@@ -10196,31 +10196,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==================== EXPORTAÇÃO GLOBAL DE MÉTODOS ====================
 if (typeof window !== 'undefined') {
-  window.openComponentDocs = openComponentDocs;
-  window.showHomePage = showHomePage;
-  window.showInstallationDocs = showInstallationDocs;
-  window.showTailwindDocs = showTailwindDocs;
-  window.showStorybookDocs = showStorybookDocs;
-  window.showTemplatesView = showTemplatesView;
-  window.selectTemplate = selectTemplate;
-  window.switchTemplateTab = switchTemplateTab;
-  window.setTemplateViewport = setTemplateViewport;
-  window.switchDocTab = switchDocTab;
-  window.setFilter = setFilter;
-  window.toggleTheme = toggleTheme;
-  window.openSearchModal = openSearchModal;
-  window.closeSearchModal = closeSearchModal;
-  window.copyCliCommand = copyCliCommand;
-  window.switchPkgManager = switchPkgManager;
-  window.scrollToSection = scrollToSection;
-  window.scrollToCodeSection = scrollToCodeSection;
-  window.handleTemplateLoginSubmit = handleTemplateLoginSubmit;
-  window.handleRouting = handleRouting;
-  window.getTemplateTSX = getTemplateTSX;
-  window.renderTemplate = renderTemplate;
-  window.showToast = showToast;
-  window.copyText = copyText;
-  window.downloadFile = downloadFile;
+  const _fnMap = {
+    openComponentDocs, showHomePage, showInstallationDocs, showTailwindDocs, showStorybookDocs,
+    showTemplatesView, selectTemplate, switchTemplateTab, setTemplateViewport, switchDocTab,
+    setFilter, toggleTheme, openSearchModal, closeSearchModal, copyCliCommand, switchPkgManager,
+    scrollToSection, scrollToCodeSection, handleTemplateLoginSubmit, handleRouting, getTemplateTSX,
+    renderTemplate, showToast, copyText, downloadFile,
+    toggleTemplatePasswordVisibility, copyInstallCmd, simulateLoading, toggleGroupItem, clearDemoInput,
+    togglePassVisibility, openDemoModal, closeDemoModal, toggleAccordionItem, switchTabPane,
+    toggleSwitch, switchChartDemoType, selectCalDay, toggleTreeNode, selectTreeFile, jumpToStep,
+    prevStepDemo, resetStepperDemo, nextStepDemo, toggleDropdownDemo, toggleContextMenuDirect,
+    toggleMenubarMenu, toggleNavMegaMenu, closeAllNavMenus, togglePopoverDemo, selectRadioDemo,
+    toggleDatePickerDemo, clearDatePickerDemo, selectDatePreset, navDateMonth, openLookupDemo,
+    closeLookupDemo, toggleComboDemo, toggleMultiSelectDemo, removeBadgeChipDemo, resetBadgeChipsDemo,
+    showToastDemo, adjustProgressDemo, setProgressDemo, simulateProgressDemo, toggleSkeletonDemo,
+    dismissAlertDemo, restoreAlertsDemo, selectNavbarLinkDemo, toggleSidebarCollapseDemo,
+    selectSidebarItemDemo, toggleFieldErrorDemo, resetFormDemo, changePaginationDemoPage,
+    setPaginationDemoPage, triggerAsyncLoadingDemo, selectCalendarDate, selectLookupItem,
+    selectComboOption, removeMultiSelectTag, toggleMultiSelectOption, selectSearchResult,
+    copyUsageCode, copyTailwindConfig, copyGlobalsCSS
+  };
+  Object.keys(_fnMap).forEach(key => {
+    try {
+      if (typeof _fnMap[key] !== 'undefined') {
+        window[key] = _fnMap[key];
+      }
+    } catch(e) {}
+  });
 }
 
 // Inicialização segura após declaração de todas as variáveis e mapas
