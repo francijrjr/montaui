@@ -19,18 +19,18 @@
 
 </div>
 
-## 🌟 Principais Recursos
+## Principais Recursos
 
-- 🛡️ **100% Zero Radix**: Construído diretamente em **React + TypeScript + Tailwind CSS** nativos, sem dependências de terceiros.
-- 📦 **Monta CLI**: Instalação simples e individual de componentes com `pnpm dlx monta-ui add [componente]`.
-- 🎨 **Paleta Corporativa**: Roxo `#753399`, modo escuro/claro nativo (`class="dark"`) e tokens HSL universais.
-- 📊 **Suíte de Gráficos**: Gráficos analíticos de Barras com Metas, Linhas/Área com gradientes, Donut e Barras Horizontais.
-- 📱 **Templates Prontos**: Telas completas de **Login**, **Landing Page** e **Dashboard SaaS Executivo**.
-- 🧪 **Storybook 8**: Laboratório interativo de componentes configurado com Tailwind CSS e temas.
+- **100% Zero Radix**: Construído diretamente em **React + TypeScript + Tailwind CSS** nativos, sem dependências de terceiros.
+- **Monta CLI**: Instalação simples e individual de componentes com `pnpm dlx monta-ui add [componente]`.
+- **Paleta Corporativa**: Roxo `#753399`, modo escuro/claro nativo (`class="dark"`) e tokens HSL universais.
+- **Suíte de Gráficos**: Gráficos analíticos de Barras com Metas, Linhas/Área com gradientes, Donut e Barras Horizontais.
+- **Templates Prontos**: Telas completas de **Login**, **Landing Page** e **Dashboard SaaS Executivo**.
+- **Storybook 8**: Laboratório interativo de componentes configurado com Tailwind CSS e temas.
 
 ---
 
-## 🚀 Instalação Rápida
+## Instalação Rápida
 
 ### 1. Inicializar Monta UI no seu projeto React
 ```bash
@@ -50,7 +50,7 @@ pnpm dlx monta-ui add loading
 
 ---
 
-## 🧩 Catálogo dos 44 Componentes Corporativos
+## Catálogo dos 44 Componentes Corporativos
 
 | Categoria | Componentes |
 | :--- | :--- |
@@ -63,15 +63,15 @@ pnpm dlx monta-ui add loading
 
 ---
 
-## 📱 Templates de Telas Completas
+## Templates de Telas Completas
 
-1. **🔐 Login / Autenticação (`templates/login.tsx`)**: Layout split em 2 colunas com campos de e-mail, senha com show/hide, checkbox de sessão, botão com spinner e SSO.
-2. **🌐 Landing Page (`templates/home.tsx`)**: Navbar superior, hero de alto impacto, preview ao vivo do dashboard, métricas e grid de features.
-3. **📊 Dashboard SaaS (`templates/dashboard.tsx`)**: Sidebar retrátil, navbar com atalhos, 4 cards de KPI executivos, gráficos de receita/canais e tabela com paginação.
+1. **Login / Autenticação (`templates/login.tsx`)**: Layout split em 2 colunas com campos de e-mail, senha com show/hide, checkbox de sessão, botão com spinner e SSO.
+2. **Landing Page (`templates/home.tsx`)**: Navbar superior, hero de alto impacto, preview ao vivo do dashboard, métricas e grid de features.
+3. **Dashboard SaaS (`templates/dashboard.tsx`)**: Sidebar retrátil, navbar com atalhos, 4 cards de KPI executivos, gráficos de receita/canais e tabela com paginação.
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```text
 ├── index.html                  # Portal interativo de documentação e laboratório
@@ -90,7 +90,7 @@ pnpm dlx monta-ui add loading
 
 ---
 
-## 📄 Licença
+## Licença
 
 Distribuído sob a licença **MIT**. Consulte o arquivo `LICENSE` para obter mais detalhes.
 
