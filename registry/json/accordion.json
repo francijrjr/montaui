@@ -1,0 +1,19 @@
+{
+  "name": "accordion",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/accordion.tsx",
+      "content": "import * as React from \"react\"\nimport { ChevronDown } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\ninterface AccordionContextType {\n  activeItem: string | null\n  setActiveItem: React.Dispatch<React.SetStateAction<string | null>>\n}\n\nconst AccordionContext = React.createContext<AccordionContextType | null>(null)\n\nexport function Accordion({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {\n  const [activeItem, setActiveItem] = React.useState<string | null>(null)\n  return (\n    <AccordionContext.Provider value={{ activeItem, setActiveItem }}>\n      <div className={cn(\"divide-y divide-border rounded-xl border border-border bg-card\", className)} {...props}>\n        {children}\n      </div>\n    </AccordionContext.Provider>\n  )\n}\n\nexport function AccordionItem({ value, children, className, ...props }: React.HTMLAttributes<HTMLDivElement> & { value: string }) {\n  return (\n    <div className={cn(\"border-b border-border last:border-b-0\", className)} {...props}>\n      {React.Children.map(children, child => {\n        if (React.isValidElement(child)) {\n          return React.cloneElement(child as React.ReactElement<any>, { value })\n        }\n        return child\n      })}\n    </div>\n  )\n}\n\nexport function AccordionTrigger({\n  value,\n  children,\n  className,\n  ...props\n}: React.ButtonHTMLAttributes<HTMLButtonElement> & { value?: string }) {\n  const context = React.useContext(AccordionContext)\n  const isOpen = context?.activeItem === value\n\n  return (\n    <button\n      type=\"button\"\n      onClick={() => context?.setActiveItem(isOpen ? null : value || null)}\n      className={cn(\n        \"flex w-full items-center justify-between p-4 text-xs font-semibold text-foreground transition-all hover:bg-muted/50\",\n        className\n      )}\n      {...props}\n    >\n      <span>{children}</span>\n      <ChevronDown className={cn(\"h-4 w-4 text-muted-foreground transition-transform duration-200\", isOpen && \"rotate-180\")} />\n    </button>\n  )\n}\n\nexport function AccordionContent({\n  value,\n  children,\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement> & { value?: string }) {\n  const context = React.useContext(AccordionContext)\n  if (context?.activeItem !== value) return null\n\n  return (\n    <div className={cn(\"p-4 pt-0 text-xs text-muted-foreground animate-in fade-in-50 duration-150\", className)} {...props}>\n      {children}\n    </div>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/accordion.tsx"
+    }
+  ]
+}

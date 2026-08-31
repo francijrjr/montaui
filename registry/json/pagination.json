@@ -1,0 +1,19 @@
+{
+  "name": "pagination",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/pagination.tsx",
+      "content": "import * as React from \"react\"\nimport { ChevronLeft, ChevronRight, MoreHorizontal } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\nexport interface PaginationProps extends React.HTMLAttributes<HTMLElement> {}\n\nexport function Pagination({ className, ...props }: PaginationProps) {\n  return (\n    <nav\n      role=\"navigation\"\n      aria-label=\"pagination\"\n      className={cn(\"mx-auto flex w-full justify-center\", className)}\n      {...props}\n    />\n  )\n}\n\nexport function PaginationContent({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) {\n  return (\n    <ul className={cn(\"flex flex-row items-center gap-1\", className)} {...props} />\n  )\n}\n\nexport function PaginationItem({ className, ...props }: React.LiHTMLAttributes<HTMLLIElement>) {\n  return <li className={cn(\"\", className)} {...props} />\n}\n\nexport interface PaginationLinkProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {\n  isActive?: boolean\n  size?: \"default\" | \"sm\"\n}\n\nexport function PaginationLink({\n  className,\n  isActive,\n  size = \"default\",\n  ...props\n}: PaginationLinkProps) {\n  return (\n    <button\n      type=\"button\"\n      aria-current={isActive ? \"page\" : undefined}\n      className={cn(\n        \"inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#753399]\",\n        size === \"default\" ? \"h-8 min-w-8 px-3\" : \"h-7 min-w-7 px-2 text-[11px]\",\n        isActive\n          ? \"bg-[#753399] font-bold text-white shadow-sm\"\n          : \"border border-border bg-card text-foreground hover:bg-muted\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nexport function PaginationPrevious({\n  className,\n  children = \"Anterior\",\n  ...props\n}: React.ButtonHTMLAttributes<HTMLButtonElement>) {\n  return (\n    <button\n      type=\"button\"\n      className={cn(\n        \"inline-flex h-8 items-center gap-1 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40\",\n        className\n      )}\n      {...props}\n    >\n      <ChevronLeft className=\"h-3.5 w-3.5\" />\n      <span>{children}</span>\n    </button>\n  )\n}\n\nexport function PaginationNext({\n  className,\n  children = \"Próximo\",\n  ...props\n}: React.ButtonHTMLAttributes<HTMLButtonElement>) {\n  return (\n    <button\n      type=\"button\"\n      className={cn(\n        \"inline-flex h-8 items-center gap-1 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40\",\n        className\n      )}\n      {...props}\n    >\n      <span>{children}</span>\n      <ChevronRight className=\"h-3.5 w-3.5\" />\n    </button>\n  )\n}\n\nexport function PaginationEllipsis({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {\n  return (\n    <span\n      aria-hidden\n      className={cn(\"flex h-8 w-8 items-center justify-center text-muted-foreground\", className)}\n      {...props}\n    >\n      <MoreHorizontal className=\"h-4 w-4\" />\n      <span className=\"sr-only\">Mais páginas</span>\n    </span>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/pagination.tsx"
+    }
+  ]
+}

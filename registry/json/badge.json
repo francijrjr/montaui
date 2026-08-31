@@ -1,0 +1,20 @@
+{
+  "name": "badge",
+  "type": "registry:ui",
+  "dependencies": [
+    "class-variance-authority",
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/badge.tsx",
+      "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { X } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\nconst badgeVariants = cva(\n  \"inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors select-none\",\n  {\n    variants: {\n      variant: {\n        default: \"border-transparent bg-[#753399]/15 text-[#753399] dark:bg-[#753399]/30 dark:text-purple-300\",\n        secondary: \"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80\",\n        success: \"border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400\",\n        warning: \"border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400\",\n        destructive: \"border-transparent bg-rose-500/15 text-rose-600 dark:text-rose-400\",\n        outline: \"text-foreground border border-border bg-card\",\n        brand: \"bg-[#753399] text-white shadow-sm hover:bg-[#622981]\",\n        ghost: \"text-muted-foreground hover:bg-muted\"\n      },\n      size: {\n        sm: \"px-2 py-0.2 text-[10px]\",\n        default: \"px-2.5 py-0.5 text-xs\",\n        lg: \"px-3.5 py-1 text-sm font-bold\"\n      }\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\"\n    }\n  }\n)\n\nexport interface BadgeProps\n  extends React.HTMLAttributes<HTMLDivElement>,\n    VariantProps<typeof badgeVariants> {\n  dot?: boolean\n  dotColor?: string\n  removable?: boolean\n  onRemove?: (e: React.MouseEvent) => void\n}\n\nfunction Badge({\n  className,\n  variant,\n  size,\n  dot = false,\n  dotColor,\n  removable = false,\n  onRemove,\n  children,\n  ...props\n}: BadgeProps) {\n  return (\n    <div className={cn(badgeVariants({ variant, size }), className)} {...props}>\n      {dot && (\n        <span\n          className={cn(\n            \"h-1.5 w-1.5 rounded-full shrink-0\",\n            dotColor || \"bg-current\"\n          )}\n        />\n      )}\n      <span>{children}</span>\n      {removable && (\n        <button\n          type=\"button\"\n          onClick={onRemove}\n          className=\"rounded-full p-0.5 hover:bg-black/10 dark:hover:bg-white/10 ml-0.5\"\n        >\n          <X className=\"h-3 w-3\" />\n        </button>\n      )}\n    </div>\n  )\n}\n\nexport { Badge, badgeVariants }",
+      "type": "registry:ui",
+      "target": "components/monta-ui/badge.tsx"
+    }
+  ]
+}

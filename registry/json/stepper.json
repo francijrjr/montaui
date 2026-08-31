@@ -1,0 +1,19 @@
+{
+  "name": "stepper",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/stepper.tsx",
+      "content": "import * as React from \"react\"\nimport { Check } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\nexport interface StepItem {\n  title: string\n  description?: string\n}\n\nexport interface StepperProps {\n  steps: StepItem[]\n  currentStep: number\n  onStepClick?: (step: number) => void\n  className?: string\n}\n\nexport function Stepper({ steps, currentStep, onStepClick, className }: StepperProps) {\n  return (\n    <div className={cn(\"w-full grid grid-cols-4 relative px-2\", className)}>\n      {steps.map((step, idx) => {\n        const stepNum = idx + 1\n        const isCompleted = stepNum < currentStep\n        const isCurrent = stepNum === currentStep\n        const isLast = idx === steps.length - 1\n\n        return (\n          <div key={idx} className=\"relative flex flex-col items-center text-center group cursor-pointer\" onClick={() => onStepClick?.(stepNum)}>\n            {!isLast && (\n              <div\n                className={cn(\n                  \"absolute top-4 left-1/2 w-full h-0.5 -z-0\",\n                  stepNum < currentStep ? \"bg-emerald-600\" : \"bg-border\"\n                )}\n              />\n            )}\n            <div\n              className={cn(\n                \"relative z-10 flex h-8 w-8 items-center justify-center rounded-full font-bold text-xs shadow transition-all\",\n                isCompleted && \"bg-emerald-600 text-white ring-4 ring-card\",\n                isCurrent && \"bg-[#753399] text-white ring-4 ring-[#753399]/20\",\n                !isCompleted && !isCurrent && \"bg-muted text-muted-foreground border border-border ring-4 ring-card\"\n              )}\n            >\n              {isCompleted ? <Check className=\"h-4 w-4 stroke-[3]\" /> : stepNum}\n            </div>\n            <span className={cn(\"mt-2 text-xs font-bold\", isCurrent ? \"text-[#753399]\" : isCompleted ? \"text-foreground\" : \"text-muted-foreground\")}>\n              {step.title}\n            </span>\n          </div>\n        )\n      })}\n    </div>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/stepper.tsx"
+    }
+  ]
+}

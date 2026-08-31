@@ -1,0 +1,19 @@
+{
+  "name": "dialog",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/dialog.tsx",
+      "content": "import * as React from \"react\"\nimport { X } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\ninterface DialogContextType {\n  open: boolean\n  setOpen: React.Dispatch<React.SetStateAction<boolean>>\n}\n\nconst DialogContext = React.createContext<DialogContextType | null>(null)\n\nexport function Dialog({\n  children,\n  open: controlledOpen,\n  onOpenChange\n}: {\n  children: React.ReactNode\n  open?: boolean\n  onOpenChange?: (open: boolean) => void\n}) {\n  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)\n  const isControlled = controlledOpen !== undefined\n  const open = isControlled ? controlledOpen : uncontrolledOpen\n\n  const setOpen = React.useCallback(\n    (next: boolean | ((prev: boolean) => boolean)) => {\n      const nextValue = typeof next === \"function\" ? next(open) : next\n      if (!isControlled) setUncontrolledOpen(nextValue)\n      onOpenChange?.(nextValue)\n    },\n    [isControlled, onOpenChange, open]\n  )\n\n  return <DialogContext.Provider value={{ open, setOpen }}>{children}</DialogContext.Provider>\n}\n\nexport function DialogTrigger({ children, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {\n  const context = React.useContext(DialogContext)\n  return (\n    <button\n      type=\"button\"\n      onClick={() => context?.setOpen(true)}\n      className={cn(\"inline-flex items-center justify-center\", className)}\n      {...props}\n    >\n      {children}\n    </button>\n  )\n}\n\nexport function DialogContent({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {\n  const context = React.useContext(DialogContext)\n  if (!context?.open) return null\n\n  return (\n    <div className=\"fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200 p-4\">\n      <div\n        className={cn(\n          \"relative w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200\",\n          className\n        )}\n        {...props}\n      >\n        <button\n          type=\"button\"\n          onClick={() => context.setOpen(false)}\n          className=\"absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none\"\n        >\n          <X className=\"h-4 w-4\" />\n          <span className=\"sr-only\">Fechar</span>\n        </button>\n        {children}\n      </div>\n    </div>\n  )\n}\n\nexport function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn(\"flex flex-col space-y-1.5 text-center sm:text-left mb-4\", className)} {...props} />\n}\n\nexport function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {\n  return <h3 className={cn(\"font-heading text-lg font-bold leading-none tracking-tight text-foreground\", className)} {...props} />\n}\n\nexport function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {\n  return <p className={cn(\"text-xs text-muted-foreground\", className)} {...props} />\n}\n\nexport function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {\n  return <div className={cn(\"flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-6\", className)} {...props} />\n}\n\nexport { Dialog as Modal }",
+      "type": "registry:ui",
+      "target": "components/monta-ui/dialog.tsx"
+    }
+  ]
+}

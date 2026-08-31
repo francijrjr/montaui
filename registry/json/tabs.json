@@ -1,0 +1,18 @@
+{
+  "name": "tabs",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/tabs.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\ninterface TabsContextType {\n  activeTab: string\n  setActiveTab: (val: string) => void\n}\n\nconst TabsContext = React.createContext<TabsContextType | null>(null)\n\nexport function Tabs({\n  defaultValue,\n  value,\n  onValueChange,\n  children,\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement> & {\n  defaultValue?: string\n  value?: string\n  onValueChange?: (val: string) => void\n}) {\n  const [tab, setTab] = React.useState(defaultValue || \"\")\n  const currentTab = value !== undefined ? value : tab\n\n  const handleTabChange = (val: string) => {\n    if (value === undefined) setTab(val)\n    onValueChange?.(val)\n  }\n\n  return (\n    <TabsContext.Provider value={{ activeTab: currentTab, setActiveTab: handleTabChange }}>\n      <div className={cn(\"space-y-4\", className)} {...props}>\n        {children}\n      </div>\n    </TabsContext.Provider>\n  )\n}\n\nexport function TabsList({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {\n  return (\n    <div className={cn(\"inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground\", className)} {...props}>\n      {children}\n    </div>\n  )\n}\n\nexport function TabsTrigger({\n  value,\n  children,\n  className,\n  ...props\n}: React.ButtonHTMLAttributes<HTMLButtonElement> & { value: string }) {\n  const context = React.useContext(TabsContext)\n  const isActive = context?.activeTab === value\n\n  return (\n    <button\n      type=\"button\"\n      onClick={() => context?.setActiveTab(value)}\n      className={cn(\n        \"inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-semibold ring-offset-background transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50\",\n        isActive ? \"bg-background text-foreground shadow-sm font-bold\" : \"hover:text-foreground\",\n        className\n      )}\n      {...props}\n    >\n      {children}\n    </button>\n  )\n}\n\nexport function TabsContent({\n  value,\n  children,\n  className,\n  ...props\n}: React.HTMLAttributes<HTMLDivElement> & { value: string }) {\n  const context = React.useContext(TabsContext)\n  if (context?.activeTab !== value) return null\n\n  return (\n    <div className={cn(\"outline-none animate-in fade-in duration-150\", className)} {...props}>\n      {children}\n    </div>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/tabs.tsx"
+    }
+  ]
+}

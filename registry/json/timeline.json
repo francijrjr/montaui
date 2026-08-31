@@ -1,0 +1,19 @@
+{
+  "name": "timeline",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/timeline.tsx",
+      "content": "import * as React from \"react\"\nimport { Check, Package, AlertTriangle, XCircle, Clock } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\nexport type TimelineStatus = \"completed\" | \"in-progress\" | \"warning\" | \"error\" | \"pending\"\n\nexport interface TimelineItem {\n  id?: string\n  title: string\n  description?: string\n  time?: string\n  status?: TimelineStatus\n  icon?: React.ReactNode\n  badge?: string\n  children?: React.ReactNode\n}\n\nexport function Timeline({ items, className, ...props }: { items: TimelineItem[]; className?: string }) {\n  return (\n    <div className={cn(\"relative space-y-6 ml-2\", className)} {...props}>\n      {items.map((item, idx) => {\n        const status = item.status || \"completed\"\n        const isLast = idx === items.length - 1\n\n        return (\n          <div key={item.id || idx} className=\"flex gap-4 items-start relative\">\n            {!isLast && <div className=\"absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0\" />}\n            <div\n              className={cn(\n                \"relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white shadow-sm ring-4 ring-card\",\n                status === \"completed\" && \"bg-emerald-600\",\n                status === \"in-progress\" && \"bg-[#753399] ring-[#753399]/20 animate-pulse\",\n                status === \"warning\" && \"bg-amber-500\",\n                status === \"error\" && \"bg-rose-500\",\n                status === \"pending\" && \"bg-muted text-muted-foreground border border-border\"\n              )}\n            >\n              {item.icon || (status === \"completed\" ? <Check className=\"h-3.5 w-3.5\" /> : <Clock className=\"h-3.5 w-3.5\" />)}\n            </div>\n            <div className=\"flex-1 rounded-xl border border-border bg-card p-4 space-y-1.5 shadow-sm\">\n              <div className=\"flex items-center justify-between\">\n                <span className={cn(\"font-heading text-xs font-bold\", status === \"in-progress\" ? \"text-[#753399]\" : \"text-foreground\")}>\n                  {item.title}\n                </span>\n                {item.time && <span className=\"text-[10px] font-mono text-muted-foreground\">{item.time}</span>}\n              </div>\n              {item.description && <p className=\"text-[11px] text-muted-foreground leading-relaxed\">{item.description}</p>}\n              {item.badge && <span className=\"inline-block rounded bg-emerald-500/10 text-emerald-600 px-2 py-0.5 text-[10px] font-bold\">{item.badge}</span>}\n              {item.children}\n            </div>\n          </div>\n        )\n      })}\n    </div>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/timeline.tsx"
+    }
+  ]
+}

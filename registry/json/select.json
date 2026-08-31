@@ -1,0 +1,19 @@
+{
+  "name": "select",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/select.tsx",
+      "content": "import * as React from \"react\"\nimport { ChevronDown } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\nexport interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {\n  label?: string\n  error?: string\n}\n\nconst Select = React.forwardRef<HTMLSelectElement, SelectProps>(\n  ({ className, label, error, children, disabled, ...props }, ref) => {\n    return (\n      <div className=\"w-full space-y-1.5\">\n        {label && <label className=\"text-xs font-semibold text-foreground\">{label}</label>}\n        <div className=\"relative flex items-center\">\n          <select\n            ref={ref}\n            disabled={disabled}\n            className={cn(\n              \"flex h-10 w-full appearance-none rounded-md border border-input bg-background px-3 py-2 pr-8 text-xs shadow-sm transition-all focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399] disabled:cursor-not-allowed disabled:opacity-50\",\n              error && \"border-rose-500 focus:border-rose-500 focus:ring-rose-500\",\n              className\n            )}\n            {...props}\n          >\n            {children}\n          </select>\n          <ChevronDown className=\"pointer-events-none absolute right-3 h-4 w-4 text-muted-foreground\" />\n        </div>\n        {error && <p className=\"text-[11px] font-medium text-rose-500\">{error}</p>}\n      </div>\n    )\n  }\n)\nSelect.displayName = \"Select\"\n\nexport { Select }",
+      "type": "registry:ui",
+      "target": "components/monta-ui/select.tsx"
+    }
+  ]
+}

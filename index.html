@@ -1,147 +1,1054 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Catálogo de componentes inspirados no PO UI, recriados em HTML, CSS e JavaScript puro.">
-  <title>WF willFran | Componentes HTML, CSS e JS</title>
+  <title>Monta UI — O Design System Corporativo em React & Tailwind CSS</title>
+  <meta name="description" content="Monta UI é uma biblioteca de componentes corporativos de alta performance em React, Tailwind CSS e Radix UI. Código como propriedade, acessível e 100% customizável.">
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/po-ui/css/po-theme-default.min.css">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main">Pular para o conteúdo</a>
-  <div class="app-shell">
-    <header class="topbar">
-      <button class="icon-button mobile-menu" id="menuToggle" aria-label="Abrir menu" aria-expanded="false"><i data-lucide="menu"></i></button>
-      <a class="brand" href="#/inicio" aria-label="WF willFran - início">
-        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-        <span><b>WF</b> willFran</span>
-      </a>
-      <div class="top-search">
-        <i data-lucide="search" aria-hidden="true"></i>
-        <input id="globalSearch" type="search" placeholder="Buscar componente..." autocomplete="off" aria-label="Buscar componente">
-        <kbd>Ctrl K</kbd>
-      </div>
-      <nav class="top-actions" aria-label="Ações globais">
-        <button class="icon-button" id="themeToggle" aria-label="Alternar tema"><i data-lucide="moon"></i></button>
-      </nav>
-    </header>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head"><span class="eyebrow">BIBLIOTECA</span><span class="count" id="componentCount">0</span></div>
-      <nav id="componentNav" aria-label="Componentes"></nav>
-      <div class="sidebar-foot"><span class="status-dot"></span><div><b>wilFran edition</b><small>HTML · CSS · JavaScript</small></div></div>
+  <!-- Tailwind CSS CDN (with console warning filter for clean devtools) -->
+  <script>
+    const _origWarn = console.warn;
+    console.warn = function(...args) {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+      _origWarn.apply(console, args);
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            primary: {
+              DEFAULT: "hsl(var(--primary))",
+              foreground: "hsl(var(--primary-foreground))",
+            },
+            secondary: {
+              DEFAULT: "hsl(var(--secondary))",
+              foreground: "hsl(var(--secondary-foreground))",
+            },
+            destructive: {
+              DEFAULT: "hsl(var(--destructive))",
+              foreground: "hsl(var(--destructive-foreground))",
+            },
+            muted: {
+              DEFAULT: "hsl(var(--muted))",
+              foreground: "hsl(var(--muted-foreground))",
+            },
+            accent: {
+              DEFAULT: "hsl(var(--accent))",
+              foreground: "hsl(var(--accent-foreground))",
+            },
+            popover: {
+              DEFAULT: "hsl(var(--popover))",
+              foreground: "hsl(var(--popover-foreground))",
+            },
+            card: {
+              DEFAULT: "hsl(var(--card))",
+              foreground: "hsl(var(--card-foreground))",
+            },
+            brand: {
+              DEFAULT: "#753399",
+              hover: "#622981",
+              soft: "rgba(117, 51, 153, 0.12)",
+              foreground: "#ffffff",
+            }
+          },
+          borderRadius: {
+            lg: "var(--radius)",
+            md: "calc(var(--radius) - 2px)",
+            sm: "calc(var(--radius) - 4px)",
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Monta UI Design Tokens -->
+  <style>
+    @layer base {
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 277 50% 40%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 277 50% 40%;
+        --radius: 0.5rem;
+      }
+      .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 277 50% 45%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 277 50% 45%;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(120,120,120,0.25); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(120,120,120,0.45); }
+
+    /* Code Block & Syntax Highlighting (High Contrast in Light & Dark Mode) */
+    pre, pre code, code {
+      color: #e4e4e7 !important; /* text-zinc-200 base */
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .tok-kw { color: #ff7b72 !important; font-weight: 600; }     /* Palavras-chave: import, const, return */
+    .tok-tag { color: #7ee787 !important; font-weight: 600; }    /* Componentes JSX: Button, Dialog */
+    .tok-attr { color: #d2a8ff !important; }                    /* Props: variant, className, size */
+    .tok-str { color: #a5d6ff !important; }                     /* Strings: "default", "icon" */
+    .tok-prop { color: #79c0ff !important; }                    /* Propriedades JSON / Objeto */
+    .tok-fn { color: #d2a8ff !important; font-weight: 500; }    /* Funções e Hooks: useState, cn, forwardRef */
+    .tok-type { color: #ffa657 !important; font-weight: 500; }  /* Tipos TypeScript: boolean, string, React.FC */
+    .tok-comm { color: #8b949e !important; font-style: italic; } /* Comentários */
+    .tok-num { color: #79c0ff !important; }                     /* Números */
+    .tok-punc { color: #a1a1aa !important; }                    /* Pontuação: {}, (), [], =, ; */
+  </style>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-brand selection:text-white">
+
+  <!-- ==================== HEADER / NAVBAR ==================== -->
+  <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div class="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
+      <div class="flex items-center gap-6">
+        <a href="#/inicio" class="flex items-center gap-2.5 font-heading font-bold text-base tracking-tight transition-opacity hover:opacity-90">
+          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-white shadow-md">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="text-lg">Monta <span class="text-brand font-extrabold">UI</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <a href="#/docs/instalacao" class="transition-colors hover:text-foreground">Instalação CLI</a>
+          <a href="#/docs/tailwind" class="transition-colors hover:text-foreground">Tailwind Config</a>
+          <a href="#/docs/storybook" class="transition-colors hover:text-foreground">Storybook</a>
+          <a href="#/templates/login" class="transition-colors hover:text-foreground font-semibold text-brand">Templates</a>
+          <a href="#/componente/button" class="text-foreground transition-colors hover:text-foreground font-semibold">Componentes</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Search Button (Command Palette) -->
+        <button id="searchTrigger" class="relative flex h-8 w-full items-center justify-between rounded-md border border-input bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-accent sm:w-64">
+          <span class="inline-flex items-center gap-2">
+            <i data-lucide="search" class="h-3.5 w-3.5"></i>
+            <span>Buscar no Monta UI...</span>
+          </span>
+          <kbd class="pointer-events-none hidden rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-block">Ctrl + K</kbd>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground" aria-label="Alternar tema">
+          <i data-lucide="sun" class="hidden dark:block h-4 w-4"></i>
+          <i data-lucide="moon" class="block dark:hidden h-4 w-4"></i>
+        </button>
+
+        <!-- GitHub Link -->
+        <a href="https://github.com/francijrjr/wf-willfran" target="_blank" rel="noreferrer" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN WRAPPER ==================== -->
+  <div class="container mx-auto max-w-screen-2xl flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)] px-4 sm:px-8">
+    
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside id="sidebar" class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border/40 py-6 pr-6 lg:py-8">
+      <div class="w-full flex flex-col gap-6" id="sidebarContent">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
     </aside>
 
-    <main id="main" class="main" tabindex="-1">
-      <section id="homeView" class="home-view">
-        <div class="hero">
-          <div class="hero-copy">
-            <span class="hero-label">DESIGN SYSTEM · SEM FRAMEWORK</span>
-            <h1>Componentes para<br><em>trabalho de verdade.</em></h1>
-            <p>Uma releitura do catálogo PO UI em HTML semântico, CSS moderno e JavaScript puro. Acessível, responsivo e pronto para copiar.</p>
-            <div class="hero-actions"><button class="po-button primary" data-open="po-button">Explorar componentes <i data-lucide="arrow-right"></i></button><button class="po-button ghost" id="showAllButton">Ver catálogo</button></div>
+    <!-- ==================== CONTENT AREA ==================== -->
+    <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_220px]">
+      
+      <!-- ==================== VIEW 1: HOME / LANDING ==================== -->
+      <section id="homeView" class="w-full min-w-0">
+        <!-- Hero Section -->
+        <div id="homeHeroSection" class="flex flex-col items-start gap-4 md:pt-4 scroll-mt-24">
+          <a href="#/docs/instalacao" class="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted">
+            <span class="flex h-2 w-2 rounded-full bg-brand"></span>
+            <span>Monta UI — Instalação via CLI Disponível</span>
+            <i data-lucide="arrow-right" class="h-3 w-3"></i>
+          </a>
+          <h1 class="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+            Construa interfaces com o<br>
+            <span class="text-brand">Monta UI Design System.</span>
+          </h1>
+          <p class="max-w-[700px] text-base sm:text-lg text-muted-foreground">
+            Biblioteca corporativa com 44 componentes nativos de alto nível construídos em <b>React 18/19</b>, <b>TypeScript</b> e <b>Tailwind CSS</b>. 100% autoral, sem dependências de terceiros.
+          </p>
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="openComponentDocs('button')" class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand px-5 text-sm font-semibold text-white shadow transition-colors hover:bg-brand-hover">
+              <span>Explorar Componentes</span>
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </button>
+            <button onclick="copyInstallCmd()" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground font-mono text-xs">
+              <span id="heroInstallText">pnpm dlx monta-ui add button</span>
+              <i data-lucide="copy" class="h-3.5 w-3.5 text-muted-foreground"></i>
+            </button>
           </div>
-          <div class="hero-demo" aria-label="Demonstração visual">
-            <div class="demo-window">
-              <div class="window-bar"><i></i><i></i><i></i><span>novo-pedido.html</span></div>
-              <div class="mini-form">
-                <div class="mini-title"><span>Novo pedido</span><span class="po-tag success">Rascunho</span></div>
-                <label>Cliente <span>●</span><input value="Clínica Aurora" readonly></label>
-                <div class="mini-row"><label>Entrega<input value="18/09/2026" readonly></label><label>Prioridade<select><option>Normal</option></select></label></div>
-                <div class="mini-total"><span>Total</span><b>R$ 4.820,00</b></div>
-                <button class="po-button primary">Confirmar pedido</button>
+        </div>
+
+        <!-- Showcase Mockup: Cards & Interactive Widgets -->
+        <div id="homeShowcaseSection" class="mt-12 rounded-xl border border-border bg-card p-6 shadow-sm scroll-mt-24">
+          <div class="flex items-center justify-between border-b border-border pb-4 mb-6">
+            <div>
+              <h2 class="font-heading text-lg font-bold">Showcase Monta UI</h2>
+              <p class="text-xs text-muted-foreground">Componentes reais combinados com tokens visuais Tailwind e React nativo</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand border border-brand/20">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand"></span> Monta UI Core
+              </span>
+            </div>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Widget 1: Card de Ações -->
+            <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-brand font-heading">Ações & Estados</span>
+                  <span class="text-xs text-muted-foreground">Button.tsx</span>
+                </div>
+                <h3 class="mt-2 text-sm font-semibold">Botões com Variantes</h3>
+                <p class="text-xs text-muted-foreground mt-1">Gerenciados via CVA com suporte a loading e ícones.</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <button class="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-white shadow hover:bg-brand-hover">
+                    <i data-lucide="check" class="h-3.5 w-3.5"></i> Salvar
+                  </button>
+                  <button class="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-semibold hover:border-brand hover:text-brand">
+                    Secundário
+                  </button>
+                  <button class="inline-flex h-8 items-center gap-1.5 rounded-md bg-transparent px-3 text-xs font-semibold text-brand hover:bg-brand/10">
+                    Ghost
+                  </button>
+                  <button class="inline-flex h-8 items-center gap-1.5 rounded-md bg-destructive px-3 text-xs font-semibold text-white shadow hover:bg-destructive/90">
+                    <i data-lucide="trash-2" class="h-3.5 w-3.5"></i> Excluir
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="float-card float-one"><span><i data-lucide="check"></i></span><div><b>Pedido salvo</b><small>Agora mesmo</small></div></div>
-            <div class="float-card float-two"><b id="heroCount">0</b><small>componentes</small></div>
+
+            <!-- Widget 2: Formulário -->
+            <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-brand font-heading">Entradas</span>
+                  <span class="text-xs text-muted-foreground">Input.tsx</span>
+                </div>
+                <h3 class="mt-2 text-sm font-semibold">Campos & Senhas</h3>
+                <div class="mt-3 space-y-2.5">
+                  <div>
+                    <label class="text-xs font-medium text-muted-foreground">Razão Social</label>
+                    <input class="mt-1 flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand" placeholder="Monta UI Enterprise">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-muted-foreground">Senha de Acesso</label>
+                    <div class="relative mt-1">
+                      <input type="password" value="secret1234" class="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+                      <i data-lucide="eye" class="absolute right-2.5 top-2 h-3.5 w-3.5 text-muted-foreground"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Widget 3: Tabela / Registro -->
+            <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-brand font-heading">Feedback</span>
+                  <span class="text-xs text-muted-foreground">Badge.tsx</span>
+                </div>
+                <h3 class="mt-2 text-sm font-semibold">Tags e Status</h3>
+                <div class="mt-3 space-y-2">
+                  <div class="flex items-center justify-between border-b border-border/50 pb-2 text-xs">
+                    <span class="font-medium">CLI-001 Clínica Aurora</span>
+                    <span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Ativo</span>
+                  </div>
+                  <div class="flex items-center justify-between border-b border-border/50 pb-2 text-xs">
+                    <span class="font-medium">CLI-002 Mercado Central</span>
+                    <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">Pendente</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium">CLI-003 Studio Norte</span>
+                    <span class="rounded-full bg-brand/15 px-2 py-0.5 text-[10px] font-bold text-brand dark:text-purple-300">Homologado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <section class="catalog" id="catalog">
-          <div class="section-heading"><div><span class="eyebrow">CATÁLOGO</span><h2>Encontre o componente certo</h2></div><div class="filters" id="filters" role="group" aria-label="Filtrar componentes"></div></div>
-          <div class="component-grid" id="componentGrid"></div>
-          <div class="empty-state" id="emptyState" hidden><i data-lucide="search-x"></i><h3>Nenhum componente encontrado</h3><p>Tente buscar por outro nome ou categoria.</p></div>
-        </section>
+        <!-- Grid de Todos os Componentes -->
+        <div id="homeCatalogSection" class="mt-16 scroll-mt-24">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+            <div>
+              <h2 class="font-heading text-2xl font-bold tracking-tight">Catálogo Monta UI</h2>
+              <p class="text-sm text-muted-foreground">Explore os componentes disponíveis para cópia e instalação.</p>
+            </div>
+            <!-- Filtro de Categoria -->
+            <div id="categoryFilter" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div id="componentsGrid" class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+        </div>
       </section>
 
-      <section id="detailView" class="detail-view" hidden>
-        <button class="back-link" id="backButton"><i data-lucide="arrow-left"></i> Todos os componentes</button>
-        <div class="detail-header">
-          <div>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-              <span class="hero-label" style="margin-bottom:0">DESIGN SYSTEM · SEM FRAMEWORK</span>
-              <span class="component-category" id="detailCategory"></span>
-            </div>
-            <h1 id="detailTitle"></h1>
-            <p id="detailDescription"></p>
+      <!-- ==================== VIEW 2: COMPONENT DOCS ==================== -->
+      <section id="docsView" class="hidden w-full min-w-0">
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+          <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
+          <i data-lucide="chevron-right" class="h-3 w-3"></i>
+          <span id="breadcrumbCategory" class="text-muted-foreground">Componentes</span>
+          <i data-lucide="chevron-right" class="h-3 w-3"></i>
+          <span id="breadcrumbName" class="font-medium text-foreground">Button</span>
+        </nav>
+
+        <!-- Title & Description -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <h1 id="docTitle" class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Button</h1>
+            <span id="docCategoryBadge" class="rounded-md bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">Ações</span>
           </div>
-          <span class="zero-deps"><i data-lucide="circle-check"></i> Pronto para copiar</span>
+          <p id="docDescription" class="text-base text-muted-foreground">Exibe um botão de disparo ou gatilho com variantes visuais e suporte a acessibilidade.</p>
         </div>
-        <div class="detail-tabs" role="tablist"><button class="active" role="tab" data-tab="preview" aria-selected="true">Exemplo</button><button role="tab" data-tab="code" aria-selected="false">Código</button></div>
-        <div class="tab-panel active" id="previewPanel" role="tabpanel">
-          <div class="preview-toolbar"><span>PREVIEW</span><div><button data-viewport="desktop" class="active" aria-label="Visualização desktop"><i data-lucide="monitor"></i></button><button data-viewport="mobile" aria-label="Visualização mobile"><i data-lucide="smartphone"></i></button></div></div>
-          <div class="preview-stage" id="previewStage"><div id="componentPreview"></div></div>
-        </div>
-        <div class="tab-panel" id="codePanel" role="tabpanel">
-          <div class="code-head">
-            <div class="code-languages" role="tablist" aria-label="Linguagem do código">
-              <button class="active" role="tab" data-language="html" aria-selected="true"><i data-lucide="file-code"></i> HTML</button>
-              <button role="tab" data-language="css" aria-selected="false"><i data-lucide="palette"></i> CSS</button>
-              <button role="tab" data-language="js" aria-selected="false"><i data-lucide="terminal"></i> JavaScript</button>
+
+        <!-- Interactive Preview Box (Tabs: Preview | Code) -->
+        <div class="mt-8 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex h-9 items-center rounded-lg bg-muted p-1 text-muted-foreground">
+              <button id="tabPreviewBtn" onclick="switchDocTab('preview')" class="flex items-center gap-1.5 rounded-md bg-background px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                <i data-lucide="eye" class="h-3.5 w-3.5"></i> Preview
+              </button>
+              <button id="tabCodeBtn" onclick="switchDocTab('code')" class="flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium hover:text-foreground">
+                <i data-lucide="code-2" class="h-3.5 w-3.5"></i> Código TSX
+              </button>
             </div>
-            <div class="code-actions">
-              <span class="code-file-badge" id="codeFileBadge">po-button.html</span>
-              <button class="code-action-btn" id="downloadCode" title="Baixar arquivo no seu computador"><i data-lucide="download"></i><span>Baixar</span></button>
-              <button class="code-action-btn primary" id="copyCode"><i data-lucide="copy"></i><span>Copiar HTML</span></button>
+            <div class="flex items-center gap-2">
+              <button id="downloadBtn" class="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium hover:bg-accent text-muted-foreground hover:text-foreground">
+                <i data-lucide="download" class="h-3.5 w-3.5"></i> Baixar .tsx
+              </button>
+              <button id="copyDocCodeBtn" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-white shadow hover:bg-brand-hover">
+                <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copiar Código
+              </button>
             </div>
           </div>
-          <div class="code-container">
-            <pre><code id="codeBlock"></code></pre>
+
+          <!-- Preview Container -->
+          <div id="docPreviewContainer" class="scroll-mt-24 flex min-h-[320px] w-full items-center justify-center rounded-lg border border-border bg-card p-8 shadow-sm">
+            <div id="docPreviewStage" class="w-full max-w-xl"></div>
+          </div>
+
+          <!-- Code Container (Hidden by default) -->
+          <div id="docCodeContainer" class="scroll-mt-24 hidden rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden text-sm">
+            <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+              <span id="docCodeFilename">components/monta-ui/button.tsx</span>
+              <span>Monta UI · TypeScript · Tailwind CSS</span>
+            </div>
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed"><code id="docCodeBlock"></code></pre>
+          </div>
+        </div>
+
+        <!-- CLI Installation Section -->
+        <div class="mt-12 space-y-3 scroll-mt-24" id="installationSection">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground border-b border-border pb-2">Instalação via Monta CLI</h2>
+          <p class="text-sm text-muted-foreground">Instale o componente no seu projeto diretamente com o gerenciador de pacotes da sua preferência.</p>
+          
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+            <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2">
+              <div class="flex gap-4 text-xs font-mono text-zinc-400">
+                <button id="pkgTab-pnpm" onclick="switchPkgManager('pnpm')" class="text-zinc-100 font-semibold border-b-2 border-brand pb-0.5">pnpm</button>
+                <button id="pkgTab-npx" onclick="switchPkgManager('npx')" class="hover:text-zinc-100 pb-0.5">npx</button>
+                <button id="pkgTab-yarn" onclick="switchPkgManager('yarn')" class="hover:text-zinc-100 pb-0.5">yarn</button>
+                <button id="pkgTab-bun" onclick="switchPkgManager('bun')" class="hover:text-zinc-100 pb-0.5">bun</button>
+              </div>
+              <button onclick="copyCliCommand()" class="text-xs text-zinc-300 hover:text-white flex items-center gap-1.5 font-sans">
+                <i data-lucide="copy" class="h-3.5 w-3.5"></i> <span id="copyCliText">Copiar</span>
+              </button>
+            </div>
+            <div class="p-4 font-mono text-xs text-[#79c0ff]">
+              <code id="docCliCommand">pnpm dlx monta-ui add button</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage Example Section -->
+        <div class="mt-10 space-y-3 scroll-mt-24" id="usageSection">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <h2 class="font-heading text-xl font-bold tracking-tight text-foreground">Exemplo de Uso</h2>
+            <button onclick="copyUsageCode()" class="text-xs text-brand hover:text-brand-hover flex items-center gap-1 font-medium">
+              <i data-lucide="copy" class="h-3.5 w-3.5"></i> <span>Copiar Exemplo</span>
+            </button>
+          </div>
+          <p class="text-sm text-muted-foreground">Como importar e utilizar o componente no seu código React:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+            <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+              <span id="docUsageFilename">src/App.tsx</span>
+              <span>React · TypeScript</span>
+            </div>
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[300px] text-[#a5d6ff]"><code id="docUsageBlock"></code></pre>
+          </div>
+        </div>
+
+        <!-- Component Anatomy & Composition Section -->
+        <div class="mt-10 space-y-4 scroll-mt-24" id="compositionSection">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div class="space-y-0.5">
+              <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <i data-lucide="layers" class="h-5 w-5 text-brand"></i>
+                <span>Composição & Anatomia</span>
+              </h2>
+              <p class="text-xs text-muted-foreground">Estrutura hierárquica, exportações e papéis dos subcomponentes modulares.</p>
+            </div>
+            <span id="compositionCountBadge" class="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-bold text-brand">1 parte</span>
+          </div>
+
+          <!-- Composition Content (Injected by JS) -->
+          <div id="compositionContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- API Reference / Referência da API Section -->
+        <div class="mt-10 space-y-4 scroll-mt-24" id="apiSection">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div class="space-y-0.5">
+              <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <i data-lucide="book-open" class="h-5 w-5 text-brand"></i>
+                <span>Referência da API</span>
+              </h2>
+              <p class="text-xs text-muted-foreground">Props, tipos TypeScript, valores padrão e eventos do componente.</p>
+            </div>
+            <span id="apiPropsCountBadge" class="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-bold text-brand">Props</span>
+          </div>
+
+          <!-- API Props Table Container -->
+          <div id="apiPropsContainer" class="space-y-4"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 3: INSTALAÇÃO CLI ==================== -->
+      <section id="installationDocsView" class="hidden w-full min-w-0 space-y-8">
+        <div>
+          <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+            <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="text-muted-foreground">Começando</span>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="font-medium text-foreground">Instalação CLI</span>
+          </nav>
+          <h1 class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Instalação & Configuração CLI</h1>
+          <p class="mt-2 text-base text-muted-foreground">Aprenda a configurar seu projeto React com Tailwind CSS e utilizar o Monta CLI para gerenciar componentes.</p>
+        </div>
+
+        <!-- Passo 1: Criar Projeto -->
+        <div id="installStep1" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>
+            Criar um projeto React (Vite / Next.js)
+          </h2>
+          <p class="text-sm text-muted-foreground">Crie um novo projeto React com TypeScript e Tailwind CSS:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#a5d6ff]">
+            <code># Usando Vite com TypeScript<br>pnpm create vite meu-app --template react-ts<br>cd meu-app</code>
+          </div>
+        </div>
+
+        <!-- Passo 2: Dependências Base -->
+        <div id="installStep2" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>
+            Instalar Dependências Essenciais
+          </h2>
+          <p class="text-sm text-muted-foreground">Instale os pacotes fundamentais para manipulação de classes e ícones:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#a5d6ff]">
+            <code>pnpm add clsx tailwind-merge class-variance-authority lucide-react</code>
+          </div>
+        </div>
+
+        <!-- Passo 3: Inicializar Monta CLI -->
+        <div id="installStep3" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>
+            Inicializar o Monta CLI
+          </h2>
+          <p class="text-sm text-muted-foreground">Execute o assistente de inicialização para gerar o arquivo <code class="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">components.json</code>:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
+            <code>pnpm dlx monta-ui init</code>
+          </div>
+          <p class="text-xs text-muted-foreground mt-2">O arquivo <code class="bg-muted px-1 rounded font-mono">components.json</code> gerado terá a seguinte estrutura:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs">
+            <pre class="overflow-x-auto text-[#a5d6ff]"><code>{
+  "$schema": "https://monta-ui.dev/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "src/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/monta-ui"
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Passo 4: Adicionar Utilitário cn() -->
+        <div id="installStep4" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">4</span>
+            Criar Utilitário <code class="text-base font-mono">src/lib/utils.ts</code>
+          </h2>
+          <p class="text-sm text-muted-foreground">Este helper une <code class="font-mono text-xs">clsx</code> e <code class="font-mono text-xs">tailwind-merge</code> para mesclagem limpa de classes Tailwind:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs">
+            <pre class="overflow-x-auto text-[#a5d6ff]"><code>import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Passo 5: Baixar Componentes -->
+        <div id="installStep5" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">5</span>
+            Adicionar Componentes com o CLI
+          </h2>
+          <p class="text-sm text-muted-foreground">Agora você pode instalar qualquer componente do catálogo instantaneamente:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
+            <code># Adicionar múltiplos componentes<br>pnpm dlx monta-ui add button dialog input table badge</code>
           </div>
         </div>
       </section>
+
+      <!-- ==================== VIEW 4: TAILWIND CONFIG ==================== -->
+      <section id="tailwindDocsView" class="hidden w-full min-w-0 space-y-8">
+        <div>
+          <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+            <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="text-muted-foreground">Começando</span>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="font-medium text-foreground">Tailwind Config</span>
+          </nav>
+          <h1 class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Configuração do Tailwind CSS</h1>
+          <p class="mt-2 text-base text-muted-foreground">Definição oficial dos tokens, variáveis CSS, cores do Design System e animações do Monta UI.</p>
+        </div>
+
+        <!-- 1. tailwind.config.js -->
+        <div id="tailwindConfigFileSection" class="space-y-3 scroll-mt-24">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <h2 class="font-heading text-lg font-bold tracking-tight text-foreground">1. <code class="font-mono">tailwind.config.js</code></h2>
+            <span class="text-xs text-muted-foreground font-mono">JavaScript / TypeScript</span>
+          </div>
+          <p class="text-sm text-muted-foreground">Adicione as extensões de tema, animações e cores HSL ao seu arquivo de configuração:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+            <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+              <span>tailwind.config.js</span>
+              <button onclick="copyTailwindConfig()" class="hover:text-foreground flex items-center gap-1 text-xs text-brand font-semibold">
+                <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copiar Config
+              </button>
+            </div>
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[420px] text-[#a5d6ff]"><code>/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: { "2xl": "1400px" },
+    },
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        heading: ['Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        brand: {
+          DEFAULT: "#753399",
+          hover: "#622981",
+          soft: "rgba(117, 51, 153, 0.12)",
+          foreground: "#ffffff",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- 2. globals.css -->
+        <div id="tailwindGlobalsCssSection" class="space-y-3 scroll-mt-24">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <h2 class="font-heading text-lg font-bold tracking-tight text-foreground">2. <code class="font-mono">src/globals.css</code></h2>
+            <span class="text-xs text-muted-foreground font-mono">CSS Variables (HSL)</span>
+          </div>
+          <p class="text-sm text-muted-foreground">Tokens de cor oficiais com suporte a tema Claro (Light) e Escuro (Dark):</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+            <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+              <span>src/globals.css</span>
+              <button onclick="copyGlobalsCSS()" class="hover:text-foreground flex items-center gap-1 text-xs text-brand font-semibold">
+                <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copiar CSS
+              </button>
+            </div>
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[380px] text-[#a5d6ff]"><code>@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 277 50% 40%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 277 50% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 277 50% 45%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 277 50% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: STORYBOOK ==================== -->
+      <section id="storybookDocsView" class="hidden w-full min-w-0 space-y-8">
+        <div>
+          <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+            <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="text-muted-foreground">Ferramentas</span>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="font-medium text-foreground">Storybook</span>
+          </nav>
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF4785]/10 text-[#FF4785]">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M16.417 0c-.81 0-1.585.34-2.146.942l-5.633 6.07a.64.64 0 01-.476.2H2.33C1.042 7.212 0 8.254 0 9.542v12.127C0 22.958 1.042 24 2.33 24h15.006c1.288 0 2.33-1.042 2.33-2.331V9.542c0-1.288-1.042-2.33-2.33-2.33h-1.077a.64.64 0 01-.475-.2l-5.633-6.07A2.932 2.932 0 0116.417 0z"/></svg>
+            </div>
+            <div>
+              <h1 class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Monta UI Storybook</h1>
+              <p class="mt-1 text-sm text-muted-foreground">Ambiente de desenvolvimento e testes isolados para todos os componentes do Design System.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Execução do Storybook -->
+        <div id="storybookRunSection" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>
+            Executar o Storybook Localmente
+          </h2>
+          <p class="text-sm text-muted-foreground">Inicie o servidor de desenvolvimento do Storybook com suporte a hot reload:</p>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
+            <code># Iniciar o Storybook na porta 6006<br>pnpm storybook<br># ou:<br>npm run storybook</code>
+          </div>
+        </div>
+
+        <!-- Estrutura de Configuração -->
+        <div id="storybookSetupSection" class="space-y-3 scroll-mt-24">
+          <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>
+            Configuração com Tema Monta UI & Tailwind
+          </h2>
+          <p class="text-sm text-muted-foreground">O Storybook já está configurado com o tema escuro/claro nativo e tokens do Tailwind CSS em <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">.storybook/main.ts</code> e <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">.storybook/preview.ts</code>.</p>
+          
+          <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+            <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+              <span>stories/Button.stories.tsx</span>
+              <span>Storybook 8 · React</span>
+            </div>
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[350px] text-[#a5d6ff]"><code>import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "../registry/ui/button";
+import { Check, Trash2 } from "lucide-react";
+
+const meta: Meta<typeof Button> = {
+  title: "Ações/Button",
+  component: Button,
+  tags: ["autodocs"],
+  argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "secondary", "ghost", "danger", "success"],
+    },
+    size: {
+      control: "select",
+      options: ["xs", "sm", "default", "lg", "icon"],
+    },
+    isLoading: { control: "boolean" },
+    disabled: { control: "boolean" },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Default: Story = {
+  args: {
+    children: "Confirmar Ação",
+    variant: "default",
+  },
+};
+
+export const WithIcon: Story = {
+  render: (args) => (
+    <Button {...args}>
+      <Check className="h-4 w-4" />
+      <span>Salvar Registro</span>
+    </Button>
+  ),
+};</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 6: TEMPLATES DE TELAS COMPLETAS ==================== -->
+      <section id="templatesView" class="hidden w-full min-w-0 space-y-6">
+        <div>
+          <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
+            <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="text-muted-foreground">Templates</span>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span id="templateBreadcrumbName" class="font-medium text-foreground">Login / Autenticação</span>
+          </nav>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 id="templateViewTitle" class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Templates de Telas</h1>
+              <p class="mt-1.5 text-sm text-muted-foreground">Telas corporativas prontas para produção construídas com os 44 componentes 100% nativos do Monta UI.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-brand/15 px-3 py-1 text-xs font-bold text-brand">3 Templates Disponíveis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Template Selector Switcher Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-border pb-4">
+          <button id="tplBtnLogin" onclick="selectTemplate('login')" class="flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-brand text-white shadow-sm">
+            <i data-lucide="lock" class="h-4 w-4"></i>
+            <span>1. Login & Autenticação</span>
+          </button>
+          <button id="tplBtnHome" onclick="selectTemplate('home')" class="flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+            <i data-lucide="globe" class="h-4 w-4"></i>
+            <span>2. Landing Page (Home)</span>
+          </button>
+          <button id="tplBtnDashboard" onclick="selectTemplate('dashboard')" class="flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+            <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+            <span>3. Dashboard SaaS Executivo</span>
+          </button>
+        </div>
+
+        <!-- Preview & Code View Tabs Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-muted/40 p-2 rounded-xl border border-border">
+          <div class="flex items-center gap-1.5">
+            <button id="tplTabPreviewBtn" onclick="switchTemplateTab('preview')" class="flex items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 text-xs font-bold text-foreground shadow-sm border border-border">
+              <i data-lucide="eye" class="h-3.5 w-3.5"></i>
+              <span>Exemplo Interativo</span>
+            </button>
+            <button id="tplTabCodeBtn" onclick="switchTemplateTab('code')" class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <i data-lucide="code-2" class="h-3.5 w-3.5"></i>
+              <span>Código TSX Pronto</span>
+            </button>
+          </div>
+
+          <!-- Viewport Size Switcher for Interactive Preview -->
+          <div id="tplViewportControls" class="flex items-center gap-1 text-xs">
+            <span class="text-muted-foreground text-[11px] mr-1 hidden md:inline">Visualização:</span>
+            <button onclick="setTemplateViewport('desktop')" id="tplVpDesktop" class="rounded p-1.5 text-brand bg-brand/15 font-semibold text-xs flex items-center gap-1" title="Desktop 100%">
+              <i data-lucide="monitor" class="h-3.5 w-3.5"></i>
+              <span class="hidden sm:inline text-[11px]">Desktop</span>
+            </button>
+            <button onclick="setTemplateViewport('tablet')" id="tplVpTablet" class="rounded p-1.5 text-muted-foreground hover:bg-muted font-medium text-xs flex items-center gap-1" title="Tablet (768px)">
+              <i data-lucide="tablet" class="h-3.5 w-3.5"></i>
+              <span class="hidden sm:inline text-[11px]">Tablet</span>
+            </button>
+            <button onclick="setTemplateViewport('mobile')" id="tplVpMobile" class="rounded p-1.5 text-muted-foreground hover:bg-muted font-medium text-xs flex items-center gap-1" title="Mobile (380px)">
+              <i data-lucide="smartphone" class="h-3.5 w-3.5"></i>
+              <span class="hidden sm:inline text-[11px]">Mobile</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Template Stage (Preview Mode) -->
+        <div id="templatePreviewContainer" class="w-full flex justify-center transition-all">
+          <div id="templateViewportWrapper" class="w-full transition-all duration-300">
+            <div id="templatePreviewStage" class="rounded-2xl border border-border bg-card shadow-xl overflow-hidden min-h-[500px]">
+              <!-- Injetado dinamicamente via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Template Code Block Container (Code Mode) -->
+        <div id="templateCodeContainer" class="hidden rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-xl">
+          <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2.5 text-xs text-zinc-300">
+            <div class="flex items-center gap-2 font-mono">
+              <i data-lucide="file-code" class="h-4 w-4 text-brand"></i>
+              <span id="templateCodeFilename">templates/login.tsx</span>
+            </div>
+            <button id="copyTemplateCodeBtn" class="flex items-center gap-1.5 rounded-md bg-zinc-800 px-3 py-1 text-xs font-semibold text-zinc-200 hover:bg-zinc-700 transition-colors">
+              <i data-lucide="copy" class="h-3.5 w-3.5"></i>
+              <span>Copiar TSX</span>
+            </button>
+          </div>
+          <pre class="overflow-x-auto p-5 font-mono text-xs leading-relaxed max-h-[600px]"><code id="templateCodeBlock" class="language-tsx"></code></pre>
+        </div>
+
+        <!-- Componentes Utilizados neste Template -->
+        <div class="rounded-xl border border-border bg-card p-5 space-y-3 shadow-sm">
+          <h4 class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <i data-lucide="boxes" class="h-4 w-4 text-brand"></i>
+            Componentes Monta UI Utilizados Neste Template
+          </h4>
+          <div id="templateUsedComponentsList" class="flex flex-wrap gap-2 pt-1">
+            <!-- Inserido dinamicamente -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RIGHT TOC SIDEBAR ==================== -->
+      <div class="hidden text-sm xl:block w-56 shrink-0">
+        <div class="sticky top-20 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-8">
+          <div class="space-y-3">
+            <p class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">Nesta Página</p>
+            <ul id="tocLinksList" class="m-0 list-none space-y-1 text-xs">
+              <li>
+                <a href="#docPreviewContainer" onclick="scrollToSection(event, 'docPreviewContainer')" data-section="docPreviewContainer" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Exemplo Interativo</span>
+                </a>
+              </li>
+              <li>
+                <a href="#installationSection" onclick="scrollToSection(event, 'installationSection')" data-section="installationSection" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Instalação via Monta CLI</span>
+                </a>
+              </li>
+              <li>
+                <a href="#usageSection" onclick="scrollToSection(event, 'usageSection')" data-section="usageSection" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Exemplo de Uso</span>
+                </a>
+              </li>
+              <li>
+                <a href="#compositionSection" onclick="scrollToSection(event, 'compositionSection')" data-section="compositionSection" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Composição & Anatomia</span>
+                </a>
+              </li>
+              <li>
+                <a href="#apiSection" onclick="scrollToSection(event, 'apiSection')" data-section="apiSection" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Referência da API</span>
+                </a>
+              </li>
+              <li>
+                <a href="#docCodeContainer" onclick="scrollToCodeSection(event)" data-section="docCodeContainer" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                  <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+                  <span>Código TSX</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
-  
-  <!-- Modal Padrão -->
-  <div class="modal-backdrop" id="modalBackdrop" hidden>
-    <div class="po-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-head"><h2 id="modalTitle">Confirmar ação</h2><button class="icon-button" data-close-modal aria-label="Fechar"><i data-lucide="x"></i></button></div>
-      <p>Deseja confirmar esta operação? Esta janela é totalmente controlada em HTML, CSS e JavaScript puro.</p>
-      <div class="modal-actions"><button class="po-button ghost" data-close-modal>Cancelar</button><button class="po-button primary" data-confirm-modal>Confirmar</button></div>
+  <!-- Search Modal / Command Palette -->
+  <div id="searchModal" onclick="closeSearchModal()" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-150">
+    <div onclick="event.stopPropagation()" class="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]">
+      
+      <!-- Search Input Header -->
+      <div class="flex items-center gap-3 px-4 border-b border-border bg-background">
+        <i data-lucide="search" class="h-4 w-4 text-muted-foreground shrink-0"></i>
+        <input id="searchInputModal" type="text" placeholder="Buscar componentes, docs, storybook, CLI..." class="flex h-12 w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" spellcheck="false">
+        <button onclick="closeSearchModal()" class="cursor-pointer rounded border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-muted-foreground hover:bg-accent hover:text-foreground">ESC</button>
+      </div>
+
+      <!-- Results Container -->
+      <div id="searchResultsList" class="overflow-y-auto p-2 space-y-1 text-xs max-h-96">
+        <!-- Preenchido dinamicamente via app.js -->
+      </div>
+
+      <!-- Search Modal Footer -->
+      <div class="flex items-center justify-between px-4 py-2.5 border-t border-border bg-muted/40 text-[11px] text-muted-foreground">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1"><kbd class="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[9px]">↑↓</kbd> Navegar</span>
+          <span class="flex items-center gap-1"><kbd class="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[9px]">↵</kbd> Abrir</span>
+        </div>
+        <span class="font-semibold text-brand">Monta UI Search</span>
+      </div>
     </div>
   </div>
 
-  <!-- Modal de Lookup de Dados -->
-  <div class="modal-backdrop" id="lookupModalBackdrop" hidden>
-    <div class="po-modal" style="width:min(100%, 650px)" role="dialog" aria-modal="true" aria-labelledby="lookupModalTitle">
-      <div class="modal-head"><h2 id="lookupModalTitle">Selecionar Registro (Lookup)</h2><button class="icon-button" data-close-lookup aria-label="Fechar"><i data-lucide="x"></i></button></div>
-      <div style="margin-bottom:14px;display:flex;gap:8px">
-        <input class="po-control" id="lookupFilterInput" placeholder="Filtrar registros..." style="flex:1">
-        <button class="po-button primary"><i data-lucide="search"></i> Buscar</button>
-      </div>
-      <div style="max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-bottom:16px">
-        <table class="po-table">
-          <thead><tr><th>Código</th><th>Razão Social / Nome</th><th>Cidade</th><th>Ação</th></tr></thead>
-          <tbody>
-            <tr><td>CLI-001</td><td>Clínica Aurora Saúde</td><td>Fortaleza</td><td><button class="po-button sm primary" data-select-lookup="Clínica Aurora Saúde">Selecionar</button></td></tr>
-            <tr><td>CLI-002</td><td>Mercado Central Distribuição</td><td>Recife</td><td><button class="po-button sm primary" data-select-lookup="Mercado Central Distribuição">Selecionar</button></td></tr>
-            <tr><td>CLI-003</td><td>Studio Norte Arquitetura</td><td>São Paulo</td><td><button class="po-button sm primary" data-select-lookup="Studio Norte Arquitetura">Selecionar</button></td></tr>
-            <tr><td>CLI-004</td><td>Hospital São Mateus</td><td>Rio de Janeiro</td><td><button class="po-button sm primary" data-select-lookup="Hospital São Mateus">Selecionar</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-actions"><button class="po-button ghost" data-close-lookup>Fechar</button></div>
-    </div>
-  </div>
+  <!-- Toast Notification -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <!-- App Script -->
   <script src="app.js"></script>
 </body>
 </html>

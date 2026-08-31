@@ -1,0 +1,18 @@
+{
+  "name": "button-group",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/button-group.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\nexport interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {\n  attached?: boolean\n}\n\nconst ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(\n  ({ className, attached = true, ...props }, ref) => {\n    return (\n      <div\n        ref={ref}\n        role=\"group\"\n        className={cn(\n          \"inline-flex items-center\",\n          attached &&\n            \"[&>button]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md [&>button:not(:last-child)]:border-r-0\",\n          !attached && \"gap-2\",\n          className\n        )}\n        {...props}\n      />\n    )\n  }\n)\nButtonGroup.displayName = \"ButtonGroup\"\n\nexport { ButtonGroup }",
+      "type": "registry:ui",
+      "target": "components/monta-ui/button-group.tsx"
+    }
+  ]
+}

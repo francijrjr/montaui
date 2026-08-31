@@ -1,0 +1,18 @@
+{
+  "name": "skeleton",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/skeleton.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\nexport interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {\n  shape?: \"rectangle\" | \"circle\" | \"rounded\"\n}\n\nexport function Skeleton({ className, shape = \"rounded\", ...props }: SkeletonProps) {\n  const shapeClass = {\n    rectangle: \"rounded-none\",\n    rounded: \"rounded-md\",\n    circle: \"rounded-full\"\n  }[shape]\n\n  return (\n    <div\n      className={cn(\"animate-pulse bg-muted/70\", shapeClass, className)}\n      {...props}\n    />\n  )\n}\n\nexport function SkeletonText({ lines = 3, className }: { lines?: number; className?: string }) {\n  return (\n    <div className={cn(\"space-y-2\", className)}>\n      {Array.from({ length: lines }).map((_, i) => (\n        <Skeleton\n          key={i}\n          className={cn(\"h-3\", i === lines - 1 ? \"w-2/3\" : i === 0 ? \"w-full\" : \"w-5/6\")}\n        />\n      ))}\n    </div>\n  )\n}\n\nexport function SkeletonAvatar({ size = \"default\", className }: { size?: \"sm\" | \"default\" | \"lg\"; className?: string }) {\n  const sizeClass = {\n    sm: \"h-8 w-8\",\n    default: \"h-10 w-10\",\n    lg: \"h-14 w-14\"\n  }[size]\n\n  return <Skeleton shape=\"circle\" className={cn(sizeClass, \"shrink-0\", className)} />\n}\n\nexport function SkeletonCard({ className }: { className?: string }) {\n  return (\n    <div className={cn(\"rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm\", className)}>\n      <div className=\"flex items-center gap-3\">\n        <SkeletonAvatar />\n        <div className=\"space-y-2 flex-1\">\n          <Skeleton className=\"h-3.5 w-1/3\" />\n          <Skeleton className=\"h-2.5 w-1/2\" />\n        </div>\n      </div>\n      <SkeletonText lines={3} />\n      <div className=\"flex items-center justify-between pt-2 border-t border-border/50\">\n        <Skeleton className=\"h-7 w-20 rounded-md\" />\n        <Skeleton className=\"h-7 w-28 rounded-md\" />\n      </div>\n    </div>\n  )\n}",
+      "type": "registry:ui",
+      "target": "components/monta-ui/skeleton.tsx"
+    }
+  ]
+}

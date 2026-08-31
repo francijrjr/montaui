@@ -1,3211 +1,10025 @@
+// ==============================================================================
+// Monta UI - Documentation & Live Registry Manager
+// Design System Corporativo em React & Tailwind CSS
+// ==============================================================================
+
+const state = {
+  theme: localStorage.getItem('monta-theme') || 'dark',
+  current: 'button',
+  view: 'home', // 'home' | 'docs' | 'installation' | 'tailwind' | 'storybook' | 'templates'
+  template: 'login', // 'login' | 'home' | 'dashboard'
+  templateTab: 'preview', // 'preview' | 'code'
+  templateViewport: 'desktop', // 'desktop' | 'tablet' | 'mobile'
+  docTab: 'preview', // 'preview' | 'code'
+  pkgManager: 'pnpm',
+  filter: 'Todos',
+};
+
+// ==================== MAPEAMENTO DE CATEGORIAS ====================
 const groups = {
-  'Navegação': [
-    'po-breadcrumb', 'po-context-tabs', 'po-menu', 'po-menu-panel', 
-    'po-navbar', 'po-tabs', 'po-tree-view', 'po-stepper'
+  "Ações & Menus": [
+    "button", "button-group", "dropdown-menu", "popover", "context-menu", 
+    "menubar", "navigation-menu"
   ],
-  'Ações & Menus': [
-    'po-button', 'po-button-group', 'po-context-menu', 'po-dropdown', 
-    'po-link', 'po-popup', 'po-popover'
+  "Formulários": [
+    "field", "form", "input", "checkbox", "switch", "select", "textarea", "radio-group", 
+    "slider", "date-picker", "lookup", "combo", "multiselect"
   ],
-  'Formulários': [
-    'po-field', 'po-input', 'po-password', 'po-number', 'po-decimal', 
-    'po-email', 'po-url', 'po-datepicker', 'po-datepicker-range', 
-    'po-datetimepicker', 'po-timepicker', 'po-select', 'po-multiselect', 
-    'po-combo', 'po-autocomplete', 'po-lookup', 'po-checkbox', 
-    'po-checkbox-group', 'po-radio', 'po-radio-group', 'po-switch', 
-    'po-textarea', 'po-upload', 'po-rich-text', 'po-search-ai', 'po-clean'
+  "Layout & Containers": [
+    "dialog", "card", "accordion", "tabs"
   ],
-  'Dados & Visualização': [
-    'po-table', 'po-chart', 'po-gauge', 'po-grid', 'po-info', 
-    'po-list-view', 'po-listbox', 'po-dynamic-view', 'po-dynamic-form'
+  "Feedback": [
+    "badge", "toast", "progress", "skeleton", "alert", "loading"
   ],
-  'Feedback': [
-    'po-badge', 'po-disclaimer', 'po-disclaimer-group', 'po-filter-chip', 
-    'po-loading', 'po-loading-overlay', 'po-progress', 'po-skeleton', 
-    'po-tag', 'po-toaster'
+  "Dados & Visualização": [
+    "table", "avatar", "chart", "calendar", "tree-view", "stepper", 
+    "timeline", "page-header", "statistic", "marker"
   ],
-  'Layout & Containers': [
-    'po-accordion', 'po-container', 'po-divider', 'po-header', 
-    'po-modal', 'po-overlay', 'po-slide', 'po-toolbar', 'po-widget'
-  ],
-  'Utilidades': [
-    'po-avatar', 'po-calendar', 'po-helper', 'po-icon', 'po-image', 
-    'po-label', 'po-logo', 'po-search', 'po-timer'
-  ],
-  'Templates de Página': [
-    'po-page-default', 'po-page-list', 'po-page-detail', 'po-page-edit', 
-    'po-page-login', 'po-page-dynamic-table', 'po-page-dynamic-edit', 
-    'po-page-dynamic-detail', 'po-page-change-password', 'po-page-blocked-user', 
-    'po-modal-password-recovery'
+  "Navegação": [
+    "breadcrumb", "navbar", "sidebar", "pagination"
   ]
 };
 
 const descriptions = {
-  // Navegação
-  'po-breadcrumb': 'Trilha de navegação que indica a hierarquia e localização na aplicação.',
-  'po-context-tabs': 'Abas contextuais para alternância rápida entre múltiplos registros ou instâncias.',
-  'po-menu': 'Barra de navegação lateral com suporte a submenus e ícones.',
-  'po-menu-panel': 'Painel de menu compacto para agrupamento de ações secundárias e navegação.',
-  'po-navbar': 'Barra de navegação horizontal superior para módulos ou seções principais.',
-  'po-tabs': 'Organiza e alterna conteúdos divididos em abas horizontais.',
-  'po-tree-view': 'Estrutura hierárquica em árvore expansível para navegação de pastas ou itens.',
-  'po-stepper': 'Guia de progresso sequencial para formulários de múltiplas etapas.',
-
-  // Ações
-  'po-button': 'Botão de disparo com variantes primária, secundária, terciária e perigo.',
-  'po-button-group': 'Agrupamento visual e lógico de botões de ação relacionados.',
-  'po-context-menu': 'Menu contextual acionado por clique ou menu suspenso em elementos.',
-  'po-dropdown': 'Menu dropdown expansível com lista de opções e comandos executáveis.',
-  'po-link': 'Hiperlink estilizado para navegação interna ou externa.',
-  'po-popup': 'Janela flutuante ancorada para menus rápidos ou opções contextuais.',
-  'po-popover': 'Container flutuante que exibe informações adicionais com seta indicativa.',
-
-  // Formulários
-  'po-field': 'Componente base com rótulo, container de entrada e texto de apoio.',
-  'po-input': 'Campo de texto de linha única para digitação geral com suporte a limpeza.',
-  'po-password': 'Campo para senhas e dados confidenciais com botão de alternar visibilidade.',
-  'po-number': 'Campo de entrada numérico com controles de incremento e decremento.',
-  'po-decimal': 'Entrada formatada para valores decimais e monetários com máscara brasileira.',
-  'po-email': 'Campo validado para endereços de e-mail eletrônico.',
-  'po-url': 'Campo validado para endereços web (URLs).',
-  'po-datepicker': 'Seletor de data com calendário popup e máscara formatada (DD/MM/AAAA).',
-  'po-datepicker-range': 'Seletor de intervalo de datas (período inicial e final).',
-  'po-datetimepicker': 'Seletor combinado de data e horário em um único controle.',
-  'po-timepicker': 'Seletor de horário com controle de horas e minutos.',
-  'po-select': 'Menu de seleção simples entre múltiplas opções predefinidas.',
-  'po-multiselect': 'Seleção de múltiplos itens com exibição em tags/chips removíveis.',
-  'po-combo': 'Campo seletor com caixa de pesquisa e carregamento sob demanda.',
-  'po-autocomplete': 'Sugestão dinâmica de termos conforme a digitação do usuário.',
-  'po-lookup': 'Busca avançada com modal de pesquisa e seleção tabular de registros.',
-  'po-checkbox': 'Caixa de seleção binária independente.',
-  'po-checkbox-group': 'Grupo com múltiplas caixas de seleção independentes.',
-  'po-radio': 'Botão de opção de seleção única.',
-  'po-radio-group': 'Conjunto de opções mutuamente exclusivas.',
-  'po-switch': 'Interruptor de alternância rápida entre ligado e desligado.',
-  'po-textarea': 'Área de texto de múltiplas linhas para descrições e observações.',
-  'po-upload': 'Área de envio de arquivos com suporte a arrastar e soltar (drag & drop).',
-  'po-rich-text': 'Editor de texto rico com barra de formatação (negrito, itálico, listas).',
-  'po-search-ai': 'Campo de busca inteligente integrado com IA generativa e prompts.',
-  'po-clean': 'Ação integrada em campos de formulário para limpeza imediata do valor digitado.',
-
-  // Dados & Visualização
-  'po-table': 'Tabela de dados completa com ordenação, seleção por linha, status e ações.',
-  'po-chart': 'Gráficos analíticos objetivos (barras, colunas, pizza e rosca).',
-  'po-gauge': 'Medidor circular ou linear para metas e percentuais de desempenho.',
-  'po-grid': 'Sistema de grid responsivo de 12 colunas para distribuição de layout.',
-  'po-info': 'Apresentação em par de chave-valor (rótulo superior e valor destacado).',
-  'po-list-view': 'Lista de cartões ou itens de registros com visualização resumida.',
-  'po-listbox': 'Caixa de seleção de itens em lista vertical com destaque selecionado.',
-  'po-dynamic-view': 'Renderizador dinâmico de visualização de dados a partir de esquema JSON.',
-  'po-dynamic-form': 'Geração automática de formulários completos a partir de metadados JSON.',
-
-  // Feedback
-  'po-badge': 'Indicador numérico ou de contagem compacto para notificações e status.',
-  'po-disclaimer': 'Etiqueta de filtro aplicado removível com botão de exclusão.',
-  'po-disclaimer-group': 'Agrupador de disclaimers e critérios de filtros ativos com ação de limpar.',
-  'po-filter-chip': 'Chip de filtragem rápida tipo botão toggle para segmentação de dados.',
-  'po-loading': 'Indicador giratório de operação em andamento oficial do PO UI.',
-  'po-loading-overlay': 'Bloqueio total ou parcial da tela com indicador de carregamento e mensagem.',
-  'po-progress': 'Barra de progresso visual de conclusão de tarefas em percentual.',
-  'po-skeleton': 'Esqueleto com animação de brilho para reserva de espaço antes do carregamento.',
-  'po-tag': 'Etiqueta semântica colorida para indicação de status (sucesso, aviso, erro, info).',
-  'po-toaster': 'Notificação temporária flutuante (toast) com variantes informativas e auto-fechamento.',
-
-  // Layout
-  'po-accordion': 'Painel expansível em sanfona para agrupamento de seções de conteúdo.',
-  'po-container': 'Container estrutural com bordas e espaçamento padronizado para blocos de UI.',
-  'po-divider': 'Linha divisória horizontal ou vertical com opção de texto central.',
-  'po-header': 'Cabeçalho contextual de área com título, subtítulo e ações.',
-  'po-modal': 'Janela modal sobreposta com bloqueio de foco para decisões e formulários.',
-  'po-overlay': 'Camada de sobreposição escura para foco e controle de segundo plano.',
-  'po-slide': 'Carrossel de slides com navegação por indicadores para destaques e banners.',
-  'po-toolbar': 'Barra superior com logotipo, busca e atalhos de perfil do usuário.',
-  'po-widget': 'Cartão de dashboard funcional para KPIs, métricas e resumos rápidos.',
-
-  // Utilidades
-  'po-avatar': 'Representação visual de usuário ou entidade com imagem ou iniciais.',
-  'po-calendar': 'Calendário interativo mensal para seleção de dias com destaques.',
-  'po-helper': 'Texto explicativo ou dica de ajuda contextual para orientação do usuário.',
-  'po-icon': 'Biblioteca de ícones SVG vetorizados e responsivos.',
-  'po-image': 'Componente de imagem com tratamento de fallback e proporção controlada.',
-  'po-label': 'Rótulo textual tipográfico padronizado para elementos e formulários.',
-  'po-logo': 'Logotipo institucional da TOTVS e marcas do ecossistema PO UI.',
-  'po-search': 'Campo de busca rápido com disparo instantâneo e botão de limpeza.',
-  'po-timer': 'Temporizador e cronômetro digital em formato MM:SS com controles de pausar/reset.',
-
-  // Templates
-  'po-page-default': 'Template de página padrão com cabeçalho, ações globais e área de conteúdo.',
-  'po-page-list': 'Template completo de listagem com barra de busca, filtros avançados e tabela.',
-  'po-page-detail': 'Template estruturado para exibição detalhada de um registro com abas e histórico.',
-  'po-page-edit': 'Template para criação ou edição de registros com ações de salvar e cancelar.',
-  'po-page-login': 'Tela de autenticação completa com plano de fundo, logo e recuperação de senha.',
-  'po-page-dynamic-table': 'Template de tabela dinâmica alimentada automaticamente por JSON.',
-  'po-page-dynamic-edit': 'Template de formulário de edição gerado automaticamente por JSON.',
-  'po-page-dynamic-detail': 'Template de página de detalhes gerada dinamicamente a partir de schema.',
-  'po-page-change-password': 'Template para troca obrigatória ou voluntária de senha de acesso.',
-  'po-page-blocked-user': 'Template de tela de aviso para usuários temporariamente bloqueados.',
-  'po-modal-password-recovery': 'Modal especializado para envio de link de recuperação de senha por e-mail.'
+  button: "Dispara uma ação ou evento corporativo com variantes primária, secundária, ghost, danger e loading.",
+  "button-group": "Agrupa visualmente um conjunto de botões relacionados para ações coordenadas.",
+  field: "Container modular de campo com rótulo, indicador obrigatório, dica contextual e mensagem de erro.",
+  form: "Estrutura completa de formulário corporativo com seções, linhas responsivas, validação e ações de envio.",
+  input: "Campo de entrada de texto flexível com suporte a ícones, senhas, limpeza rápida e estados de foco.",
+  dialog: "Janela modal acessível construída sobre as primitivas Radix UI para confirmações e fluxos sobrepostos.",
+  card: "Container modular estruturado com cabeçalho, conteúdo e rodapé para organização de informações.",
+  accordion: "Seções recolhíveis empilhadas verticalmente para navegação compacta e exibição de detalhes sob demanda.",
+  tabs: "Conjunto de abas em camadas para alternar rapidamente entre visualizações no mesmo contexto.",
+  switch: "Controle de alternância booleana (ligado/desligado) com animação suave e acessibilidade ARIA.",
+  checkbox: "Caixa de seleção com suporte a estados marcado, desmarcado e indeterminado.",
+  table: "Tabela de dados corporativa com cabeçalhos estilizados, linhas zebradas e suporte a seleção.",
+  badge: "Pequeno rótulo semântico para exibir status, contadores e tags em registros.",
+  toast: "Notificação temporária flutuante de alta prioridade com suporte a feedback de ações.",
+  progress: "Barra de progresso animada com cálculo percentual dinâmico.",
+  skeleton: "Efeito de pulso de carregamento simulando a estrutura do conteúdo enquanto carrega.",
+  alert: "Banners de aviso e alerta com ícones semânticos, título e botão de fechar.",
+  loading: "Indicadores visuais de carregamento assíncrono com spinner circular, pulso, barras equalizadoras e overlay de tela.",
+  avatar: "Elemento de exibição de foto de usuário corporativo com fallback automático de iniciais.",
+  breadcrumb: "Trilha de navegação hierárquica para indicar a localização do usuário na aplicação.",
+  navbar: "Barra de navegação superior responsiva com logo, links ativos, busca e perfil de usuário.",
+  sidebar: "Painel lateral retrátil e recolhível com grupos de navegação, ícones, badges e perfil corporativo.",
+  marker: "Marcador de ponto de interesse com pulso radar, índice numérico e card de tooltip informativo.",
+  pagination: "Navegação por páginas com botões anterior/próximo, números com reticências e seletor de itens por página.",
+  popover: "Panel suspenso acionado por clique para informações adicionais e ações secundárias.",
+  "dropdown-menu": "Menu suspenso em cascata para listagem de opções, atalhos de teclado e ações de registro.",
+  "context-menu": "Menu de contexto contextual acionado ao clicar com o botão direito sobre áreas do sistema.",
+  menubar: "Barra de menus estilo aplicação desktop com submenus em cascata (Arquivo, Editar, Exibir).",
+  "navigation-menu": "Mega-menu de navegação com submenus suspensos ricos em cards, ícones e colunas estruturadas.",
+  select: "Caixa de seleção suspensa nativa estilizada com suporte a estados ativo e desabilitado.",
+  textarea: "Área de texto com auto-redimensionamento para comentários e entradas longas.",
+  chart: "Visualizador de gráficos analíticos em barras, linhas e áreas com comparação de metas e tooltips.",
+  calendar: "Grade de calendário mensal interativa com marcação de eventos, navegação e seleção de datas.",
+  "tree-view": "Estrutura de dados em árvore hierárquica expansível para navegação de pastas e entidades.",
+  stepper: "Indicador de progresso passo a passo (wizard) para fluxos de checkout e cadastros multi-etapas.",
+  timeline: "Linha do tempo vertical cronológica para rastreamento de status, auditoria e eventos corporativos.",
+  "page-header": "Cabeçalho corporativo com breadcrumbs, título, tags de status e grupos de botões de ação.",
+  statistic: "Blocos de métricas e KPIs executivos com valores consolidados, tendências percentuais e ícones.",
+  "radio-group": "Grupo de opções mutuamente exclusivas com suporte a cards ricos, ícones e descrições.",
+  slider: "Controle deslizante contínuo com trilha percentual preenchida, bolha de valor e suporte a limites numéricos.",
+  "date-picker": "Campo seletor de data corporativo com calendário popover, atalhos de navegação e formato localizado.",
+  lookup: "Campo de consulta avançada com diálogo modal de pesquisa em grade de registros corporativos.",
+  combo: "Campo combobox pesquisável com filtragem em tempo real e tags de seleção.",
+  multiselect: "Seletor múltiplo com tags removíveis (chips), busca rápida e opções desmarcáveis."
 };
 
-const icons = {
-  'Navegação': 'route',
-  'Ações & Menus': 'mouse-pointer-click',
-  'Formulários': 'text-cursor-input',
-  'Dados & Visualização': 'chart-no-axes-column',
-  'Feedback': 'message-circle-more',
-  'Layout & Containers': 'layout-dashboard',
-  'Utilidades': 'wrench',
-  'Templates de Página': 'layout-template'
-};
+// ==================== INICIALIZAÇÃO ====================
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  renderSidebar();
+  renderCategoryFilter();
+  renderComponentsGrid();
+  handleRouting();
 
-const components = Object.entries(groups).flatMap(([category, names]) =>
-  names.map(name => ({
-    name,
-    category,
-    description: descriptions[name] || 'Componente reutilizável do PO UI Vanilla.'
-  }))
-);
+  window.addEventListener('hashchange', handleRouting);
+  window.addEventListener('popstate', handleRouting);
+  window.addEventListener('scroll', handleScrollSpy, { passive: true });
+  document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+  document.getElementById('searchTrigger')?.addEventListener('click', openSearchModal);
 
-const state = {
-  query: '',
-  filter: 'Todos',
-  current: null,
-  codeLanguage: 'html',
-  timerSeconds: 65,
-  timerId: null
-};
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      openSearchModal();
+    }
+  });
 
-const $ = selector => document.querySelector(selector);
-const $$ = selector => [...document.querySelectorAll(selector)];
-const nav = $('#componentNav');
-const grid = $('#componentGrid');
-const search = $('#globalSearch');
+  if (window.lucide) window.lucide.createIcons();
+});
 
-function displayName(name) {
-  return name.replace('po-', '').split('-').map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>'"]/g, char => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
-  })[char]);
-}
-
-function icon(name, label = '') {
-  return `<i data-lucide="${name}"${label ? ` aria-label="${label}"` : ' aria-hidden="true"'}></i>`;
-}
-
-function refreshIcons() {
-  if (window.lucide) {
-    window.lucide.createIcons({ attrs: { 'stroke-width': 1.9 } });
+// ==================== TEMA (DARK / LIGHT) ====================
+function initTheme() {
+  if (state.theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
   }
 }
 
-function renderNavigation() {
-  nav.innerHTML = Object.entries(groups).map(([group, names]) => `
-    <div class="nav-group">
-      <span class="nav-group-title">${group}</span>
-      ${names.map(name => `
-        <button class="nav-item" data-component="${name}">
-          <span class="nav-icon">${icon(icons[group] || 'circle')}</span>
-          ${displayName(name)}
-        </button>
-      `).join('')}
-    </div>
-  `).join('');
-  $('#componentCount').textContent = components.length;
-  $('#heroCount').textContent = components.length;
-  refreshIcons();
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('monta-theme', state.theme);
+  initTheme();
 }
 
-function renderFilters() {
-  const values = ['Todos', ...Object.keys(groups)];
-  $('#filters').innerHTML = values.map(value => `
-    <button class="filter-button ${value === state.filter ? 'active' : ''}" data-filter="${value}">
-      ${value}
+// ==================== ROTEAMENTO ====================
+function handleRouting() {
+  const hash = window.location.hash || '#/inicio';
+  if (hash === '#/docs/instalacao' || hash === '#/instalacao') {
+    showInstallationDocs(false);
+  } else if (hash === '#/docs/tailwind' || hash === '#/tailwind' || hash === '#/tailwind-config') {
+    showTailwindDocs(false);
+  } else if (hash === '#/docs/storybook' || hash === '#/storybook') {
+    showStorybookDocs(false);
+  } else if (hash === '#/templates' || hash.startsWith('#/templates/')) {
+    const tplName = hash.replace('#/templates/', '').replace('#/templates', '') || 'login';
+    showTemplatesView(tplName, false);
+  } else if (hash.startsWith('#/componente/')) {
+    const name = hash.replace('#/componente/', '');
+    openComponentDocs(name, false);
+  } else {
+    showHomePage(false);
+  }
+}
+
+function hideAllViews() {
+  document.getElementById('homeView')?.classList.add('hidden');
+  document.getElementById('docsView')?.classList.add('hidden');
+  document.getElementById('installationDocsView')?.classList.add('hidden');
+  document.getElementById('tailwindDocsView')?.classList.add('hidden');
+  document.getElementById('storybookDocsView')?.classList.add('hidden');
+  document.getElementById('templatesView')?.classList.add('hidden');
+}
+
+function showHomePage(updateHistory = true) {
+  state.view = 'home';
+  hideAllViews();
+  document.getElementById('homeView')?.classList.remove('hidden');
+  renderTableOfContents();
+  if (updateHistory) {
+    if (window.location.hash !== '#/inicio') window.location.hash = '#/inicio';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showInstallationDocs(updateHistory = true) {
+  state.view = 'installation';
+  hideAllViews();
+  document.getElementById('installationDocsView')?.classList.remove('hidden');
+  renderTableOfContents();
+  if (updateHistory) {
+    if (window.location.hash !== '#/docs/instalacao') window.location.hash = '#/docs/instalacao';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function showTailwindDocs(updateHistory = true) {
+  state.view = 'tailwind';
+  hideAllViews();
+  document.getElementById('tailwindDocsView')?.classList.remove('hidden');
+  renderTableOfContents();
+  if (updateHistory) {
+    if (window.location.hash !== '#/docs/tailwind') window.location.hash = '#/docs/tailwind';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function showStorybookDocs(updateHistory = true) {
+  state.view = 'storybook';
+  hideAllViews();
+  document.getElementById('storybookDocsView')?.classList.remove('hidden');
+  renderTableOfContents();
+  if (updateHistory) {
+    if (window.location.hash !== '#/docs/storybook') window.location.hash = '#/docs/storybook';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// ==================== TEMPLATES DE TELAS COMPLETAS ====================
+const templateComponentsUsed = {
+  login: ['field', 'form', 'input', 'checkbox', 'button', 'loading', 'card', 'badge'],
+  home: ['navbar', 'button', 'badge', 'card', 'statistic', 'chart', 'avatar'],
+  dashboard: ['sidebar', 'navbar', 'page-header', 'statistic', 'chart', 'table', 'badge', 'pagination', 'button']
+};
+
+function showTemplatesView(tplName = 'login', updateHistory = true) {
+  state.view = 'templates';
+  state.template = tplName;
+  hideAllViews();
+  document.getElementById('templatesView')?.classList.remove('hidden');
+
+  renderTemplate(tplName);
+
+  if (updateHistory) {
+    const targetHash = `#/templates/${tplName}`;
+    if (window.location.hash !== targetHash) window.location.hash = targetHash;
+  }
+
+  // Atualizar links da sidebar
+  document.querySelectorAll('.sidebar-tpl-link').forEach(link => {
+    const active = link.dataset.template === tplName;
+    link.className = active
+      ? 'sidebar-tpl-link flex items-center justify-between rounded-md bg-[#753399]/15 px-2 py-1.5 text-xs font-bold text-[#753399] dark:text-purple-300'
+      : 'sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground';
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function selectTemplate(name) {
+  showTemplatesView(name, true);
+}
+
+function switchTemplateTab(tab) {
+  state.templateTab = tab;
+  const isPreview = tab === 'preview';
+
+  const previewBtn = document.getElementById('tplTabPreviewBtn');
+  const codeBtn = document.getElementById('tplTabCodeBtn');
+  const previewContainer = document.getElementById('templatePreviewContainer');
+  const codeContainer = document.getElementById('templateCodeContainer');
+  const viewportControls = document.getElementById('tplViewportControls');
+
+  if (isPreview) {
+    previewBtn.className = 'flex items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 text-xs font-bold text-foreground shadow-sm border border-border';
+    codeBtn.className = 'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors';
+    previewContainer?.classList.remove('hidden');
+    codeContainer?.classList.add('hidden');
+    viewportControls?.classList.remove('hidden');
+  } else {
+    codeBtn.className = 'flex items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 text-xs font-bold text-foreground shadow-sm border border-border';
+    previewBtn.className = 'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors';
+    previewContainer?.classList.add('hidden');
+    codeContainer?.classList.remove('hidden');
+    viewportControls?.classList.add('hidden');
+  }
+}
+
+function setTemplateViewport(mode) {
+  state.templateViewport = mode;
+  const wrapper = document.getElementById('templateViewportWrapper');
+  const btnD = document.getElementById('tplVpDesktop');
+  const btnT = document.getElementById('tplVpTablet');
+  const btnM = document.getElementById('tplVpMobile');
+
+  [btnD, btnT, btnM].forEach(b => {
+    if (b) b.className = 'rounded p-1.5 text-muted-foreground hover:bg-muted font-medium text-xs flex items-center gap-1';
+  });
+
+  if (mode === 'desktop') {
+    if (btnD) btnD.className = 'rounded p-1.5 text-[#753399] dark:text-purple-300 bg-[#753399]/15 font-semibold text-xs flex items-center gap-1';
+    if (wrapper) wrapper.style.maxWidth = '100%';
+  } else if (mode === 'tablet') {
+    if (btnT) btnT.className = 'rounded p-1.5 text-[#753399] dark:text-purple-300 bg-[#753399]/15 font-semibold text-xs flex items-center gap-1';
+    if (wrapper) wrapper.style.maxWidth = '768px';
+  } else if (mode === 'mobile') {
+    if (btnM) btnM.className = 'rounded p-1.5 text-[#753399] dark:text-purple-300 bg-[#753399]/15 font-semibold text-xs flex items-center gap-1';
+    if (wrapper) wrapper.style.maxWidth = '400px';
+  }
+}
+
+function renderTemplate(name) {
+  // Atualizar botões de seleção de template
+  const btnLogin = document.getElementById('tplBtnLogin');
+  const btnHome = document.getElementById('tplBtnHome');
+  const btnDashboard = document.getElementById('tplBtnDashboard');
+  const breadcrumb = document.getElementById('templateBreadcrumbName');
+  const titleEl = document.getElementById('templateViewTitle');
+
+  [btnLogin, btnHome, btnDashboard].forEach(b => {
+    if (b) b.className = 'flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all';
+  });
+
+  if (name === 'login') {
+    if (btnLogin) btnLogin.className = 'flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-[#753399] text-white shadow-sm';
+    if (breadcrumb) breadcrumb.textContent = 'Login / Autenticação';
+    if (titleEl) titleEl.textContent = 'Template: Login Corporativo';
+  } else if (name === 'home') {
+    if (btnHome) btnHome.className = 'flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-[#753399] text-white shadow-sm';
+    if (breadcrumb) breadcrumb.textContent = 'Landing Page (Home)';
+    if (titleEl) titleEl.textContent = 'Template: Landing Page & Portal';
+  } else if (name === 'dashboard') {
+    if (btnDashboard) btnDashboard.className = 'flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-[#753399] text-white shadow-sm';
+    if (breadcrumb) breadcrumb.textContent = 'Dashboard SaaS';
+    if (titleEl) titleEl.textContent = 'Template: Painel Administrativo SaaS';
+  }
+
+  // Injetar Preview HTML
+  const stage = document.getElementById('templatePreviewStage');
+  if (stage) {
+    if (name === 'login') {
+      stage.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[580px]">
+          <!-- Left: Login Form -->
+          <div class="flex flex-col justify-between p-6 sm:p-10 bg-card">
+            <!-- Brand Header -->
+            <div class="flex items-center gap-2.5">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-md">
+                M
+              </div>
+              <span class="font-heading text-base font-bold text-foreground">Monta<span class="text-[#753399]">UI</span></span>
+            </div>
+
+            <!-- Main Form Block -->
+            <div class="my-6 max-w-sm w-full mx-auto space-y-6">
+              <div class="space-y-1.5 text-left">
+                <h3 class="font-heading text-2xl font-bold text-foreground">Bem-vindo de volta</h3>
+                <p class="text-xs text-muted-foreground">Digite seu e-mail e senha corporativa para acessar.</p>
+              </div>
+
+              <!-- Form Fields -->
+              <form onsubmit="handleTemplateLoginSubmit(event)" class="space-y-4 text-left">
+                <div class="space-y-1.5">
+                  <label class="text-xs font-semibold text-foreground flex items-center justify-between">
+                    <span>E-mail Corporativo</span>
+                    <span class="text-[10px] text-muted-foreground font-normal">Domínio @empresa.com</span>
+                  </label>
+                  <div class="relative">
+                    <i data-lucide="mail" class="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                    <input
+                      id="tplLoginEmail"
+                      type="email"
+                      required
+                      placeholder="usuario@montaui.com.br"
+                      class="flex h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <label class="text-xs font-semibold text-foreground">Senha</label>
+                    <a href="javascript:void(0)" onclick="showToast('Link de recuperação enviado por e-mail')" class="text-[11px] font-semibold text-[#753399] hover:underline">Esqueceu a senha?</a>
+                  </div>
+                  <div class="relative">
+                    <i data-lucide="lock" class="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                    <input
+                      id="tplLoginPassword"
+                      type="password"
+                      required
+                      value="••••••••••••"
+                      class="flex h-9 w-full rounded-md border border-input bg-background pl-9 pr-9 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399] transition-colors"
+                    />
+                    <button type="button" onclick="toggleTemplatePasswordVisibility()" class="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground">
+                      <i data-lucide="eye" id="tplLoginEyeIcon" class="h-4 w-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" id="tplLoginRemember" checked class="h-4 w-4 rounded border-border text-[#753399] focus:ring-[#753399]" />
+                  <label for="tplLoginRemember" class="text-xs text-muted-foreground cursor-pointer select-none">Lembrar desta sessão por 30 dias</label>
+                </div>
+
+                <button
+                  id="tplLoginSubmitBtn"
+                  type="submit"
+                  class="w-full flex items-center justify-center gap-2 rounded-lg bg-[#753399] py-2.5 text-xs font-bold text-white shadow hover:bg-[#622981] active:scale-[0.99] transition-all"
+                >
+                  <span>Entrar na Plataforma</span>
+                  <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                </button>
+              </form>
+
+              <div class="relative flex items-center justify-center">
+                <hr class="w-full border-border" />
+                <span class="absolute bg-card px-2 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">ou acesse com SSO</span>
+              </div>
+
+              <!-- SSO Corporate Buttons -->
+              <div class="grid grid-cols-2 gap-2.5">
+                <button onclick="showToast('Autenticando via Google Workspace...')" class="flex items-center justify-center gap-2 rounded-lg border border-border bg-card py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                  <span>Google</span>
+                </button>
+                <button onclick="showToast('Autenticando via GitHub Enterprise...')" class="flex items-center justify-center gap-2 rounded-lg border border-border bg-card py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                  <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  <span>GitHub</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Footer Privacy Policy -->
+            <p class="text-[11px] text-muted-foreground text-center">
+              Ao continuar, você concorda com nossos <a href="javascript:void(0)" class="underline hover:text-foreground">Termos de Serviço</a> e <a href="javascript:void(0)" class="underline hover:text-foreground">Privacidade</a>.
+            </p>
+          </div>
+
+          <!-- Right: Hero Banner with Purple Gradient -->
+          <div class="hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-[#753399] via-[#4d1f66] to-zinc-950 text-white relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+            
+            <div class="flex items-center justify-between z-10">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs font-semibold text-white/90 border border-white/15">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                Sistemas 100% Operacionais
+              </span>
+              <span class="text-xs text-white/70 font-mono">v2.4.0</span>
+            </div>
+
+            <div class="space-y-4 z-10 my-auto py-10 text-left">
+              <div class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur border border-white/20">
+                <i data-lucide="shield-check" class="h-5 w-5 text-white"></i>
+              </div>
+              <h4 class="font-heading text-2xl font-bold leading-tight">
+                "O Monta UI garantiu a estabilidade e velocidade na entrega de todas as nossas plataformas financeiras."
+              </h4>
+              <div class="space-y-0.5">
+                <p class="text-xs font-bold text-white">Engenharia de Produto</p>
+                <p class="text-[11px] text-white/70">Monta Tech Design System Group</p>
+              </div>
+            </div>
+
+            <!-- Bottom Stats -->
+            <div class="grid grid-cols-2 gap-4 border-t border-white/15 pt-6 z-10 text-left">
+              <div>
+                <p class="text-lg font-extrabold text-white">44 Componentes</p>
+                <p class="text-[11px] text-white/70">100% Zero-Radix Nativo</p>
+              </div>
+              <div>
+                <p class="text-lg font-extrabold text-emerald-300">99.9% Uptime</p>
+                <p class="text-[11px] text-white/70">SLA Corporativo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (name === 'home') {
+      stage.innerHTML = `
+        <div class="w-full bg-card flex flex-col text-left">
+          <!-- 1. Top Mini Navigation -->
+          <header class="h-14 border-b border-border px-6 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2">
+                <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs">M</div>
+                <span class="font-heading text-sm font-bold text-foreground">Monta<span class="text-[#753399]">UI</span></span>
+              </div>
+              <nav class="hidden md:flex items-center gap-4 text-xs font-medium text-muted-foreground">
+                <a href="javascript:void(0)" class="text-foreground font-semibold">Recursos</a>
+                <a href="javascript:void(0)" class="hover:text-foreground">Componentes</a>
+                <a href="javascript:void(0)" class="hover:text-foreground">Templates</a>
+                <a href="javascript:void(0)" class="hover:text-foreground">Preços</a>
+              </nav>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <button onclick="showToast('Abrindo documentação...')" class="rounded-md border border-input px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted">Docs</button>
+              <button onclick="showToast('Iniciando cadastro...')" class="rounded-md bg-[#753399] px-3.5 py-1.5 text-xs font-bold text-white shadow hover:bg-[#622981]">Começar Agora</button>
+            </div>
+          </header>
+
+          <!-- 2. Hero Section -->
+          <div class="p-8 sm:p-14 text-center space-y-5 max-w-3xl mx-auto">
+            <span class="inline-flex items-center gap-2 rounded-full border border-[#753399]/30 bg-[#753399]/10 px-3.5 py-1 text-xs font-bold text-[#753399] dark:text-purple-300">
+              <span class="h-2 w-2 rounded-full bg-[#753399] animate-pulse"></span>
+              Novo Release v2.4 — 44 Componentes Corporativos
+            </span>
+            
+            <h2 class="font-heading text-3xl sm:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+              O Design System Enterprise Feito para Alta Performance
+            </h2>
+
+            <p class="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Componentes 100% nativos em React, TypeScript e Tailwind CSS, sem amarras do Radix UI. Desenvolvido para dashboards analíticos e sistemas corporativos.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button onclick="showToast('Template selecionado: Criando projeto...')" class="inline-flex items-center gap-2 rounded-lg bg-[#753399] px-5 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-[#622981] transition-all">
+                <span>Criar Projeto Grátis</span>
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </button>
+              <button onclick="copyInstallCmd()" class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-xs font-mono font-medium text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="terminal" class="h-3.5 w-3.5 text-[#753399]"></i>
+                <span>pnpm dlx monta-ui init</span>
+              </button>
+            </div>
+
+            <!-- 3. Mockup Visual Preview -->
+            <div class="mt-8 rounded-xl border border-border bg-muted/20 p-4 shadow-xl text-left space-y-3">
+              <div class="flex items-center justify-between border-b border-border pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="h-3 w-3 rounded-full bg-rose-500"></span>
+                  <span class="h-3 w-3 rounded-full bg-amber-500"></span>
+                  <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold ml-2 text-foreground">Live SaaS Mockup</span>
+                </div>
+                <span class="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">● 1.480 TPS</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <span class="text-[10px] uppercase font-bold text-muted-foreground">Faturamento Mês</span>
+                  <p class="text-base font-extrabold text-foreground font-mono">R$ 489.250,00</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +14.8%</span>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <span class="text-[10px] uppercase font-bold text-muted-foreground">Transações Aprovadas</span>
+                  <p class="text-base font-extrabold text-foreground font-mono">3.420</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +8.2%</span>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-3 space-y-1">
+                  <span class="text-[10px] uppercase font-bold text-muted-foreground">Taxa de Conversão</span>
+                  <p class="text-base font-extrabold text-foreground font-mono">4.92%</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +1.1%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Feature Cards Grid -->
+          <div class="border-t border-border p-8 bg-muted/10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="space-y-2">
+              <div class="h-8 w-8 rounded-lg bg-[#753399]/15 flex items-center justify-center text-[#753399]">
+                <i data-lucide="shield-check" class="h-4 w-4"></i>
+              </div>
+              <h4 class="font-heading text-sm font-bold text-foreground">100% Zero Radix</h4>
+              <p class="text-xs text-muted-foreground leading-relaxed">Arquitetura totalmente autoral construída diretamente sobre React e Tailwind CSS.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="h-8 w-8 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600">
+                <i data-lucide="zap" class="h-4 w-4"></i>
+              </div>
+              <h4 class="font-heading text-sm font-bold text-foreground">Ultra Performance</h4>
+              <p class="text-xs text-muted-foreground leading-relaxed">Bundle leve com transições otimizadas e renderização em milissegundos.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="h-8 w-8 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-600">
+                <i data-lucide="layout" class="h-4 w-4"></i>
+              </div>
+              <h4 class="font-heading text-sm font-bold text-foreground">Templates Prontos</h4>
+              <p class="text-xs text-muted-foreground leading-relaxed">Telas completas de Login, Home e Dashboard prontas para copiar e colar.</p>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (name === 'dashboard') {
+      stage.innerHTML = `
+        <div class="flex h-[620px] bg-card text-left overflow-hidden">
+          <!-- Sidebar Left -->
+          <aside class="w-56 border-r border-border bg-card flex flex-col justify-between p-3 select-none">
+            <div class="space-y-4">
+              <!-- Brand Header -->
+              <div class="flex items-center gap-2.5 px-2 py-1">
+                <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-sm">M</div>
+                <div class="space-y-0.5">
+                  <h5 class="font-heading text-xs font-bold text-foreground leading-none">Monta Tech</h5>
+                  <p class="text-[10px] text-muted-foreground leading-none">SaaS Admin</p>
+                </div>
+              </div>
+
+              <!-- Nav Links -->
+              <div class="space-y-1">
+                <p class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Plataforma</p>
+                <button class="w-full flex items-center gap-2 rounded-lg bg-[#753399]/15 px-2.5 py-1.5 text-xs font-bold text-[#753399] dark:text-purple-300">
+                  <i data-lucide="layout-dashboard" class="h-3.5 w-3.5 shrink-0"></i>
+                  <span>Dashboard</span>
+                </button>
+                <button class="w-full flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-cart" class="h-3.5 w-3.5 shrink-0"></i>
+                    <span>Vendas</span>
+                  </div>
+                  <span class="rounded bg-emerald-500/15 px-1 py-0.2 text-[9px] font-bold text-emerald-600">Novo</span>
+                </button>
+                <button class="w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
+                  <i data-lucide="users" class="h-3.5 w-3.5 shrink-0"></i>
+                  <span>Clientes</span>
+                </button>
+                <button class="w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
+                  <i data-lucide="credit-card" class="h-3.5 w-3.5 shrink-0"></i>
+                  <span>Financeiro</span>
+                </button>
+                <button class="w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
+                  <i data-lucide="bar-chart-2" class="h-3.5 w-3.5 shrink-0"></i>
+                  <span>Relatórios</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="border-t border-border pt-2.5">
+              <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-muted cursor-pointer" onclick="showToast('Perfil: Monta UI')">
+                <div class="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs">MU</div>
+                <div class="space-y-0.5 flex-1 min-w-0">
+                  <p class="text-xs font-bold text-foreground truncate">Monta UI</p>
+                  <p class="text-[10px] text-muted-foreground truncate">admin@montaui.com.br</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Dashboard Content -->
+          <main class="flex-1 flex flex-col overflow-y-auto bg-muted/20">
+            <!-- Top Navbar -->
+            <header class="h-12 border-b border-border bg-card px-4 flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>Painel</span>
+                <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                <span class="font-bold text-foreground">Visão Executiva</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="showToast('Exportando relatório consolidado...')" class="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-muted shadow-sm">
+                  <i data-lucide="download" class="h-3 w-3"></i>
+                  <span>Exportar</span>
+                </button>
+                <button onclick="showToast('Novo lançamento aberto')" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399] px-3 py-1 text-xs font-semibold text-white hover:bg-[#622981] shadow">
+                  <i data-lucide="plus" class="h-3 w-3"></i>
+                  <span>Lançamento</span>
+                </button>
+              </div>
+            </header>
+
+            <!-- Dashboard Body -->
+            <div class="p-5 space-y-4">
+              <!-- KPI 4 Cards Grid -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                  <span class="text-[10px] font-bold text-muted-foreground uppercase">Faturamento Mês</span>
+                  <p class="font-mono text-base font-extrabold text-foreground">R$ 489.250,00</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +14.8% vs mês ant.</span>
+                </div>
+                <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                  <span class="text-[10px] font-bold text-muted-foreground uppercase">Transações Aprovadas</span>
+                  <p class="font-mono text-base font-extrabold text-foreground">3.420</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +8.2%</span>
+                </div>
+                <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                  <span class="text-[10px] font-bold text-muted-foreground uppercase">Clientes Ativos</span>
+                  <p class="font-mono text-base font-extrabold text-foreground">1.280</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +12.4%</span>
+                </div>
+                <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                  <span class="text-[10px] font-bold text-muted-foreground uppercase">Taxa de Conversão</span>
+                  <p class="font-mono text-base font-extrabold text-foreground">4.92%</p>
+                  <span class="text-[10px] font-bold text-emerald-500">▲ +1.1%</span>
+                </div>
+              </div>
+
+              <!-- Middle Charts Row -->
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                <!-- Area Chart -->
+                <div class="lg:col-span-2 rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm">
+                  <div class="flex items-center justify-between">
+                    <h5 class="font-heading text-xs font-bold text-foreground">Evolução de Receita & Conciliação</h5>
+                    <span class="text-[10px] text-muted-foreground font-mono">Últimos 6 meses</span>
+                  </div>
+                  <div class="h-36 w-full flex items-end justify-between gap-2 pt-4">
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399]/40 hover:bg-[#753399] rounded-t transition-all h-[45%]"></div>
+                      <span class="text-[9px] font-mono text-muted-foreground">MAR</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399]/40 hover:bg-[#753399] rounded-t transition-all h-[60%]"></div>
+                      <span class="text-[9px] font-mono text-muted-foreground">ABR</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399]/40 hover:bg-[#753399] rounded-t transition-all h-[75%]"></div>
+                      <span class="text-[9px] font-mono text-muted-foreground">MAI</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399]/40 hover:bg-[#753399] rounded-t transition-all h-[65%]"></div>
+                      <span class="text-[9px] font-mono text-muted-foreground">JUN</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399]/40 hover:bg-[#753399] rounded-t transition-all h-[88%]"></div>
+                      <span class="text-[9px] font-mono text-muted-foreground">JUL</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                      <div class="w-full bg-[#753399] rounded-t transition-all h-[95%]"></div>
+                      <span class="text-[9px] font-mono text-[#753399] font-bold">AGO</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Donut Breakdown -->
+                <div class="rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm flex flex-col justify-between">
+                  <h5 class="font-heading text-xs font-bold text-foreground">Canais de Recebimento</h5>
+                  <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-1.5 text-muted-foreground"><span class="h-2 w-2 rounded-full bg-[#753399]"></span> Pix Instantâneo</span>
+                      <span class="font-mono font-bold text-foreground">54%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-1.5 text-muted-foreground"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> Cartão de Crédito</span>
+                      <span class="font-mono font-bold text-foreground">32%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-1.5 text-muted-foreground"><span class="h-2 w-2 rounded-full bg-amber-500"></span> Boleto Bancário</span>
+                      <span class="font-mono font-bold text-foreground">14%</span>
+                    </div>
+                  </div>
+                  <div class="p-2 rounded-lg bg-muted/40 text-center">
+                    <span class="text-[10px] text-muted-foreground">Total Conciliado: <b>R$ 1.480.290,00</b></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Transactions Table with Pagination -->
+              <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+                <div class="p-3 border-b border-border flex items-center justify-between">
+                  <h5 class="font-heading text-xs font-bold text-foreground">Últimas Transações Conciliadas</h5>
+                  <span class="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">4 de 180 registros</span>
+                </div>
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+                    <tr>
+                      <th class="p-2.5">Cliente / Razão</th>
+                      <th class="p-2.5">Forma</th>
+                      <th class="p-2.5">Valor</th>
+                      <th class="p-2.5">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-border">
+                    <tr class="hover:bg-muted/30">
+                      <td class="p-2.5 font-medium text-foreground">Alpha Logística Ltda</td>
+                      <td class="p-2.5 text-muted-foreground">Pix</td>
+                      <td class="p-2.5 font-mono font-bold text-foreground">R$ 14.850,00</td>
+                      <td class="p-2.5"><span class="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">Aprovado</span></td>
+                    </tr>
+                    <tr class="hover:bg-muted/30">
+                      <td class="p-2.5 font-medium text-foreground">Beta Varejo Brasil S/A</td>
+                      <td class="p-2.5 text-muted-foreground">Cartão 12x</td>
+                      <td class="p-2.5 font-mono font-bold text-foreground">R$ 8.920,00</td>
+                      <td class="p-2.5"><span class="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600">Aprovado</span></td>
+                    </tr>
+                    <tr class="hover:bg-muted/30">
+                      <td class="p-2.5 font-medium text-foreground">Gamma Tech Distribuição</td>
+                      <td class="p-2.5 text-muted-foreground">Boleto</td>
+                      <td class="p-2.5 font-mono font-bold text-foreground">R$ 32.400,00</td>
+                      <td class="p-2.5"><span class="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-600">Pendente</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </main>
+        </div>
+      `;
+    }
+  }
+
+  // Injetar Código TSX
+  const tsxCode = getTemplateTSX(name);
+  const codeBlock = document.getElementById('templateCodeBlock');
+  const codeFilename = document.getElementById('templateCodeFilename');
+  if (codeBlock) codeBlock.innerHTML = highlightCode(tsxCode, 'tsx');
+  if (codeFilename) codeFilename.textContent = `templates/${name}.tsx`;
+
+  const copyBtn = document.getElementById('copyTemplateCodeBtn');
+  if (copyBtn) copyBtn.onclick = () => copyText(tsxCode, `Código TSX do Template ${name.toUpperCase()} copiado!`);
+
+  // Injetar Componentes Utilizados
+  const usedList = document.getElementById('templateUsedComponentsList');
+  if (usedList) {
+    const list = templateComponentsUsed[name] || [];
+    usedList.innerHTML = list.map(comp => `
+      <button onclick="openComponentDocs('${comp}')" class="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-[#753399]/15 hover:text-[#753399] hover:border-[#753399]/40 transition-colors">
+        <span>${formatTitle(comp)}</span>
+        <i data-lucide="arrow-up-right" class="h-3 w-3 opacity-60"></i>
+      </button>
+    `).join('');
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function handleTemplateLoginSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('tplLoginSubmitBtn');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></span> Autenticando...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.disabled = false;
+      showToast('✅ Login realizado com sucesso! Redirecionando...');
+    }, 1500);
+  }
+}
+
+function toggleTemplatePasswordVisibility() {
+  const input = document.getElementById('tplLoginPassword');
+  const icon = document.getElementById('tplLoginEyeIcon');
+  if (input) {
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+      input.type = 'password';
+      if (icon) icon.setAttribute('data-lucide', 'eye');
+    }
+    if (window.lucide) window.lucide.createIcons();
+  }
+}
+
+function getTemplateTSX(name) {
+  if (name === 'login') {
+    return `"use client"
+
+import * as React from "react"
+import { Field, FieldLabel } from "@/components/monta-ui/field"
+import { Input } from "@/components/monta-ui/input"
+import { Checkbox } from "@/components/monta-ui/checkbox"
+import { Button } from "@/components/monta-ui/button"
+import { Spinner } from "@/components/monta-ui/loading"
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react"
+
+export default function LoginPage() {
+  const [email, setEmail] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [showPassword, setShowPassword] = React.useState(false)
+  const [rememberMe, setRememberMe] = React.useState(true)
+  const [isLoading, setIsLoading] = React.useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setTimeout(() => {
+      setIsLoading(false)
+      alert("Autenticado com sucesso!")
+    }, 1500)
+  }
+
+  return (
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-background text-foreground">
+      {/* Coluna Esquerda: Formulário de Autenticação */}
+      <div className="flex flex-col justify-between p-8 sm:p-14">
+        {/* Marca & Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-md">
+            M
+          </div>
+          <span className="font-heading text-base font-bold text-foreground">
+            Monta<span className="text-[#753399]">UI</span>
+          </span>
+        </div>
+
+        {/* Bloco Central */}
+        <div className="my-8 max-w-sm w-full mx-auto space-y-6">
+          <div className="space-y-1.5">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+              Bem-vindo de volta
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Digite suas credenciais corporativas para acessar o painel.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Field>
+              <FieldLabel required>E-mail Corporativo</FieldLabel>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  required
+                  placeholder="usuario@empresa.com.br"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </Field>
+
+            <Field>
+              <div className="flex items-center justify-between">
+                <FieldLabel required>Senha</FieldLabel>
+                <a href="#recuperar" className="text-[11px] font-semibold text-[#753399] hover:underline">
+                  Esqueceu a senha?
+                </a>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-9 pr-9"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </Field>
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(!!checked)}
+              />
+              <label className="text-xs text-muted-foreground cursor-pointer select-none">
+                Lembrar desta sessão por 30 dias
+              </label>
+            </div>
+
+            <Button type="submit" disabled={isLoading} className="w-full gap-2">
+              {isLoading && <Spinner size="sm" className="text-white" />}
+              <span>{isLoading ? "Autenticando..." : "Entrar na Plataforma"}</span>
+              {!isLoading && <ArrowRight className="h-4 w-4" />}
+            </Button>
+          </form>
+        </div>
+
+        <p className="text-[11px] text-muted-foreground text-center">
+          Monta UI Design System · Todos os direitos reservados.
+        </p>
+      </div>
+
+      {/* Coluna Direita: Banner Hero Corporativo */}
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-[#753399] via-[#4d1f66] to-zinc-950 text-white relative overflow-hidden">
+        <div className="flex items-center justify-between z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs font-semibold text-white border border-white/15">
+            <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+            Sistemas 100% Operacionais
+          </span>
+          <span className="text-xs text-white/70 font-mono">v2.4.0</span>
+        </div>
+
+        <div className="space-y-4 z-10 max-w-md">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur border border-white/20">
+            <ShieldCheck className="h-5 w-5 text-white" />
+          </div>
+          <h2 className="font-heading text-2xl font-bold leading-tight">
+            "O Monta UI garantiu a estabilidade e velocidade na entrega de todas as nossas plataformas financeiras."
+          </h2>
+          <p className="text-xs text-white/80 font-bold">Engenharia de Produto · Monta Tech</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 border-t border-white/15 pt-6 z-10">
+          <div>
+            <p className="text-lg font-extrabold text-white">44 Componentes</p>
+            <p className="text-[11px] text-white/70">100% Zero-Radix Nativo</p>
+          </div>
+          <div>
+            <p className="text-lg font-extrabold text-emerald-300">99.9% Uptime</p>
+            <p className="text-[11px] text-white/70">SLA Corporativo</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}`
+  }
+
+  if (name === 'home') {
+    return `"use client"
+
+import * as React from "react"
+import { Navbar } from "@/components/monta-ui/navbar"
+import { Button } from "@/components/monta-ui/button"
+import { Badge } from "@/components/monta-ui/badge"
+import { ArrowRight, Terminal, ShieldCheck, Zap, Layout } from "lucide-react"
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* 1. Navbar Superior */}
+      <Navbar
+        links={[
+          { label: "Recursos", href: "#recursos", active: true },
+          { label: "Componentes", href: "#componentes" },
+          { label: "Templates", href: "#templates" },
+          { label: "Preços", href: "#precos" },
+        ]}
+        actions={
+          <Button size="sm" className="bg-[#753399] hover:bg-[#622981]">
+            Começar Agora
+          </Button>
+        }
+      />
+
+      {/* 2. Hero Section */}
+      <section className="py-20 px-6 sm:px-12 text-center max-w-4xl mx-auto space-y-6">
+        <Badge variant="brand" className="px-3.5 py-1 gap-2 text-xs">
+          <span className="h-2 w-2 rounded-full bg-[#753399] animate-pulse" />
+          Monta UI Release v2.4 — 44 Componentes Corporativos
+        </Badge>
+
+        <h1 className="font-heading text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
+          O Design System Enterprise Feito para Alta Performance
+        </h1>
+
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Biblioteca de componentes 100% autorais em React, TypeScript e Tailwind CSS, sem amarras do Radix UI. Ideal para sistemas SaaS, ERPs e fintechs.
+        </p>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+          <Button size="lg" className="gap-2 bg-[#753399] hover:bg-[#622981]">
+            <span>Criar Projeto Grátis</span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <Button size="lg" variant="secondary" className="gap-2 font-mono text-xs">
+            <Terminal className="h-4 w-4 text-[#753399]" />
+            <span>pnpm dlx monta-ui init</span>
+          </Button>
+        </div>
+      </section>
+
+      {/* 3. Grid de Funcionalidades */}
+      <section className="border-t border-border py-16 px-6 sm:px-12 bg-muted/10">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-2 p-6 rounded-xl border border-border bg-card shadow-sm">
+            <div className="h-9 w-9 rounded-lg bg-[#753399]/15 flex items-center justify-center text-[#753399]">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <h3 className="font-heading text-base font-bold">100% Zero Radix</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Sem dependências pesadas. Código limpo e transparente diretamente no seu repositório.
+            </p>
+          </div>
+
+          <div className="space-y-2 p-6 rounded-xl border border-border bg-card shadow-sm">
+            <div className="h-9 w-9 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600">
+              <Zap className="h-5 w-5" />
+            </div>
+            <h3 className="font-heading text-base font-bold">Ultra Performance</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Renderização imediata sem sobrecarga de wrappers ou transições lentas.
+            </p>
+          </div>
+
+          <div className="space-y-2 p-6 rounded-xl border border-border bg-card shadow-sm">
+            <div className="h-9 w-9 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-600">
+              <Layout className="h-5 w-5" />
+            </div>
+            <h3 className="font-heading text-base font-bold">Templates Prontos</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Telas completas de Login, Home e Dashboard SaaS prontas para uso em produção.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}`
+  }
+
+  if (name === 'dashboard') {
+    return `"use client"
+
+import * as React from "react"
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarItem,
+  SidebarFooter,
+  SidebarTrigger
+} from "@/components/monta-ui/sidebar"
+import { Navbar } from "@/components/monta-ui/navbar"
+import { Statistic } from "@/components/monta-ui/statistic"
+import { Chart } from "@/components/monta-ui/chart"
+import { Badge } from "@/components/monta-ui/badge"
+import { Button } from "@/components/monta-ui/button"
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Users,
+  CreditCard,
+  BarChart2,
+  Download,
+  Plus
+} from "lucide-react"
+
+export default function DashboardPage() {
+  return (
+    <SidebarProvider defaultCollapsed={false}>
+      <div className="flex h-screen w-full bg-background text-foreground">
+        {/* Barra Lateral (Sidebar) */}
+        <Sidebar>
+          <SidebarHeader>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs">
+                M
+              </div>
+              <span className="font-heading text-sm font-bold">Monta Tech</span>
+            </div>
+            <SidebarTrigger />
+          </SidebarHeader>
+
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
+              <SidebarItem icon={<LayoutDashboard className="h-4 w-4" />} active>
+                Dashboard
+              </SidebarItem>
+              <SidebarItem
+                icon={<ShoppingCart className="h-4 w-4" />}
+                badge={<Badge variant="success" size="sm">Novo</Badge>}
+              >
+                Vendas & NF-e
+              </SidebarItem>
+              <SidebarItem icon={<Users className="h-4 w-4" />}>
+                Clientes
+              </SidebarItem>
+              <SidebarItem icon={<CreditCard className="h-4 w-4" />}>
+                Financeiro
+              </SidebarItem>
+              <SidebarItem icon={<BarChart2 className="h-4 w-4" />}>
+                Relatórios DRE
+              </SidebarItem>
+            </SidebarGroup>
+          </SidebarContent>
+
+          <SidebarFooter>
+            <div className="flex items-center gap-2.5 p-1">
+              <div className="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs">
+                MU
+              </div>
+              <div className="space-y-0.5 text-left">
+                <p className="text-xs font-bold leading-none">Monta UI</p>
+                <p className="text-[10px] text-muted-foreground leading-none">admin@montaui.com.br</p>
+              </div>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+
+        {/* Conteúdo Principal com Top Navbar */}
+        <main className="flex-1 flex flex-col overflow-y-auto bg-muted/20">
+          <Navbar
+            searchPlaceholder="Buscar no sistema (⌘K)..."
+            user={{
+              name: "Monta UI",
+              role: "Administrador",
+              fallback: "MU"
+            }}
+            actions={
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="secondary" className="gap-1.5">
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Exportar</span>
+                </Button>
+                <Button size="sm" className="gap-1.5 bg-[#753399] hover:bg-[#622981]">
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Novo Lançamento</span>
+                </Button>
+              </div>
+            }
+          />
+
+          <div className="p-6 space-y-6">
+            {/* 4 Cards de KPI Executivo */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Statistic title="Faturamento Mês" value="R$ 489.250,00" change="+14.8%" trend="up" />
+              <Statistic title="Transações Aprovadas" value="3.420" change="+8.2%" trend="up" />
+              <Statistic title="Clientes Ativos" value="1.280" change="+12.4%" trend="up" />
+              <Statistic title="Taxa de Conversão" value="4.92%" change="+1.1%" trend="up" />
+            </div>
+
+            {/* Linha de Gráficos */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 p-5 rounded-xl border border-border bg-card shadow-sm space-y-3">
+                <h3 className="font-heading text-sm font-bold">Evolução de Receita & Conciliação</h3>
+                <Chart
+                  type="bar"
+                  data={[
+                    { label: "Mar", value: 320, target: 300 },
+                    { label: "Abr", value: 390, target: 350 },
+                    { label: "Mai", value: 450, target: 400 },
+                    { label: "Jun", value: 410, target: 400 },
+                    { label: "Jul", value: 520, target: 480 },
+                    { label: "Ago", value: 580, target: 500 }
+                  ]}
+                />
+              </div>
+
+              <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-3">
+                <h3 className="font-heading text-sm font-bold">Canais de Recebimento</h3>
+                <Chart
+                  type="donut"
+                  data={[
+                    { label: "Pix", value: 54, color: "#753399" },
+                    { label: "Cartão", value: 32, color: "#10b981" },
+                    { label: "Boleto", value: 14, color: "#f59e0b" }
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
+  )
+}`
+  }
+
+  return `// Template ${name}`
+}
+
+// ==================== DOCUMENTAÇÃO DO COMPONENTE ====================
+function openComponentDocs(name, updateHistory = true) {
+  state.current = name;
+  state.view = 'docs';
+  state.docTab = 'preview';
+
+  hideAllViews();
+  document.getElementById('docsView')?.classList.remove('hidden');
+
+  const category = getCategoryForComponent(name);
+  const title = formatTitle(name);
+  const desc = descriptions[name] || `Componente React ${title} do Monta UI Design System.`;
+
+  document.getElementById('breadcrumbCategory').textContent = category;
+  document.getElementById('breadcrumbName').textContent = title;
+  document.getElementById('docTitle').textContent = title;
+  document.getElementById('docCategoryBadge').textContent = category;
+  document.getElementById('docDescription').textContent = desc;
+
+  // 1. Exemplo Interativo
+  renderComponentPreview(name);
+
+  // 2. Código TSX & Exemplo de Uso
+  const tsxCode = getComponentTSX(name);
+  const usageCode = getComponentUsage(name);
+
+  document.getElementById('docCodeFilename').textContent = `components/monta-ui/${name}.tsx`;
+  document.getElementById('docCodeBlock').innerHTML = highlightCode(tsxCode, 'tsx');
+  document.getElementById('docUsageBlock').innerHTML = highlightCode(usageCode, 'tsx');
+
+  // 3. Instalação via CLI
+  updateCliCommand();
+
+  // 4. Composição & Anatomia
+  renderComponentComposition(name);
+
+  // 5. Referência da API (Props)
+  renderComponentApiReference(name);
+
+  // 6. Atualizar Tabela de Conteúdos da Página
+  renderTableOfContents();
+
+  // Ações
+  document.getElementById('copyDocCodeBtn').onclick = () => copyText(tsxCode, 'Código TSX copiado!');
+  document.getElementById('downloadBtn').onclick = () => downloadFile(`${name}.tsx`, tsxCode);
+
+  switchDocTab('preview');
+
+  if (updateHistory) {
+    const targetHash = `#/componente/${name}`;
+    if (window.location.hash !== targetHash) window.location.hash = targetHash;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Atualizar sidebar
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    const active = link.dataset.component === name;
+    link.className = active
+      ? 'sidebar-link flex items-center justify-between rounded-md bg-accent px-2 py-1.5 text-xs font-semibold text-accent-foreground'
+      : 'sidebar-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground';
+  });
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function switchDocTab(tab) {
+  state.docTab = tab;
+  const isPreview = tab === 'preview';
+  
+  const previewBtn = document.getElementById('tabPreviewBtn');
+  const codeBtn = document.getElementById('tabCodeBtn');
+  const previewContainer = document.getElementById('docPreviewContainer');
+  const codeContainer = document.getElementById('docCodeContainer');
+
+  if (isPreview) {
+    previewBtn.className = 'flex items-center gap-1.5 rounded-md bg-background px-3 py-1 text-xs font-semibold text-foreground shadow-sm';
+    codeBtn.className = 'flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium hover:text-foreground';
+    previewContainer.classList.remove('hidden');
+    codeContainer.classList.add('hidden');
+  } else {
+    codeBtn.className = 'flex items-center gap-1.5 rounded-md bg-background px-3 py-1 text-xs font-semibold text-foreground shadow-sm';
+    previewBtn.className = 'flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium hover:text-foreground';
+    previewContainer.classList.add('hidden');
+    codeContainer.classList.remove('hidden');
+  }
+}
+
+// ==================== SCROLLSPY & NAVEGAÇÃO "NESTA PÁGINA" ====================
+const tableOfContentsMap = {
+  home: [
+    { id: "homeHeroSection", label: "Destaque & Início" },
+    { id: "homeShowcaseSection", label: "Showcase Monta UI" },
+    { id: "homeCatalogSection", label: "Catálogo de Componentes" }
+  ],
+  docs: [
+    { id: "docPreviewContainer", label: "Exemplo Interativo" },
+    { id: "installationSection", label: "Instalação via Monta CLI" },
+    { id: "usageSection", label: "Exemplo de Uso" },
+    { id: "compositionSection", label: "Composição & Anatomia" },
+    { id: "apiSection", label: "Referência da API" },
+    { id: "docCodeContainer", label: "Código TSX", isCode: true }
+  ],
+  installation: [
+    { id: "installStep1", label: "1. Criar Projeto" },
+    { id: "installStep2", label: "2. Dependências" },
+    { id: "installStep3", label: "3. Inicializar CLI" },
+    { id: "installStep4", label: "4. Utilitário cn()" },
+    { id: "installStep5", label: "5. Adicionar Componente" }
+  ],
+  tailwind: [
+    { id: "tailwindConfigFileSection", label: "1. tailwind.config.js" },
+    { id: "tailwindGlobalsCssSection", label: "2. globals.css & Cores" }
+  ],
+  storybook: [
+    { id: "storybookRunSection", label: "1. Executar Storybook" },
+    { id: "storybookSetupSection", label: "2. Configuração & Stories" }
+  ]
+};
+
+function renderTableOfContents() {
+  const container = document.getElementById('tocLinksList');
+  if (!container) return;
+
+  const currentKey = state.view || 'home';
+  const items = tableOfContentsMap[currentKey] || tableOfContentsMap.home;
+
+  container.innerHTML = items.map(item => {
+    const clickHandler = item.isCode
+      ? `scrollToCodeSection(event)`
+      : `scrollToSection(event, '${item.id}')`;
+    
+    return `
+      <li>
+        <a href="#${item.id}" onclick="${clickHandler}" data-section="${item.id}" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+          <span class="toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors"></span>
+          <span>${item.label}</span>
+        </a>
+      </li>
+    `;
+  }).join('');
+
+  if (items.length > 0) {
+    highlightTocItem(items[0].id);
+  }
+}
+
+function scrollToSection(e, sectionId) {
+  if (e) e.preventDefault();
+  const target = document.getElementById(sectionId);
+  if (!target) return;
+  
+  const headerOffset = 90;
+  const elementPosition = target.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: 'smooth'
+  });
+  
+  highlightTocItem(sectionId);
+}
+
+function scrollToCodeSection(e) {
+  if (e) e.preventDefault();
+  switchDocTab('code');
+  setTimeout(() => {
+    const target = document.getElementById('docCodeContainer');
+    if (!target) return;
+    const headerOffset = 90;
+    const elementPosition = target.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+    highlightTocItem('docCodeContainer');
+  }, 60);
+}
+
+function highlightTocItem(sectionId) {
+  const items = document.querySelectorAll('#tocLinksList .toc-item');
+  items.forEach(item => {
+    const isTarget = item.dataset.section === sectionId;
+    const indicator = item.querySelector('.toc-indicator');
+    
+    if (isTarget) {
+      item.className = 'toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold text-brand bg-brand/10 dark:text-purple-300 transition-all';
+      if (indicator) indicator.className = 'toc-indicator h-1.5 w-1.5 rounded-full bg-brand transition-colors';
+    } else {
+      item.className = 'toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all';
+      if (indicator) indicator.className = 'toc-indicator h-1.5 w-1.5 rounded-full bg-transparent transition-colors';
+    }
+  });
+}
+
+function handleScrollSpy() {
+  const currentKey = state.view || 'home';
+  const items = tableOfContentsMap[currentKey] || [];
+  if (items.length === 0) return;
+
+  const scrollPosition = window.scrollY + 140;
+  let currentSection = items[0].id;
+
+  for (const item of items) {
+    const el = document.getElementById(item.id);
+    if (el && !el.classList.contains('hidden')) {
+      const top = el.offsetTop;
+      if (scrollPosition >= top) {
+        currentSection = item.id;
+      }
+    }
+  }
+
+  highlightTocItem(currentSection);
+}
+
+// ==================== CLI PACKAGE MANAGER SELECTOR ====================
+function switchPkgManager(pkg) {
+  state.pkgManager = pkg;
+  ['pnpm', 'npx', 'yarn', 'bun'].forEach(p => {
+    const tab = document.getElementById(`pkgTab-${p}`);
+    if (!tab) return;
+    if (p === pkg) {
+      tab.className = 'text-zinc-100 font-semibold border-b-2 border-brand pb-0.5';
+    } else {
+      tab.className = 'hover:text-zinc-100 pb-0.5 text-zinc-400';
+    }
+  });
+  updateCliCommand();
+}
+
+function updateCliCommand() {
+  const name = state.current;
+  const el = document.getElementById('docCliCommand');
+  if (!el) return;
+
+  switch (state.pkgManager) {
+    case 'npx':
+      el.textContent = `npx monta-ui add ${name}`;
+      break;
+    case 'yarn':
+      el.textContent = `yarn dlx monta-ui add ${name}`;
+      break;
+    case 'bun':
+      el.textContent = `bunx --bun monta-ui add ${name}`;
+      break;
+    case 'pnpm':
+    default:
+      el.textContent = `pnpm dlx monta-ui add ${name}`;
+      break;
+  }
+}
+
+// ==================== COMPOSIÇÃO & ANATOMIA ====================
+const componentCompositions = {
+  'button': {
+    anatomy: `<Button variant="default" size="default" isLoading={false}>\n  <Icon className="h-4 w-4" />\n  <span>Salvar Registro</span>\n</Button>`,
+    parts: [
+      { name: "Button", type: "HTMLButtonElement", role: "Elemento base de disparo interativo com suporte a loading e variantes", props: "variant, size, fullWidth, isLoading, disabled" },
+      { name: "ButtonGroup", type: "HTMLDivElement", role: "Contêiner flex que agrupa botões conectados com bordas contínuas", props: "attached, className, children" }
+    ]
+  },
+  'button-group': {
+    anatomy: `<ButtonGroup attached={true}>\n  <Button variant="secondary">Anterior</Button>\n  <Button variant="secondary">Próximo</Button>\n</ButtonGroup>`,
+    parts: [
+      { name: "ButtonGroup", type: "HTMLDivElement", role: "Agrupador horizontal de botões com cantos arredondados automáticos", props: "attached, className, children" },
+      { name: "Button", type: "HTMLButtonElement", role: "Botões filhos que compõem o grupo", props: "variant, size, disabled" }
+    ]
+  },
+  'dropdown-menu': {
+    anatomy: `<DropdownMenu>\n  <DropdownMenuTrigger asChild>\n    <Button>Opções ▾</Button>\n  </DropdownMenuTrigger>\n  <DropdownMenuContent align="end">\n    <DropdownMenuItem onClick={...}>\n      Perfil Corporativo\n      <DropdownMenuShortcut>Ctrl+P</DropdownMenuShortcut>\n    </DropdownMenuItem>\n    <DropdownMenuSeparator />\n    <DropdownMenuItem className="text-rose-500">Sair</DropdownMenuItem>\n  </DropdownMenuContent>\n</DropdownMenu>`,
+    parts: [
+      { name: "DropdownMenu", type: "React.Context Provider", role: "Contêiner raiz que gerencia o estado aberto/fechado e clique externo", props: "children" },
+      { name: "DropdownMenuTrigger", type: "HTMLButtonElement", role: "Botão ou gatilho que alterna a visibilidade do menu", props: "children, className, onClick" },
+      { name: "DropdownMenuContent", type: "HTMLDivElement", role: "Painel flutuante com sombra, borda e posicionamento configurável", props: "align ('start' | 'center' | 'end'), className" },
+      { name: "DropdownMenuItem", type: "HTMLButtonElement", role: "Item de ação selecionável que fecha o menu ao ser acionado", props: "onClick, disabled, className" },
+      { name: "DropdownMenuSeparator", type: "HTMLDivElement", role: "Linha divisória sutil para agrupamento semântico", props: "className" },
+      { name: "DropdownMenuShortcut", type: "HTMLSpanElement", role: "Rótulo alinhado à direita para atalhos de teclado", props: "className, children" }
+    ]
+  },
+  'context-menu': {
+    anatomy: `<ContextMenu>\n  <ContextMenuTrigger className="border-dashed p-8">\n    Clique com o botão direito aqui\n  </ContextMenuTrigger>\n  <ContextMenuContent>\n    <ContextMenuItem onClick={...}>Copiar Link</ContextMenuItem>\n    <ContextMenuItem onClick={...}>Duplicar</ContextMenuItem>\n    <ContextMenuSeparator />\n    <ContextMenuItem className="text-rose-500">Excluir</ContextMenuItem>\n  </ContextMenuContent>\n</ContextMenu>`,
+    parts: [
+      { name: "ContextMenu", type: "HTMLDivElement", role: "Área de captura de evento de clique com o botão direito do mouse", props: "children, className" },
+      { name: "ContextMenuTrigger", type: "HTMLDivElement", role: "Região visual onde o usuário interage", props: "children, className" },
+      { name: "ContextMenuContent", type: "HTMLDivElement", role: "Menu flutuante renderizado nas coordenadas do cursor", props: "children, className" },
+      { name: "ContextMenuItem", type: "HTMLButtonElement", role: "Ação contextual executável", props: "onClick, className" },
+      { name: "ContextMenuSeparator", type: "HTMLDivElement", role: "Divisor de seções do menu contextual", props: "className" }
+    ]
+  },
+  'menubar': {
+    anatomy: `<Menubar>\n  <MenubarMenu>\n    <MenubarTrigger>Arquivo</MenubarTrigger>\n    <MenubarContent>\n      <MenubarItem onClick={...}>Novo Arquivo <span className="font-mono">Ctrl+N</span></MenubarItem>\n      <MenubarItem onClick={...}>Salvar <span className="font-mono">Ctrl+S</span></MenubarItem>\n    </MenubarContent>\n  </MenubarMenu>\n</Menubar>`,
+    parts: [
+      { name: "Menubar", type: "HTMLDivElement", role: "Barra horizontal desktop para menus superiores", props: "children, className" },
+      { name: "MenubarMenu", type: "React.Component", role: "Contêiner de cada dropdown da barra com estado independente", props: "children" },
+      { name: "MenubarTrigger", type: "HTMLButtonElement", role: "Rótulo do menu superior que abre o submenu em cascata", props: "children, className" },
+      { name: "MenubarContent", type: "HTMLDivElement", role: "Painel suspenso de comandos com atalhos de teclado", props: "children, className" },
+      { name: "MenubarItem", type: "HTMLButtonElement", role: "Comando executável dentro do menu", props: "onClick, className" }
+    ]
+  },
+  'navigation-menu': {
+    anatomy: `<NavigationMenu>\n  <NavigationMenuList>\n    <NavigationMenuItem>\n      <NavigationMenuTrigger>Soluções</NavigationMenuTrigger>\n      <NavigationMenuContent>\n        <NavigationMenuLink href="/core">Monta Core</NavigationMenuLink>\n      </NavigationMenuContent>\n    </NavigationMenuItem>\n  </NavigationMenuList>\n</NavigationMenu>`,
+    parts: [
+      { name: "NavigationMenu", type: "HTMLElement <nav>", role: "Barra de navegação principal para headers e portais", props: "children, className" },
+      { name: "NavigationMenuList", type: "HTMLUListElement <ul>", role: "Lista ordenada de itens de menu", props: "children, className" },
+      { name: "NavigationMenuItem", type: "HTMLLIElement <li>", role: "Item individual com suporte a mega-menu expansível", props: "children, className" },
+      { name: "NavigationMenuTrigger", type: "HTMLButtonElement", role: "Botão gatilho com rotação animada de chevron", props: "children, className" },
+      { name: "NavigationMenuContent", type: "HTMLDivElement", role: "Painel mega-menu com layout flex ou grid para links e cards", props: "children, className" },
+      { name: "NavigationMenuLink", type: "HTMLAnchorElement <a>", role: "Link padronizado com hover suave e estados ativos", props: "href, children, className" }
+    ]
+  },
+  'dialog': {
+    anatomy: `<Dialog open={isOpen} onOpenChange={setIsOpen}>\n  <DialogTrigger asChild>\n    <Button>Abrir Modal</Button>\n  </DialogTrigger>\n  <DialogContent>\n    <DialogHeader>\n      <DialogTitle>Confirmar Operação</DialogTitle>\n      <DialogDescription>Esta ação atualizará os dados no servidor.</DialogDescription>\n    </DialogHeader>\n    <p>Conteúdo do formulário ou aviso...</p>\n    <DialogFooter>\n      <Button variant="secondary" onClick={() => setIsOpen(false)}>Cancelar</Button>\n      <Button onClick={handleConfirm}>Confirmar</Button>\n    </DialogFooter>\n  </DialogContent>\n</Dialog>`,
+    parts: [
+      { name: "Dialog", type: "React.Context Provider", role: "Controle de estado (aberto/fechado), tecla ESC e eventos de ciclo de vida", props: "open, onOpenChange, children" },
+      { name: "DialogTrigger", type: "HTMLButtonElement", role: "Gatilho de abertura da janela modal", props: "children, className" },
+      { name: "DialogContent", type: "HTMLDivElement", role: "Janela modal centralizada com backdrop escuro e botão de fechar (X)", props: "children, className" },
+      { name: "DialogHeader", type: "HTMLDivElement", role: "Cabeçalho com espaçamento semântico para título e descrição", props: "children, className" },
+      { name: "DialogTitle", type: "HTMLHeadingElement <h3>", role: "Título principal da janela acessível via leitor de tela", props: "children, className" },
+      { name: "DialogDescription", type: "HTMLParagraphElement <p>", role: "Texto auxiliar e explicativo do diálogo", props: "children, className" },
+      { name: "DialogFooter", type: "HTMLDivElement", role: "Rodapé alinhado à direita para botões de confirmação e cancelamento", props: "children, className" }
+    ]
+  },
+  'popover': {
+    anatomy: `<Popover>\n  <PopoverTrigger asChild>\n    <Button variant="secondary">Filtros Rápidos</Button>\n  </PopoverTrigger>\n  <PopoverContent align="center">\n    <h4 className="font-bold text-xs">Parâmetros</h4>\n    <p className="text-xs text-muted-foreground">Defina os critérios de busca.</p>\n  </PopoverContent>\n</Popover>`,
+    parts: [
+      { name: "Popover", type: "React.Context Provider", role: "Contêiner de ancoragem com detecção de clique externo", props: "children" },
+      { name: "PopoverTrigger", type: "HTMLButtonElement", role: "Gatilho que posiciona e abre o popover", props: "children, className" },
+      { name: "PopoverContent", type: "HTMLDivElement", role: "Caixa flutuante com sombra elevada e alinhamento configurável", props: "align ('start' | 'center' | 'end'), children, className" }
+    ]
+  },
+  'card': {
+    anatomy: `<Card>\n  <CardHeader>\n    <CardTitle>Faturamento Mensal</CardTitle>\n    <CardDescription>Resumo financeiro dos últimos 30 dias</CardDescription>\n  </CardHeader>\n  <CardContent>\n    <p>Conteúdo ou métricas do card...</p>\n  </CardContent>\n  <CardFooter>\n    <Button size="sm">Ver Relatório</Button>\n  </CardFooter>\n</Card>`,
+    parts: [
+      { name: "Card", type: "HTMLDivElement", role: "Superfície em card com borda, fundo suave e sombra", props: "children, className" },
+      { name: "CardHeader", type: "HTMLDivElement", role: "Área superior para título e subtítulo com padding estruturado", props: "children, className" },
+      { name: "CardTitle", type: "HTMLHeadingElement <h3>", role: "Tipografia de título em negrito no padrão do Design System", props: "children, className" },
+      { name: "CardDescription", type: "HTMLParagraphElement <p>", role: "Texto descritivo em cor atenuada (muted-foreground)", props: "children, className" },
+      { name: "CardContent", type: "HTMLDivElement", role: "Área principal de conteúdo do card", props: "children, className" },
+      { name: "CardFooter", type: "HTMLDivElement", role: "Rodapé inferior para botões de ação e status", props: "children, className" }
+    ]
+  },
+  'accordion': {
+    anatomy: `<Accordion>\n  <AccordionItem value="item-1">\n    <AccordionTrigger>Como funciona o faturamento?</AccordionTrigger>\n    <AccordionContent>O faturamento é processado mensalmente via NF-e automática.</AccordionContent>\n  </AccordionItem>\n  <AccordionItem value="item-2">\n    <AccordionTrigger>Quais as formas de pagamento?</AccordionTrigger>\n    <AccordionContent>PIX Corporativo, Boleto Bancário e Cartão de Crédito.</AccordionContent>\n  </AccordionItem>\n</Accordion>`,
+    parts: [
+      { name: "Accordion", type: "React.Context Provider", role: "Contêiner raiz com gerenciamento de item expandido", props: "children, className" },
+      { name: "AccordionItem", type: "HTMLDivElement", role: "Cada painel recolhível individual", props: "value, children, className" },
+      { name: "AccordionTrigger", type: "HTMLButtonElement", role: "Botão de alternância com rotação suave do ícone chevron", props: "children, className" },
+      { name: "AccordionContent", type: "HTMLDivElement", role: "Corpo do conteúdo revelado ao expandir a sanfona", props: "children, className" }
+    ]
+  },
+  'tabs': {
+    anatomy: `<Tabs defaultValue="dados">\n  <TabsList>\n    <TabsTrigger value="dados">Dados Cadastrais</TabsTrigger>\n    <TabsTrigger value="pedidos">Pedidos</TabsTrigger>\n    <TabsTrigger value="auditoria">Auditoria</TabsTrigger>\n  </TabsList>\n  <TabsContent value="dados">\n    <p>Conteúdo da aba Dados Cadastrais...</p>\n  </TabsContent>\n  <TabsContent value="pedidos">\n    <p>Histórico de pedidos corporativos...</p>\n  </TabsContent>\n</Tabs>`,
+    parts: [
+      { name: "Tabs", type: "React.Context Provider", role: "Contêiner com controle de aba ativa selecionada", props: "defaultValue, value, onValueChange, children" },
+      { name: "TabsList", type: "HTMLDivElement", role: "Barra horizontal estilizada para abrigar os gatilhos", props: "children, className" },
+      { name: "TabsTrigger", type: "HTMLButtonElement", role: "Botão de seleção de aba com indicador de estado ativo", props: "value, children, className" },
+      { name: "TabsContent", type: "HTMLDivElement", role: "Painel renderizado quando a aba correspondente está ativa", props: "value, children, className" }
+    ]
+  },
+  'table': {
+    anatomy: `<Table>\n  <TableHeader>\n    <TableRow>\n      <TableHead>Código</TableHead>\n      <TableHead>Cliente</TableHead>\n      <TableHead>Status</TableHead>\n    </TableRow>\n  </TableHeader>\n  <TableBody>\n    <TableRow>\n      <TableCell>#1042</TableCell>\n      <TableCell>Empresa Exemplo S/A</TableCell>\n      <TableCell><Badge>Ativo</Badge></TableCell>\n    </TableRow>\n  </TableBody>\n</Table>`,
+    parts: [
+      { name: "Table", type: "HTMLTableElement <table>", role: "Tabela com scroll horizontal responsivo e bordas arredondadas", props: "children, className" },
+      { name: "TableHeader", type: "HTMLTableSectionElement <thead>", role: "Cabeçalho superior com fundo atenuado (muted/50)", props: "children, className" },
+      { name: "TableBody", type: "HTMLTableSectionElement <tbody>", role: "Corpo da tabela com linhas divisórias sutis", props: "children, className" },
+      { name: "TableRow", type: "HTMLTableRowElement <tr>", role: "Linha de dados com efeito hover", props: "children, className" },
+      { name: "TableHead", type: "HTMLTableCellElement <th>", role: "Célula de título de coluna em texto médio", props: "children, className" },
+      { name: "TableCell", type: "HTMLTableCellElement <td>", role: "Célula individual de conteúdo ou dado", props: "children, className" }
+    ]
+  },
+  'stepper': {
+    anatomy: `<Stepper\n  steps={[\n    { title: "Empresa", description: "Dados fiscais" },\n    { title: "Endereço", description: "Logística" },\n    { title: "Pagamento", description: "Faturamento" },\n    { title: "Revisão", description: "Conclusão" }\n  ]}\n  currentStep={2}\n  onStepClick={(step) => setStep(step)}\n/>`,
+    parts: [
+      { name: "Stepper", type: "HTMLDivElement (CSS Grid)", role: "Trilha sequencial de progresso com conexões matemáticas e responsivas", props: "steps, currentStep, onStepClick, className" }
+    ]
+  },
+  'timeline': {
+    anatomy: `<Timeline\n  items={[\n    { title: "Pedido Criado", time: "09:15", status: "completed" },\n    { title: "NF-e Emitida", time: "10:42", status: "completed" },\n    { title: "Separação no CD", time: "14:00", status: "in-progress" },\n    { title: "Entrega Transportadora", time: "17:30", status: "pending" }\n  ]}\n/>`,
+    parts: [
+      { name: "Timeline", type: "HTMLDivElement", role: "Trilha cronológica vertical com nós de status e linha guia contínua", props: "items (TimelineItem[]), className" }
+    ]
+  },
+  'tree-view': {
+    anatomy: `<TreeView\n  data={[\n    {\n      id: "1",\n      label: "src",\n      children: [\n        { id: "2", label: "components" },\n        { id: "3", label: "App.tsx" }\n      ]\n    }\n  ]}\n/>`,
+    parts: [
+      { name: "TreeView", type: "HTMLDivElement", role: "Árvore hierárquica navegável para pastas, diretórios e categorias", props: "data (TreeNode[]), className" }
+    ]
+  },
+  'chart': {
+    anatomy: `<Chart\n  type="bar" // "bar" | "area" | "line" | "donut" | "horizontal-bar"\n  title="Faturamento Semestral"\n  description="Comparativo de metas e vendas"\n  data={[\n    { label: "Jan", value: 85, target: 70 },\n    { label: "Fev", value: 92, target: 75 },\n    { label: "Mar", value: 110, target: 80 }\n  ]}\n  color="#753399"\n/>`,
+    parts: [
+      { name: "Chart", type: "HTMLDivElement", role: "Gráfico corporativo multi-tipo em SVG nativo (Barras, Linha/Área, Rosca/Donut e Metas Horizontais)", props: "type, data (ChartDataPoint[]), title, description, color, height, showLegend, showGrid, className" }
+    ]
+  },
+  'calendar': {
+    anatomy: `<Calendar\n  onSelectDate={(date) => console.log(date)}\n  className="border shadow-sm"\n/>`,
+    parts: [
+      { name: "Calendar", type: "HTMLDivElement", role: "Grid mensal interativo com navegação de meses e seleção de datas", props: "onSelectDate, className" }
+    ]
+  },
+  'input': {
+    anatomy: `<Input\n  icon={Search}\n  placeholder="Buscar produto..."\n  clearable={true}\n  onClear={() => setValue("")}\n/>`,
+    parts: [
+      { name: "Input", type: "HTMLInputElement", role: "Campo de entrada de texto com suporte a ícones, botão limpar e modo senha", props: "icon, clearable, onClear, disabled, className" }
+    ]
+  },
+  'textarea': {
+    anatomy: `<Textarea\n  placeholder="Observações do pedido..."\n  maxLength={250}\n  showCount={true}\n/>`,
+    parts: [
+      { name: "Textarea", type: "HTMLTextAreaElement", role: "Área de texto com redimensionamento contido e contador de caracteres", props: "maxLength, showCount, value, onChange, className" }
+    ]
+  },
+  'checkbox': {
+    anatomy: `<Checkbox\n  label="Aceito os termos de serviço"\n  description="Você receberá atualizações de segurança por e-mail."\n  checked={agreed}\n  onChange={(e) => setAgreed(e.target.checked)}\n/>`,
+    parts: [
+      { name: "Checkbox", type: "HTMLInputElement", role: "Seleção binária acessível com ícone SVG estilizado e suporte a descrição", props: "label, description, checked, defaultChecked, onChange, disabled" }
+    ]
+  },
+  'switch': {
+    anatomy: `<Switch\n  checked={enabled}\n  onCheckedChange={(checked) => setEnabled(checked)}\n/>`,
+    parts: [
+      { name: "Switch", type: "HTMLButtonElement", role: "Interruptor toggle deslizante com transição suave", props: "checked, defaultChecked, onCheckedChange, disabled" }
+    ]
+  },
+  'select': {
+    anatomy: `<Select label="Filial de Faturamento">\n  <option value="1">01 - Matriz São Paulo</option>\n  <option value="2">02 - Filial Rio de Janeiro</option>\n</Select>`,
+    parts: [
+      { name: "Select", type: "HTMLSelectElement", role: "Dropdown de seleção com ícone chevron e suporte a rótulo e mensagem de erro", props: "label, error, children, disabled, className" }
+    ]
+  },
+  'radio-group': {
+    anatomy: `<RadioGroup defaultValue="enterprise" onValueChange={(val) => setPlan(val)}>\n  <RadioGroupCard\n    value="enterprise"\n    title="Enterprise Dedicado"\n    description="SLA 99.9% e instâncias dedicadas"\n    badge="Recomendado"\n  />\n  <RadioGroupCard\n    value="business"\n    title="Business Cloud"\n    description="Até 50 usuários simultâneos"\n  />\n</RadioGroup>`,
+    parts: [
+      { name: "RadioGroup", type: "React.Context Provider", role: "Contêiner de opções mutuamente exclusivas", props: "value, defaultValue, onValueChange, name, disabled, children" },
+      { name: "RadioGroupItem", type: "HTMLDivElement", role: "Opção de rádio padrão com círculo indicador preenchido", props: "value, id, disabled, children, className" },
+      { name: "RadioGroupCard", type: "HTMLDivElement", role: "Card de opção rica com título, descrição, ícone e badge", props: "value, title, description, icon, badge, disabled, className" }
+    ]
+  },
+  'slider': {
+    anatomy: `<Slider\n  min={0}\n  max={100000}\n  step={1000}\n  value={creditLimit}\n  onValueChange={(val) => setCreditLimit(val)}\n  valuePrefix="R$ "\n/>`,
+    parts: [
+      { name: "Slider", type: "HTMLDivElement / input[type=range]", role: "Controle deslizante contínuo com trilha percentual preenchida, bolha e limites", props: "min, max, step, value, defaultValue, onValueChange, showValue, valuePrefix, valueSuffix, disabled" }
+    ]
+  },
+  'date-picker': {
+    anatomy: `<DatePicker\n  label="Data de Vencimento"\n  value={selectedDate}\n  onValueChange={(date) => setSelectedDate(date)}\n  placeholder="Selecione a data..."\n/>`,
+    parts: [
+      { name: "DatePicker", type: "HTMLDivElement", role: "Campo seletor de data corporativo com calendário popover, atalhos de navegação e formato localizado", props: "value, defaultValue, onValueChange, placeholder, label, disabled, className" }
+    ]
+  },
+  'lookup': {
+    anatomy: `<Lookup\n  label="Cliente / Parceiro Comercial"\n  title="Consulta de Clientes"\n  items={clientsList}\n  value={selectedClient}\n  onSelect={(item) => setSelectedClient(item)}\n  placeholder="Buscar cliente..."\n/>`,
+    parts: [
+      { name: "Lookup", type: "HTMLDivElement", role: "Campo de consulta avançada com diálogo modal de pesquisa em grade de registros", props: "label, title, placeholder, value, items (LookupItem[]), onSelect, disabled, className" }
+    ]
+  },
+  'combo': {
+    anatomy: `<Combobox\n  label="Centro de Custo"\n  options={departmentsList}\n  value={dept}\n  onValueChange={(val) => setDept(val)}\n  placeholder="Selecione o departamento..."\n  searchPlaceholder="Buscar departamento..."\n/>`,
+    parts: [
+      { name: "Combobox", type: "HTMLDivElement", role: "Select com autocomplete pesquisável, filtragem em tempo real e destaque", props: "options (ComboboxOption[]), value, onValueChange, placeholder, searchPlaceholder, label, disabled, className" }
+    ]
+  },
+  'multiselect': {
+    anatomy: `<MultiSelect\n  label="Permissões de Acesso"\n  options={permissionsList}\n  selected={selectedRoles}\n  onSelectedChange={(roles) => setSelectedRoles(roles)}\n  placeholder="Selecione as permissões..."\n/>`,
+    parts: [
+      { name: "MultiSelect", type: "HTMLDivElement", role: "Seletor de múltiplos itens com badges/tags removíveis e caixa de busca com checkboxes", props: "options (MultiSelectOption[]), selected (string[]), onSelectedChange, placeholder, label, disabled, className" }
+    ]
+  },
+  'badge': {
+    anatomy: `<Badge variant="success" dot dotColor="bg-emerald-500">\n  Homologado\n</Badge>\n<Badge variant="default" removable onRemove={handleRemove}>\n  Filtro Ativo\n</Badge>`,
+    parts: [
+      { name: "Badge", type: "HTMLDivElement", role: "Etiqueta visual de status com suporte a ponto de status (dot), tag removível e variantes", props: "variant, size, dot, dotColor, removable, onRemove, children, className" }
+    ]
+  },
+  'alert': {
+    anatomy: `<Alert variant="warning" dismissable onClose={handleClose}>\n  <AlertTitle>Atenção Necessária</AlertTitle>\n  <AlertDescription>O certificado digital expira em 5 dias.</AlertDescription>\n</Alert>`,
+    parts: [
+      { name: "Alert", type: "HTMLDivElement", role: "Card de notificação contextual em bloco com variantes semânticas e suporte a dismiss", props: "variant ('default' | 'brand' | 'success' | 'warning' | 'destructive' | 'info'), icon, dismissable, onClose, children, className" },
+      { name: "AlertTitle", type: "HTMLHeadingElement <h5>", role: "Título de destaque da mensagem", props: "children, className" },
+      { name: "AlertDescription", type: "HTMLParagraphElement <p>", role: "Texto explicativo detalhado do aviso", props: "children, className" }
+    ]
+  },
+  'toast': {
+    anatomy: `<ToastProvider>\n  <App />\n</ToastProvider>\n\n// No componente:\nconst { toast } = useToast()\ntoast({\n  title: "Fatura Emitida",\n  description: "NF-e #4920 autorizada com sucesso.",\n  variant: "success",\n  duration: 4000\n})`,
+    parts: [
+      { name: "ToastProvider", type: "React.Context Provider", role: "Provedor global de contexto para notificações toast", props: "children" },
+      { name: "ToastViewport", type: "HTMLDivElement", role: "Contêiner flutuante com alinhamento na tela", props: "toasts, onDismiss" },
+      { name: "ToastCard", type: "HTMLDivElement", role: "Card individual com animação slide-in, ícone semântico e auto-dismiss", props: "item (ToastItem), onDismiss" },
+      { name: "useToast", type: "Hook () => ToastContext", role: "Hook para disparo imperativo de toasts na aplicação", props: "toast(options), dismiss(id)" }
+    ]
+  },
+  'progress': {
+    anatomy: `<Progress\n  label="Processamento de Dados"\n  value={65}\n  max={100}\n  showValue={true}\n  variant="default"\n  size="default"\n/>`,
+    parts: [
+      { name: "Progress", type: "HTMLDivElement", role: "Barra de progresso acessível com porcentagem, variantes de cor e modo indeterminate", props: "value, max, variant, size, indeterminate, showValue, label, indicatorClassName, className" }
+    ]
+  },
+  'skeleton': {
+    anatomy: `<SkeletonCard />\n// ou componentes atômicos:\n<div className="flex items-center gap-3">\n  <SkeletonAvatar size="default" />\n  <div className="space-y-1.5 flex-1">\n    <Skeleton className="h-3.5 w-1/3" />\n    <Skeleton className="h-2.5 w-1/2" />\n  </div>\n</div>\n<SkeletonText lines={3} />`,
+    parts: [
+      { name: "Skeleton", type: "HTMLDivElement", role: "Bloco atômico de carregamento com animação pulse", props: "shape ('rectangle' | 'circle' | 'rounded'), className" },
+      { name: "SkeletonAvatar", type: "HTMLDivElement", role: "Esqueleto circular pronto para avatares de usuário", props: "size ('sm' | 'default' | 'lg'), className" },
+      { name: "SkeletonText", type: "HTMLDivElement", role: "Conjunto de linhas simulando parágrafos de texto", props: "lines (number), className" },
+      { name: "SkeletonCard", type: "HTMLDivElement", role: "Estrutura completa de card em loading", props: "className" }
+    ]
+  },
+  'avatar': {
+    anatomy: `<Avatar\n  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb"\n  fallback="FJ"\n  status="online"\n  size="default"\n/>`,
+    parts: [
+      { name: "Avatar", type: "HTMLDivElement", role: "Imagem de perfil com fallback para iniciais e indicador de presença", props: "src, alt, fallback, status ('online' | 'offline' | 'busy'), size ('sm' | 'default' | 'lg')" }
+    ]
+  },
+  'breadcrumb': {
+    anatomy: `<Breadcrumb>\n  <BreadcrumbList>\n    <BreadcrumbItem>\n      <BreadcrumbLink href="/inicio">Início</BreadcrumbLink>\n    </BreadcrumbItem>\n    <BreadcrumbSeparator />\n    <BreadcrumbItem>\n      <BreadcrumbPage>Clientes</BreadcrumbPage>\n    </BreadcrumbItem>\n  </BreadcrumbList>\n</Breadcrumb>`,
+    parts: [
+      { name: "Breadcrumb", type: "HTMLElement <nav>", role: "Navegação estrutural hierárquica", props: "children, className" },
+      { name: "BreadcrumbList", type: "HTMLOListElement <ol>", role: "Lista ordenada de elos do caminho", props: "children, className" },
+      { name: "BreadcrumbItem", type: "HTMLLIElement <li>", role: "Nó individual de navegação", props: "children, className" },
+      { name: "BreadcrumbLink", type: "HTMLAnchorElement <a>", role: "Link de página intermediária", props: "href, children, className" },
+      { name: "BreadcrumbPage", type: "HTMLSpanElement <span>", role: "Página ativa atual sem link", props: "children, className" },
+      { name: "BreadcrumbSeparator", type: "HTMLLIElement <li>", role: "Ícone chevron separador entre nós", props: "children, className" }
+    ]
+  },
+  'statistic': {
+    anatomy: `<Statistic\n  title="MRR Total"\n  value="R$ 482.900"\n  trend={14.8}\n  trendLabel="vs mês anterior"\n  icon={<TrendingUp className="h-4 w-4" />}\n/>`,
+    parts: [
+      { name: "Statistic", type: "HTMLDivElement", role: "Card de indicador-chave (KPI) com valor numérico e percentual de tendência", props: "title, value, trend, trendLabel, icon, className" }
+    ]
+  },
+  'page-header': {
+    anatomy: `<PageHeader\n  title="Gestão de Faturas"\n  description="Gerencie cobranças e notas fiscais."\n  breadcrumbs={<Breadcrumb>...</Breadcrumb>}\n  badge={<Badge variant="success">Produção</Badge>}\n  actions={<Button>Nova Fatura</Button>}\n/>`,
+    parts: [
+      { name: "PageHeader", type: "HTMLDivElement", role: "Cabeçalho padronizado de página corporativa com breadcrumb, título, badge e ações", props: "title, description, actions, breadcrumbs, badge, className" }
+    ]
+  },
+  'navbar': {
+    anatomy: `<Navbar\n  brand={<div className="font-bold">MontaUI</div>}\n  links={[\n    { label: "Dashboard", href: "/dash", active: true },\n    { label: "Clientes", href: "/clientes" }\n  ]}\n  searchPlaceholder="Buscar registros..."\n  onSearchClick={handleSearch}\n  user={{\n    name: "Francinilton Jr",\n    role: "Admin",\n    fallback: "FJ"\n  }}\n  actions={<Button size="sm">Novo</Button>}\n/>`,
+    parts: [
+      { name: "Navbar", type: "HTMLElement <header>", role: "Barra de topo sticky/fixa com suporte a links, busca com atalho ⌘K, ações e perfil", props: "brand, links (NavbarLink[]), actions, user, searchPlaceholder, onSearchClick, className" }
+    ]
+  },
+  'sidebar': {
+    anatomy: `<SidebarProvider defaultCollapsed={false}>\n  <Sidebar>\n    <SidebarHeader>\n      <SidebarBrand />\n      <SidebarTrigger />\n    </SidebarHeader>\n    <SidebarContent>\n      <SidebarGroup>\n        <SidebarGroupLabel>Plataforma</SidebarGroupLabel>\n        <SidebarItem icon={<DashboardIcon />} active>Dashboard</SidebarItem>\n      </SidebarGroup>\n    </SidebarContent>\n    <SidebarFooter>\n      <UserProfileCard />\n    </SidebarFooter>\n  </Sidebar>\n</SidebarProvider>`,
+    parts: [
+      { name: "SidebarProvider", type: "React.Context Provider", role: "Provedor de contexto para controle do estado recolhido (collapsed) e gaveta mobile", props: "defaultCollapsed, children" },
+      { name: "Sidebar", type: "HTMLElement <aside>", role: "Painel lateral com transição suave de largura (w-64 expandido vs w-16 recolhido)", props: "className, children" },
+      { name: "SidebarHeader", type: "HTMLDivElement", role: "Cabeçalho com marca da empresa e botão de recolher", props: "children, className" },
+      { name: "SidebarContent", type: "HTMLDivElement", role: "Área de rolagem com os grupos e links de navegação", props: "children, className" },
+      { name: "SidebarGroup", type: "HTMLDivElement", role: "Contêiner de agrupamento temático de opções", props: "children, className" },
+      { name: "SidebarGroupLabel", type: "HTMLParagraphElement", role: "Rótulo em caixa-alta da seção", props: "children, className" },
+      { name: "SidebarItem", type: "HTMLButtonElement", role: "Item de menu com ícone, texto truncável, badge e estado ativo", props: "icon, active, badge, children, className" },
+      { name: "SidebarFooter", type: "HTMLDivElement", role: "Rodapé fixo inferior com perfil do usuário logado", props: "children, className" },
+      { name: "SidebarTrigger", type: "HTMLButtonElement", role: "Botão de gatilho para recolher ou expandir a barra", props: "className" }
+    ]
+  },
+  'field': {
+    anatomy: `<Field error={hasError}>\n  <FieldLabel required>Razão Social</FieldLabel>\n  <Input placeholder="Nome da empresa" />\n  <FieldDescription>Conforme consta no cartão CNPJ.</FieldDescription>\n  <FieldError>Campo obrigatório</FieldError>\n</Field>`,
+    parts: [
+      { name: "Field", type: "HTMLDivElement", role: "Contêiner flexível do campo com estados de erro e desabilitado", props: "error, disabled, className, children" },
+      { name: "FieldLabel", type: "HTMLLabelElement", role: "Rótulo com indicador de obrigatoriedade (*)", props: "required, children, className" },
+      { name: "FieldDescription", type: "HTMLParagraphElement", role: "Texto descritivo de apoio e instruções", props: "children, className" },
+      { name: "FieldError", type: "HTMLParagraphElement", role: "Mensagem de alerta em vermelho renderizada sob demanda", props: "children, className" }
+    ]
+  },
+  'form': {
+    anatomy: `<Form onSubmit={handleSubmit}>\n  <FormHeader title="Cadastro" description="Preencha os dados" />\n  <FormSection title="1. Fiscal">\n    <FormRow>\n      <Field>...</Field>\n      <Field>...</Field>\n    </FormRow>\n  </FormSection>\n  <FormActions>\n    <Button type="submit">Salvar</Button>\n  </FormActions>\n</Form>`,
+    parts: [
+      { name: "Form", type: "HTMLFormElement", role: "Contêiner principal de formulário com suporte a onSubmit e espaçamento consistente", props: "onSubmit, className, children" },
+      { name: "FormHeader", type: "HTMLDivElement", role: "Título, subtítulo e badge contextual do formulário", props: "title, description, badge, className" },
+      { name: "FormSection", type: "HTMLDivElement", role: "Seção lógica agrupada com cabeçalho explicativo", props: "title, description, children, className" },
+      { name: "FormRow", type: "HTMLDivElement", role: "Linha responsiva em grade de 2 colunas para campos paralelos", props: "children, className" },
+      { name: "FormDivider", type: "HTMLHRElement", role: "Linha divisória de separação entre blocos", props: "className" },
+      { name: "FormActions", type: "HTMLDivElement", role: "Barra de ações alinhada à direita (Salvar / Cancelar)", props: "children, className" }
+    ]
+  },
+  'marker': {
+    anatomy: `<Marker\n  variant="brand" // "brand" | "success" | "warning" | "destructive" | "info"\n  label="1"\n  pulse={true}\n  size="default" // "sm" | "default" | "lg"\n  tooltip={<div>Matriz SP</div>}\n/>`,
+    parts: [
+      { name: "Marker", type: "HTMLDivElement", role: "Marcador de ponto de interesse com pulso radar, índice numérico e card de tooltip flutuante", props: "variant, label, tooltip, pulse, size, className" }
+    ]
+  },
+  'pagination': {
+    anatomy: `<Pagination>\n  <PaginationContent>\n    <PaginationItem><PaginationPrevious /></PaginationItem>\n    <PaginationItem><PaginationLink isActive>1</PaginationLink></PaginationItem>\n    <PaginationItem><PaginationEllipsis /></PaginationItem>\n    <PaginationItem><PaginationNext /></PaginationItem>\n  </PaginationContent>\n</Pagination>`,
+    parts: [
+      { name: "Pagination", type: "HTMLElement <nav>", role: "Contêiner de navegação acessível com role=navigation", props: "className, children" },
+      { name: "PaginationContent", type: "HTMLUListElement <ul>", role: "Lista horizontal flexível de botões de página", props: "children, className" },
+      { name: "PaginationItem", type: "HTMLLIElement <li>", role: "Invólucro de cada elemento da paginação", props: "children, className" },
+      { name: "PaginationLink", type: "HTMLButtonElement", role: "Botão numerado de página com variante ativa em destaque", props: "isActive, size, onClick, children, className" },
+      { name: "PaginationPrevious", type: "HTMLButtonElement", role: "Botão de retrocesso com ícone chevron", props: "onClick, disabled, className" },
+      { name: "PaginationNext", type: "HTMLButtonElement", role: "Botão de avanço com ícone chevron", props: "onClick, disabled, className" },
+      { name: "PaginationEllipsis", type: "HTMLSpanElement", role: "Ícone de reticências para truncamento de páginas", props: "className" }
+    ]
+  },
+  'loading': {
+    anatomy: `<Loading\n  variant="spinner" // "spinner" | "dots" | "pulse" | "bars" | "overlay"\n  size="default" // "xs" | "sm" | "default" | "lg" | "xl"\n  text="Carregando dados..."\n  fullscreen={false}\n/>`,
+    parts: [
+      { name: "Loading", type: "HTMLDivElement", role: "Contêiner universal com suporte a todas as variantes e rótulos de texto", props: "variant, size, text, fullscreen, className, children" },
+      { name: "Spinner", type: "SVGSVGElement", role: "Ícone SVG animado de rotação com espessura calibrada", props: "size, className" },
+      { name: "LoadingDots", type: "HTMLDivElement", role: "3 pontos saltitantes em onda senoidal", props: "className" },
+      { name: "LoadingBars", type: "HTMLDivElement", role: "Barras verticais equalizadoras animadas", props: "className" },
+      { name: "LoadingPulse", type: "HTMLDivElement", role: "Círculo com radar de ondas concêntricas", props: "className" },
+      { name: "LoadingOverlay", type: "HTMLDivElement", role: "Camada de bloqueio translúcida com backdrop blur para cards e diálogos", props: "text, subtext, className" }
+    ]
+  }
+};
+
+function renderComponentComposition(name) {
+  const container = document.getElementById('compositionContainer');
+  const countBadge = document.getElementById('compositionCountBadge');
+  if (!container) return;
+
+  const data = componentCompositions[name] || {
+    anatomy: `<${formatTitle(name).replace(/\\s+/g, '')} />`,
+    parts: [
+      { name: formatTitle(name).replace(/\\s+/g, ''), type: "React.Component", role: "Componente corporativo principal", props: "className, children" }
+    ]
+  };
+
+  if (countBadge) {
+    countBadge.textContent = `${data.parts.length} ${data.parts.length === 1 ? 'parte' : 'partes exportadas'}`;
+  }
+
+  container.innerHTML = `
+    <!-- 1. Anatomia / Estrutura JSX -->
+    <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
+      <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
+        <span class="flex items-center gap-1.5"><i data-lucide="code-2" class="h-3.5 w-3.5 text-brand"></i> Estrutura JSX / Hierarquia</span>
+        <span class="text-[10px] text-zinc-400">Anatomia do Módulo</span>
+      </div>
+      <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[260px] text-[#a5d6ff]"><code>${escapeHTML(data.anatomy)}</code></pre>
+    </div>
+
+    <!-- 2. Tabela de Subcomponentes -->
+    <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-muted/50 border-b border-border text-muted-foreground font-semibold">
+            <tr>
+              <th class="p-3 w-44">Subcomponente</th>
+              <th class="p-3 w-40">Tipo / Base</th>
+              <th class="p-3">Papel & Responsabilidade</th>
+              <th class="p-3 w-48 font-mono">Props Chave</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60">
+            ${data.parts.map(p => `
+              <tr class="hover:bg-muted/40 transition-colors">
+                <td class="p-3 font-mono font-bold text-brand flex items-center gap-1.5">
+                  <span class="h-1.5 w-1.5 rounded-full bg-brand"></span>
+                  &lt;${escapeHTML(p.name)}&gt;
+                </td>
+                <td class="p-3 font-mono text-[11px] text-muted-foreground">
+                  ${escapeHTML(p.type)}
+                </td>
+                <td class="p-3 text-foreground leading-relaxed">
+                  ${escapeHTML(p.role)}
+                </td>
+                <td class="p-3 font-mono text-[11px] text-muted-foreground">
+                  ${escapeHTML(p.props)}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// ==================== REFERÊNCIA DA API (PROPS) ====================
+const componentApiReferences = {
+  'button': [
+    { prop: "variant", type: '"default" | "secondary" | "ghost" | "danger" | "success"', default: '"default"', description: "Estilo visual e intenção semântica do botão." },
+    { prop: "size", type: '"default" | "sm" | "lg" | "icon"', default: '"default"', description: "Dimensões, altura mínima e padding interno." },
+    { prop: "isLoading", type: "boolean", default: "false", description: "Ativa o spinner de carregamento e desativa interações." },
+    { prop: "fullWidth", type: "boolean", default: "false", description: "Ocupa 100% da largura disponível do contêiner." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desativa o elemento e reduz a opacidade para 50%." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Conteúdo, texto ou ícones internos do botão." }
+  ],
+  'button-group': [
+    { prop: "attached", type: "boolean", default: "true", description: "Conecta os botões lado a lado eliminando bordas duplas." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes utilitárias adicionais do Tailwind CSS." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Conjunto de elementos <Button>." }
+  ],
+  'dropdown-menu': [
+    { prop: "align", type: '"start" | "center" | "end"', default: '"start"', description: "Alinhamento horizontal do painel <DropdownMenuContent>." },
+    { prop: "sideOffset", type: "number", default: "4", description: "Distância em pixels entre o gatilho e o painel flutuante." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desativa o item de menu impedindo cliques." },
+    { prop: "onClick", type: "(event: React.MouseEvent) => void", default: "undefined", description: "Callback disparado ao clicar no <DropdownMenuItem>." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Subcomponentes e itens de menu." }
+  ],
+  'context-menu': [
+    { prop: "onClick", type: "(event: React.MouseEvent) => void", default: "undefined", description: "Callback de ação para o <ContextMenuItem>." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes de estilização para o contêiner ou itens." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Itens contextuais e gatilho." }
+  ],
+  'menubar': [
+    { prop: "open", type: "boolean", default: "false", description: "Estado de abertura de cada submenu da barra." },
+    { prop: "align", type: '"start" | "center" | "end"', default: '"start"', description: "Alinhamento do painel suspenso <MenubarContent>." },
+    { prop: "onClick", type: "(event: React.MouseEvent) => void", default: "undefined", description: "Ação executada ao selecionar um item." }
+  ],
+  'navigation-menu': [
+    { prop: "href", type: "string", default: "undefined", description: "Destino do link para <NavigationMenuLink>." },
+    { prop: "open", type: "boolean", default: "false", description: "Estado de abertura do painel mega-menu." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Lista de links e painéis." }
+  ],
+  'dialog': [
+    { prop: "open", type: "boolean", default: "undefined", description: "Estado de abertura em modo controlado." },
+    { prop: "onOpenChange", type: "(open: boolean) => void", default: "undefined", description: "Callback disparado quando o diálogo abre ou fecha." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Estrutura com Header, Title, Description, Content e Footer." }
+  ],
+  'popover': [
+    { prop: "align", type: '"start" | "center" | "end"', default: '"start"', description: "Posicionamento horizontal da caixa flutuante." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Gatilho e conteúdo flutuante." }
+  ],
+  'card': [
+    { prop: "className", type: "string", default: "undefined", description: "Classes Tailwind para ajuste de padding, cor ou sombra." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Subcomponentes Header, Title, Description, Content e Footer." }
+  ],
+  'accordion': [
+    { prop: "defaultValue", type: "string", default: "undefined", description: "Valor do item que inicia expandido." },
+    { prop: "value", type: "string", default: "-", description: "Identificador exclusivo do <AccordionItem>." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Lista de sanfonas e conteúdos." }
+  ],
+  'tabs': [
+    { prop: "defaultValue", type: "string", default: "undefined", description: "Identificador da aba inicialmente ativa." },
+    { prop: "value", type: "string", default: "undefined", description: "Valor da aba ativa em modo controlado." },
+    { prop: "onValueChange", type: "(value: string) => void", default: "undefined", description: "Callback disparado ao alternar a aba." }
+  ],
+  'table': [
+    { prop: "className", type: "string", default: "undefined", description: "Classes para ajuste de largura, scroll e espaçamento." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Estrutura padrão com Thead, Tbody, Tr, Th e Td." }
+  ],
+  'stepper': [
+    { prop: "steps", type: "Array<{ title: string, description?: string }>", default: "[]", description: "Array com as etapas do processo sequencial." },
+    { prop: "currentStep", type: "number", default: "1", description: "Etapa ativa atual (índice 1-based)." },
+    { prop: "onStepClick", type: "(step: number) => void", default: "undefined", description: "Callback disparado ao clicar em uma etapa navegável." }
+  ],
+  'timeline': [
+    { prop: "items", type: "Array<{ title: string, time: string, status: 'completed'|'in-progress'|'pending', description?: string }>", default: "[]", description: "Conjunto de eventos históricos cronológicos." },
+    { prop: "className", type: "string", default: "undefined", description: "Customização da trilha vertical." }
+  ],
+  'tree-view': [
+    { prop: "data", type: "TreeNode[]", default: "[]", description: "Estrutura aninhada com id, label e children recursivos." },
+    { prop: "onSelect", type: "(node: TreeNode) => void", default: "undefined", description: "Callback ao clicar em um nó da árvore." }
+  ],
+  'chart': [
+    { prop: "type", type: '"bar" | "area" | "line" | "donut" | "horizontal-bar"', default: '"bar"', description: "Tipo de visualização gráfica a ser renderizada." },
+    { prop: "data", type: "ChartDataPoint[]", default: "[]", description: "Array de pontos contendo label, value, target opcional e color." },
+    { prop: "title", type: "string", default: '""', description: "Título do cabeçalho do gráfico corporativo." },
+    { prop: "description", type: "string", default: '""', description: "Subtítulo de apoio contextual." },
+    { prop: "color", type: "string", default: '"#753399"', description: "Cor primária aplicada às barras, linhas ou preenchimentos." },
+    { prop: "height", type: "number", default: "180", description: "Altura do contêiner de renderização gráfica em pixels." },
+    { prop: "showLegend", type: "boolean", default: "true", description: "Exibe a legenda lateral detalhada com percentuais." },
+    { prop: "showGrid", type: "boolean", default: "true", description: "Exibe linhas pontilhadas de grade no fundo (modo área/linha)." }
+  ],
+  'calendar': [
+    { prop: "selectedDate", type: "Date", default: "new Date()", description: "Data selecionada no calendário." },
+    { prop: "onSelectDate", type: "(date: Date) => void", default: "undefined", description: "Callback disparado ao selecionar um dia." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes de contorno e dimensões." }
+  ],
+  'input': [
+    { prop: "icon", type: "LucideIcon", default: "undefined", description: "Ícone decorativo posicionado à esquerda." },
+    { prop: "clearable", type: "boolean", default: "false", description: "Exibe botão X para limpar o texto digitado." },
+    { prop: "onClear", type: "() => void", default: "undefined", description: "Callback chamado ao limpar o campo." },
+    { prop: "error", type: "string", default: "undefined", description: "Mensagem de erro de validação em vermelho." },
+    { prop: "type", type: "string", default: '"text"', description: "Tipo HTML do input (text, password, email, etc.)." }
+  ],
+  'textarea': [
+    { prop: "maxLength", type: "number", default: "undefined", description: "Limite numérico de caracteres." },
+    { prop: "showCount", type: "boolean", default: "false", description: "Exibe contador de caracteres no rodapé." },
+    { prop: "placeholder", type: "string", default: '""', description: "Texto provisório auxiliar." }
+  ],
+  'checkbox': [
+    { prop: "label", type: "string", default: '""', description: "Texto do rótulo ao lado do seletor." },
+    { prop: "description", type: "string", default: "undefined", description: "Texto de apoio abaixo do rótulo." },
+    { prop: "checked", type: "boolean", default: "undefined", description: "Estado booleano marcado/desmarcado." },
+    { prop: "onChange", type: "(e: React.ChangeEvent<HTMLInputElement>) => void", default: "undefined", description: "Evento de alteração." }
+  ],
+  'switch': [
+    { prop: "checked", type: "boolean", default: "undefined", description: "Estado ativo/inativo do interruptor." },
+    { prop: "onCheckedChange", type: "(checked: boolean) => void", default: "undefined", description: "Callback disparado na alternância." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desativa interações com o switch." }
+  ],
+  'select': [
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo superior do seletor." },
+    { prop: "error", type: "string", default: "undefined", description: "Texto de validação em caso de erro." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Elementos <option>." }
+  ],
+  'radio-group': [
+    { prop: "value", type: "string", default: "undefined", description: "Valor do item de rádio atualmente selecionado (modo controlado)." },
+    { prop: "defaultValue", type: "string", default: "undefined", description: "Valor inicial selecionado (modo não controlado)." },
+    { prop: "onValueChange", type: "(value: string) => void", default: "undefined", description: "Callback disparado quando uma nova opção é selecionada." },
+    { prop: "name", type: "string", default: "undefined", description: "Nome do grupo de formulário para envio nativo." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desativa todo o grupo de rádio." }
+  ],
+  'slider': [
+    { prop: "value", type: "number", default: "undefined", description: "Valor numérico atual do slider (modo controlado)." },
+    { prop: "defaultValue", type: "number", default: "0", description: "Valor inicial não controlado." },
+    { prop: "min", type: "number", default: "0", description: "Valor mínimo da escala do slider." },
+    { prop: "max", type: "number", default: "100", description: "Valor máximo da escala do slider." },
+    { prop: "step", type: "number", default: "1", description: "Intervalo de incremento ao arrastar." },
+    { prop: "showValue", type: "boolean", default: "true", description: "Exibe badge centralizada com o valor atual." },
+    { prop: "valuePrefix", type: "string", default: '""', description: "Prefixo exibido junto ao valor (ex: 'R$ ')." },
+    { prop: "valueSuffix", type: "string", default: '""', description: "Sufixo exibido junto ao valor (ex: ' %', ' kg')." },
+    { prop: "onValueChange", type: "(value: number) => void", default: "undefined", description: "Callback disparado em tempo real ao mover o slider." }
+  ],
+  'date-picker': [
+    { prop: "value", type: "Date | null", default: "undefined", description: "Data selecionada em modo controlado." },
+    { prop: "defaultValue", type: "Date | null", default: "null", description: "Data inicial não controlada." },
+    { prop: "onValueChange", type: "(date: Date | null) => void", default: "undefined", description: "Callback disparado ao escolher ou limpar a data." },
+    { prop: "placeholder", type: "string", default: '"Selecione uma data..."', description: "Texto exibido quando nenhuma data foi selecionada." },
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo superior do campo." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desabilita a interação com o date picker." }
+  ],
+  'lookup': [
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo superior do campo de consulta." },
+    { prop: "title", type: "string", default: '"Buscar Registro Corporativo"', description: "Título do diálogo modal de pesquisa." },
+    { prop: "placeholder", type: "string", default: '"Clique para buscar..."', description: "Texto indicativo no botão do campo." },
+    { prop: "items", type: "LookupItem[]", default: "[]", description: "Lista de registros corporativos com id, code, label e subtitle." },
+    { prop: "value", type: "LookupItem | null", default: "undefined", description: "Registro atualmente selecionado." },
+    { prop: "onSelect", type: "(item: LookupItem | null) => void", default: "undefined", description: "Callback executado ao confirmar a seleção." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desativa o campo e impede abertura do modal." }
+  ],
+  'combo': [
+    { prop: "options", type: "ComboboxOption[]", default: "[]", description: "Lista de opções pesquisáveis com value, label e hint opcional." },
+    { prop: "value", type: "string", default: "undefined", description: "Valor do item selecionado." },
+    { prop: "onValueChange", type: "(value: string) => void", default: "undefined", description: "Callback disparado ao escolher uma opção." },
+    { prop: "placeholder", type: "string", default: '"Selecione uma opção..."', description: "Placeholder do botão do dropdown." },
+    { prop: "searchPlaceholder", type: "string", default: '"Buscar na lista..."', description: "Placeholder da caixa de busca interna." },
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo superior do combobox." }
+  ],
+  'multiselect': [
+    { prop: "options", type: "MultiSelectOption[]", default: "[]", description: "Lista de opções disponíveis para múltipla escolha." },
+    { prop: "selected", type: "string[]", default: "[]", description: "Array com os valores dos itens selecionados." },
+    { prop: "onSelectedChange", type: "(values: string[]) => void", default: "undefined", description: "Callback disparado ao adicionar ou remover itens." },
+    { prop: "placeholder", type: "string", default: '"Selecione múltiplos itens..."', description: "Texto exibido quando nenhum item está marcado." },
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo superior do seletor." }
+  ],
+  'badge': [
+    { prop: "variant", type: '"default" | "secondary" | "success" | "warning" | "destructive" | "outline" | "brand" | "ghost"', default: '"default"', description: "Tonalidade semântica e cor de fundo do badge." },
+    { prop: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "Tamanho e padding do badge." },
+    { prop: "dot", type: "boolean", default: "false", description: "Exibe ponto luminoso indicador de status no canto esquerdo." },
+    { prop: "dotColor", type: "string", default: "undefined", description: "Classe de cor Tailwind para o ponto (ex: 'bg-emerald-500')." },
+    { prop: "removable", type: "boolean", default: "false", description: "Exibe botão 'x' para remoção da tag." },
+    { prop: "onRemove", type: "(e: React.MouseEvent) => void", default: "undefined", description: "Callback disparado ao clicar no botão de remoção." }
+  ],
+  'alert': [
+    { prop: "variant", type: '"default" | "brand" | "success" | "warning" | "destructive" | "info"', default: '"default"', description: "Nível de severidade e esquema de cores do alerta." },
+    { prop: "icon", type: "React.ReactNode", default: "undefined", description: "Ícone customizado. Se omitido, utiliza o ícone automático da variante." },
+    { prop: "dismissable", type: "boolean", default: "false", description: "Exibe botão de fechar no canto superior direito." },
+    { prop: "onClose", type: "() => void", default: "undefined", description: "Callback disparado ao fechar o alerta." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Subcomponentes AlertTitle, AlertDescription e ações." }
+  ],
+  'toast': [
+    { prop: "title", type: "string", default: '""', description: "Título de destaque da notificação temporária." },
+    { prop: "description", type: "string", default: '""', description: "Texto de apoio ou detalhes da ação executada." },
+    { prop: "variant", type: '"default" | "success" | "destructive" | "warning" | "info"', default: '"default"', description: "Estilo visual e ícone temático do toast." },
+    { prop: "duration", type: "number", default: "4000", description: "Tempo em milissegundos antes do fechamento automático." },
+    { prop: "action", type: "{ label: string, onClick: () => void }", default: "undefined", description: "Botão de ação interativa (ex: 'Desfazer')." }
+  ],
+  'progress': [
+    { prop: "value", type: "number", default: "0", description: "Valor numérico atual da barra de progresso." },
+    { prop: "max", type: "number", default: "100", description: "Valor máximo de referência da escala (100%)." },
+    { prop: "variant", type: '"default" | "success" | "warning" | "destructive" | "info"', default: '"default"', description: "Cor da barra de preenchimento." },
+    { prop: "size", type: '"xs" | "sm" | "default" | "lg" | "xl"', default: '"default"', description: "Espessura/altura vertical da barra." },
+    { prop: "indeterminate", type: "boolean", default: "false", description: "Ativa animação contínua em loop para carregamento indeterminado." },
+    { prop: "showValue", type: "boolean", default: "false", description: "Exibe percentual formatado ao lado do rótulo." },
+    { prop: "label", type: "string", default: "undefined", description: "Rótulo descritivo superior do progresso." }
+  ],
+  'skeleton': [
+    { prop: "shape", type: '"rectangle" | "circle" | "rounded"', default: '"rounded"', description: "Formato geométrico do bloco em pulso." },
+    { prop: "className", type: "string", default: "undefined", description: "Dimensões personalizadas via Tailwind (ex: 'h-4 w-full')." }
+  ],
+  'avatar': [
+    { prop: "src", type: "string", default: "undefined", description: "URL da imagem de perfil." },
+    { prop: "fallback", type: "string", default: '""', description: "Iniciais de texto para fallback de imagem quebrada." },
+    { prop: "status", type: '"online" | "offline" | "busy"', default: "undefined", description: "Indicador de status colorido no canto." },
+    { prop: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "Tamanho do círculo do avatar." }
+  ],
+  'breadcrumb': [
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Links intermediários e página atual." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes para alinhamento e espaçamento." }
+  ],
+  'statistic': [
+    { prop: "title", type: "string", default: '""', description: "Rótulo da métrica ou KPI." },
+    { prop: "value", type: "string | number", default: '""', description: "Número ou quantia em destaque." },
+    { prop: "trend", type: "number", default: "undefined", description: "Percentual numérico de tendência." },
+    { prop: "trendLabel", type: "string", default: '""', description: "Texto descritivo do comparativo." },
+    { prop: "icon", type: "React.ReactNode", default: "undefined", description: "Ícone temático exibido no card." }
+  ],
+  'page-header': [
+    { prop: "title", type: "string", default: '""', description: "Título principal da página corporativa." },
+    { prop: "description", type: "string", default: '""', description: "Descrição ou subtítulo de apoio." },
+    { prop: "breadcrumbs", type: "React.ReactNode", default: "undefined", description: "Trilha de navegação superior." },
+    { prop: "badge", type: "React.ReactNode", default: "undefined", description: "Tag de status ou homologação." },
+    { prop: "actions", type: "React.ReactNode", default: "undefined", description: "Botões de ação no cabeçalho." }
+  ],
+  'navbar': [
+    { prop: "brand", type: "React.ReactNode", default: "undefined", description: "Elemento de marca e logo no canto esquerdo." },
+    { prop: "links", type: "Array<{ label: string, href?: string, active?: boolean, onClick?: () => void }>", default: "[]", description: "Links de navegação exibidos no desktop." },
+    { prop: "actions", type: "React.ReactNode", default: "undefined", description: "Botões de ação rápida à direita (ex: Novo, Notificações)." },
+    { prop: "user", type: "{ name: string, role?: string, fallback?: string, onProfileClick?: () => void }", default: "undefined", description: "Dados do perfil do usuário logado com avatar." },
+    { prop: "searchPlaceholder", type: "string", default: '"Buscar no sistema..."', description: "Texto do atalho de busca." },
+    { prop: "onSearchClick", type: "() => void", default: "undefined", description: "Callback ao clicar na caixa de busca ou atalho ⌘K." }
+  ],
+  'sidebar': [
+    { prop: "defaultCollapsed", type: "boolean", default: "false", description: "Define se o painel inicia recolhido no SidebarProvider." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Subcomponentes estruturais (Header, Content, Group, Item, Footer)." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes de largura ou tema adicional." }
+  ],
+  'field': [
+    { prop: "error", type: "boolean", default: "false", description: "Ativa o estado de validação de erro em vermelho nos filhos." },
+    { prop: "disabled", type: "boolean", default: "false", description: "Desabilita a interação com o conjunto do campo." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Composição de Label, Input/Control, Description e Error." }
+  ],
+  'form': [
+    { prop: "onSubmit", type: "(e: React.FormEvent) => void", default: "undefined", description: "Handler disparado ao submeter o formulário." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Seções, linhas e controles do formulário." }
+  ],
+  'marker': [
+    { prop: "variant", type: '"brand" | "success" | "warning" | "destructive" | "info"', default: '"brand"', description: "Cor semântica do marcador e do pulso de radar." },
+    { prop: "label", type: "React.ReactNode", default: "undefined", description: "Conteúdo central (número, letra ou mini-ícone)." },
+    { prop: "tooltip", type: "React.ReactNode", default: "undefined", description: "Card flutuante aberto ao passar o mouse." },
+    { prop: "pulse", type: "boolean", default: "true", description: "Ativa animação de onda radar (ping) em torno do ponto." },
+    { prop: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "Dimensão do marcador circular." }
+  ],
+  'pagination': [
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Subcomponentes (Content, Item, Link, Previous, Next, Ellipsis)." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes para centralização e alinhamento." }
+  ],
+  'loading': [
+    { prop: "variant", type: '"spinner" | "dots" | "pulse" | "bars" | "overlay"', default: '"spinner"', description: "Estilo visual da animação de carregamento." },
+    { prop: "size", type: '"xs" | "sm" | "default" | "lg" | "xl"', default: '"default"', description: "Tamanho do elemento visual indicador." },
+    { prop: "text", type: "string", default: "undefined", description: "Texto ou rótulo contextual exibido ao lado ou abaixo." },
+    { prop: "fullscreen", type: "boolean", default: "false", description: "Ativa camada modal fixa em tela cheia com backdrop blur." },
+    { prop: "className", type: "string", default: "undefined", description: "Classes CSS customizadas adicionais." }
+  ]
+};
+
+function renderComponentApiReference(name) {
+  const container = document.getElementById('apiPropsContainer');
+  const countBadge = document.getElementById('apiPropsCountBadge');
+  if (!container) return;
+
+  const propsList = componentApiReferences[name] || [
+    { prop: "className", type: "string", default: "undefined", description: "Classes adicionais para estilização via Tailwind CSS." },
+    { prop: "children", type: "React.ReactNode", default: "-", description: "Elementos filhos e conteúdo interno." }
+  ];
+
+  if (countBadge) {
+    countBadge.textContent = `${propsList.length} ${propsList.length === 1 ? 'Propriedade' : 'Propriedades'}`;
+  }
+
+  container.innerHTML = `
+    <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-muted/50 border-b border-border text-muted-foreground font-semibold">
+            <tr>
+              <th class="p-3 w-40 font-mono">Propriedade</th>
+              <th class="p-3 w-64 font-mono">Tipo TypeScript</th>
+              <th class="p-3 w-28 font-mono">Padrão</th>
+              <th class="p-3">Descrição & Comportamento</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60">
+            ${propsList.map(p => `
+              <tr class="hover:bg-muted/40 transition-colors">
+                <td class="p-3 font-mono font-bold text-brand flex items-center gap-1.5">
+                  <span class="h-1.5 w-1.5 rounded-full bg-brand"></span>
+                  ${escapeHTML(p.prop)}
+                </td>
+                <td class="p-3 font-mono text-[11px] text-[#79c0ff] dark:text-[#a5d6ff]">
+                  ${escapeHTML(p.type)}
+                </td>
+                <td class="p-3 font-mono text-[11px] text-muted-foreground">
+                  ${escapeHTML(p.default)}
+                </td>
+                <td class="p-3 text-foreground leading-relaxed">
+                  ${escapeHTML(p.description)}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// ==================== SIDEBAR ====================
+function renderSidebar() {
+  const container = document.getElementById('sidebarContent');
+  if (!container) return;
+
+  let html = `
+    <div class="flex flex-col gap-1">
+      <h4 class="px-2 text-xs font-bold uppercase tracking-wider text-muted-foreground font-heading">Começando</h4>
+      <a href="#/inicio" class="flex items-center rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">Introdução</a>
+      <a href="#/docs/instalacao" class="flex items-center rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">Instalação CLI</a>
+      <a href="#/docs/tailwind" class="flex items-center rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">Tailwind Config</a>
+      <a href="#/docs/storybook" class="flex items-center rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground">Storybook</a>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center justify-between px-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-[#753399] dark:text-purple-300 font-heading">Templates</h4>
+        <span class="rounded bg-[#753399]/15 px-1.5 py-0.2 text-[9px] font-bold text-[#753399] dark:text-purple-300">3 Prontos</span>
+      </div>
+      <a href="#/templates/login" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="login">
+        <span class="flex items-center gap-1.5">🔐 Login & Auth</span>
+      </a>
+      <a href="#/templates/home" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="home">
+        <span class="flex items-center gap-1.5">🌐 Landing Page</span>
+      </a>
+      <a href="#/templates/dashboard" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="dashboard">
+        <span class="flex items-center gap-1.5">📊 Dashboard SaaS</span>
+      </a>
+    </div>
+  `;
+
+  Object.entries(groups).forEach(([groupName, items]) => {
+    html += `
+      <div class="flex flex-col gap-1">
+        <h4 class="px-2 text-xs font-bold uppercase tracking-wider text-muted-foreground font-heading">${groupName}</h4>
+        ${items.map(name => `
+          <button onclick="openComponentDocs('${name}')" data-component="${name}" class="sidebar-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground text-left">
+            <span>${formatTitle(name)}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// ==================== GRID DE COMPONENTES NA HOME ====================
+function renderCategoryFilter() {
+  const container = document.getElementById('categoryFilter');
+  if (!container) return;
+
+  const categories = ['Todos', ...Object.keys(groups)];
+  container.innerHTML = categories.map(cat => `
+    <button onclick="setFilter('${cat}')" class="rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+      state.filter === cat
+        ? 'bg-brand text-white shadow-sm'
+        : 'border border-input bg-background text-muted-foreground hover:bg-accent hover:text-foreground'
+    }">
+      ${cat}
     </button>
   `).join('');
 }
 
-function renderGrid() {
-  const query = state.query.trim().toLowerCase();
-  const list = components.filter(item =>
-    (state.filter === 'Todos' || item.category === state.filter) &&
-    (!query || `${item.name} ${item.description} ${item.category}`.toLowerCase().includes(query))
-  );
-
-  grid.innerHTML = list.map((item, index) => `
-    <article class="component-card" data-component="${item.name}" tabindex="0" style="animation-delay:${Math.min(index * 15, 300)}ms">
-      <span class="card-icon">${icon(icons[item.category] || 'box')}</span>
-      <h3>${item.name}</h3>
-      <p>${item.description}</p>
-      <small>${item.category}</small>
-    </article>
-  `).join('');
-
-  $('#emptyState').hidden = list.length > 0;
-  refreshIcons();
+function setFilter(cat) {
+  state.filter = cat;
+  renderCategoryFilter();
+  renderComponentsGrid();
 }
 
-function showHome(scrollToCatalog = false) {
-  state.current = null;
-  $('#homeView').hidden = false;
-  $('#detailView').hidden = true;
-  $$('.nav-item').forEach(item => item.classList.remove('active'));
-  history.replaceState({}, '', '#/inicio');
-  if (scrollToCatalog) {
-    setTimeout(() => $('#catalog').scrollIntoView({ behavior: 'smooth' }), 20);
-  } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  refreshIcons();
-}
+function renderComponentsGrid() {
+  const container = document.getElementById('componentsGrid');
+  if (!container) return;
 
-function openComponent(name) {
-  const component = components.find(item => item.name === name);
-  if (!component) return;
-
-  state.current = component;
-  $('#homeView').hidden = true;
-  $('#detailView').hidden = false;
-  $('#detailCategory').textContent = component.category;
-  $('#detailTitle').textContent = component.name;
-  $('#detailDescription').textContent = component.description;
-
-  $('#componentPreview').innerHTML = createPreview(name);
-  state.codeLanguage = 'html';
-  updateCodeView();
-
-  $$('.code-languages button').forEach(button => {
-    const active = button.dataset.language === 'html';
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-selected', active);
+  let allComponents = [];
+  Object.entries(groups).forEach(([category, items]) => {
+    items.forEach(name => {
+      if (state.filter === 'Todos' || state.filter === category) {
+        allComponents.push({ name, category });
+      }
+    });
   });
 
-  $$('.nav-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.component === name);
-  });
-
-  $$('.detail-tabs button').forEach((tab, index) => {
-    tab.classList.toggle('active', index === 0);
-    tab.setAttribute('aria-selected', index === 0);
-  });
-
-  $$('.tab-panel').forEach((panel, index) => {
-    panel.classList.toggle('active', index === 0);
-  });
-
-  history.replaceState({}, '', `#/componente/${name}`);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  bindPreviewEvents(name);
-  refreshIcons();
-}
-
-function field(label, input, helper = '', required = false) {
-  return `
-    <label class="po-field">
-      <span class="${required ? 'required' : ''}">${label}</span>
-      ${input}
-      ${helper ? `<small>${helper}</small>` : ''}
-    </label>
-  `;
-}
-
-function wrap(content, title = 'Exemplo Interativo') {
-  return `<div class="showcase"><h3 class="showcase-title">${title}</h3>${content}</div>`;
-}
-
-function calendarHTML() {
-  const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
-  return `
-    <div class="po-calendar">
-      <div class="calendar-head">
-        <button class="icon-button" style="width:28px;height:28px">‹</button>
-        <span>Agosto 2026</span>
-        <button class="icon-button" style="width:28px;height:28px">›</button>
+  container.innerHTML = allComponents.map(item => `
+    <div onclick="openComponentDocs('${item.name}')" class="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:border-brand/50 hover:shadow-md cursor-pointer">
+      <div>
+        <div class="flex items-center justify-between">
+          <span class="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">${item.category}</span>
+          <i data-lucide="arrow-up-right" class="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-hover:text-brand"></i>
+        </div>
+        <h3 class="mt-3 font-heading text-base font-bold text-foreground group-hover:text-brand transition-colors">${formatTitle(item.name)}</h3>
+        <p class="mt-1 line-clamp-2 text-xs text-muted-foreground">${descriptions[item.name] || 'Componente corporativo de alto nível com Tailwind e Radix.'}</p>
       </div>
-      <div class="calendar-grid">
-        ${days.map(d => `<span class="day-name">${d}</span>`).join('')}
-        ${Array.from({ length: 35 }, (_, i) => `
-          <span class="${i === 29 ? 'today' : ''}">${i < 5 ? '' : i - 4}</span>
-        `).join('')}
+      <div class="mt-4 flex items-center justify-between border-t border-border/50 pt-3 text-[11px] font-mono text-muted-foreground">
+        <span>ui/${item.name}.tsx</span>
+        <span class="text-brand font-semibold">Ver docs →</span>
       </div>
     </div>
-  `;
+  `).join('');
+
+  if (window.lucide) window.lucide.createIcons();
 }
 
-function createPreview(name) {
-  // Previews customizados para cada componente
-  const previews = {
-    // 1. AÇÕES & MENUS
-    'po-button': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Button Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Button Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <div class="showcase-row" style="margin-bottom:12px">
-            <button class="po-button primary" data-toast="Ação primária disparada!"><i data-lucide="check"></i> Primário (Primary)</button>
-            <button class="po-button" data-toast="Ação secundária disparada!">Secundário (Default)</button>
-            <button class="po-button ghost" data-toast="Ação terciária disparada!">Terciário (Ghost)</button>
-            <button class="po-button danger" data-toast="Ação de exclusão disparada!"><i data-lucide="trash-2"></i> Perigo (Danger)</button>
-            <button class="po-button success" data-toast="Registro aprovado com sucesso!"><i data-lucide="shield-check"></i> Sucesso (Success)</button>
-            <button class="po-button" disabled><i data-lucide="lock"></i> Desabilitado</button>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button sm primary"><i data-lucide="plus"></i> Pequeno (SM)</button>
-            <button class="po-button primary"><i data-lucide="save"></i> Médio (MD)</button>
-            <button class="po-button lg primary"><i data-lucide="sparkles"></i> Grande (LG)</button>
-            <button class="po-button is-loading primary">Carregando...</button>
-            <button class="po-button icon-only primary" title="Download"><i data-lucide="download"></i></button>
-          </div>
-        </div>
+// ==================== 1. EXEMPLOS INTERATIVOS REAIS ====================
+function renderComponentPreview(name) {
+  const stage = document.getElementById('docPreviewStage');
+  if (!stage) return;
 
-        <!-- Sample 2: PO Button Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Button Labs (Laboratório Interativo)</h4>
-            <span class="po-tag brand">Interativo</span>
-          </div>
-          
-          <div style="display:grid;place-items:center;padding:28px 20px;background:var(--surface-2);border-radius:6px;border:1px dashed var(--line);margin-bottom:18px">
-            <button id="labsButtonTarget" class="po-button primary" data-toast="Botão do laboratório clicado!">
-              <i id="labsButtonIcon" data-lucide="check"></i>
-              <span id="labsButtonLabel">PO Button Labs</span>
+  switch (name) {
+    case 'button':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <button onclick="showToast('Ação Primária executada!')" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-md bg-brand px-5 py-2 text-[13px] font-semibold text-white shadow hover:bg-brand-hover active:scale-[0.99] transition-all">
+              <i data-lucide="check" class="h-4 w-4"></i> Primário
+            </button>
+            <button onclick="showToast('Ação Secundária!')" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-md border border-input bg-background px-5 py-2 text-[13px] font-semibold text-foreground shadow-sm hover:border-brand hover:text-brand active:scale-[0.99] transition-all">
+              Secundário
+            </button>
+            <button onclick="showToast('Ação Ghost!')" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-md bg-transparent px-5 py-2 text-[13px] font-semibold text-brand hover:bg-brand/10 active:scale-[0.99] transition-all">
+              Ghost
+            </button>
+            <button onclick="showToast('Registro excluído!')" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-md bg-destructive px-5 py-2 text-[13px] font-semibold text-white shadow hover:bg-destructive/90 active:scale-[0.99] transition-all">
+              <i data-lucide="trash-2" class="h-4 w-4"></i> Danger
+            </button>
+            <button onclick="simulateLoading(this)" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-md bg-emerald-600 px-5 py-2 text-[13px] font-semibold text-white shadow hover:bg-emerald-700 active:scale-[0.99] transition-all">
+              <i data-lucide="loader-2" class="h-4 w-4 hidden animate-spin"></i>
+              <span>Clique p/ Loading</span>
             </button>
           </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;padding-top:10px;border-top:1px solid var(--line)">
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Texto do Botão (Label)</label>
-              <input class="po-control" id="labsInputLabel" value="PO Button Labs" placeholder="Digite o texto...">
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Tipo (Kind)</label>
-              <div style="display:flex;gap:12px;margin-top:6px">
-                <label class="po-radio"><input type="radio" name="labsKind" value="primary" checked> Primário</label>
-                <label class="po-radio"><input type="radio" name="labsKind" value="secondary"> Secundário</label>
-                <label class="po-radio"><input type="radio" name="labsKind" value="tertiary"> Terciário</label>
-              </div>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Tamanho (Size)</label>
-              <div style="display:flex;gap:12px;margin-top:6px">
-                <label class="po-radio"><input type="radio" name="labsSize" value="sm"> Small</label>
-                <label class="po-radio"><input type="radio" name="labsSize" value="md" checked> Medium</label>
-                <label class="po-radio"><input type="radio" name="labsSize" value="lg"> Large</label>
-              </div>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Propriedades / Estados</label>
-              <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap">
-                <label class="po-checkbox"><input type="checkbox" id="labsPropDanger"> Danger</label>
-                <label class="po-checkbox"><input type="checkbox" id="labsPropLoading"> Loading</label>
-                <label class="po-checkbox"><input type="checkbox" id="labsPropDisabled"> Disabled</label>
-              </div>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Ícone</label>
-              <select class="po-control" id="labsSelectIcon">
-                <option value="check">Check (Confirmar)</option>
-                <option value="plus">Plus (Adicionar)</option>
-                <option value="search">Search (Buscar)</option>
-                <option value="trash-2">Trash (Excluir)</option>
-                <option value="download">Download (Baixar)</option>
-                <option value="send">Send (Enviar)</option>
-                <option value="none">Nenhum</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-top:16px;text-align:right">
-            <button class="po-button sm ghost" id="labsRestoreBtn"><i data-lucide="rotate-ccw"></i> Restaurar Padrões</button>
-          </div>
+          <p class="text-[11px] text-muted-foreground">Clique nos botões acima para disparar eventos reais e animações.</p>
         </div>
+      `;
+      break;
 
-        <!-- Sample 3: PO Button Social Network -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">3. PO Button Social Network</h4>
-            <span class="po-tag">Amostra Real</span>
+    case 'button-group':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center gap-3">
+          <div class="inline-flex rounded-lg border border-border bg-background p-1 shadow-sm">
+            <button onclick="toggleGroupItem(this)" class="group-btn rounded-md bg-brand px-4 py-1.5 text-xs font-bold text-white transition-all">Dia</button>
+            <button onclick="toggleGroupItem(this)" class="group-btn rounded-md px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">Semana</button>
+            <button onclick="toggleGroupItem(this)" class="group-btn rounded-md px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">Mês</button>
+            <button onclick="toggleGroupItem(this)" class="group-btn rounded-md px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">Ano</button>
           </div>
+          <span class="text-xs text-muted-foreground">Filtro de período agrupado</span>
+        </div>
+      `;
+      break;
 
-          <div class="po-widget" style="max-width:520px;margin:auto">
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-              <span class="po-avatar lg" style="background:#753399;font-size:18px">RS</span>
-              <div>
-                <b style="font-size:16px;color:var(--ink);display:block">Rodrigo Silva</b>
-                <span style="font-size:12px;color:var(--muted)">14 amigos em comum · São Paulo/SP</span>
-              </div>
+    case 'input':
+      stage.innerHTML = `
+        <div class="w-full max-w-sm mx-auto space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-foreground">Razão Social / Nome</label>
+            <div class="relative flex items-center">
+              <input id="demoInputClear" class="flex min-h-[40px] w-full rounded-md border border-input bg-background px-3.5 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 pr-10" value="Monta UI Enterprise Tecnologia" placeholder="Digite o nome...">
+              <button onclick="clearDemoInput()" class="absolute right-3 text-muted-foreground hover:text-foreground"><i data-lucide="x" class="h-4 w-4"></i></button>
             </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="po-button sm primary" data-toast="Solicitação de amizade aceita!"><i data-lucide="check-circle"></i> Confirmar</button>
-              <button class="po-button sm" data-toast="Solicitação ignorada."><i data-lucide="eye-off"></i> Ignorar</button>
-              <button class="po-button sm danger ghost" data-toast="Usuário bloqueado com sucesso."><i data-lucide="ban"></i> Bloquear</button>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-foreground">Senha Corporativa</label>
+            <div class="relative flex items-center">
+              <input id="demoPassInput" type="password" value="MontaUI#2026" class="flex min-h-[40px] w-full rounded-md border border-input bg-background px-3.5 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 pr-10">
+              <button onclick="togglePassVisibility()" class="absolute right-3 text-muted-foreground hover:text-foreground"><i id="demoPassIcon" data-lucide="eye" class="h-4 w-4"></i></button>
             </div>
           </div>
         </div>
-      </div>
-    `, 'PO Button: Basic, Labs e Social Network'),
+      `;
+      break;
 
-    'po-button-group': wrap(`
-      <div class="showcase-stack">
-        <div>
-          <h4 style="margin:0 0 10px;font-size:13px;color:var(--muted)">Seleção de Período</h4>
-          <div class="po-button-group">
-            <button class="po-button active">Hoje</button>
-            <button class="po-button">Últimos 7 dias</button>
-            <button class="po-button">Mensal</button>
-            <button class="po-button">Anual</button>
-          </div>
-        </div>
-
-        <div>
-          <h4 style="margin:0 0 10px;font-size:13px;color:var(--muted)">Alternador de Visualização</h4>
-          <div class="po-button-group">
-            <button class="po-button active"><i data-lucide="layout-grid"></i> Grade</button>
-            <button class="po-button"><i data-lucide="list"></i> Lista</button>
-            <button class="po-button"><i data-lucide="table"></i> Tabela</button>
-          </div>
-        </div>
-      </div>
-    `, 'Grupo de Botões (Button Group)'),
-
-    'po-dropdown': wrap(`
-      <div class="showcase-stack">
-        <div class="dropdown-wrap">
-          <button class="po-button primary" data-dropdown>
-            <span>Gerenciar Registro</span>
-            <i data-lucide="chevron-down"></i>
+    case 'dialog':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-4">
+          <button onclick="openDemoModal()" class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand px-5 text-sm font-semibold text-white shadow hover:bg-brand-hover">
+            <i data-lucide="external-link" class="h-4 w-4"></i> Abrir Modal Interativo
           </button>
-          <div class="po-dropdown-menu" hidden>
-            <div class="po-dropdown-header">Ações Principais</div>
-            <button data-toast="Editando registro..."><i data-lucide="pencil"></i> Editar Dados <kbd>Ctrl+E</kbd></button>
-            <button data-toast="Duplicando registro..."><i data-lucide="copy"></i> Duplicar <kbd>Ctrl+D</kbd></button>
-            <button data-toast="Relatório gerado!"><i data-lucide="file-text"></i> Exportar Relatório PDF</button>
-            <div class="po-dropdown-divider"></div>
-            <div class="po-dropdown-header">Zona Crítica</div>
-            <button class="danger" data-toast="Registro transferido para a lixeira!"><i data-lucide="trash-2"></i> Excluir Definitivamente</button>
-          </div>
-        </div>
-      </div>
-    `, 'Menu Dropdown com Atalhos e Divisores'),
 
-    'po-context-menu': wrap(`
-      <div class="showcase-stack">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--surface-2);border-radius:var(--radius);border:1px solid var(--line)">
-          <div style="display:flex;align-items:center;gap:12px">
-            <span class="po-avatar sm">CA</span>
-            <div>
-              <b style="color:var(--ink)">Contrato de Prestação de Serviços #849</b>
-              <div style="font-size:11px;color:var(--muted)">Atualizado há 15 minutos por Marina Almeida</div>
-            </div>
-          </div>
-          <div class="dropdown-wrap">
-            <button class="po-button icon-only ghost sm" data-dropdown aria-label="Menu do item"><i data-lucide="more-vertical"></i></button>
-            <div class="po-dropdown-menu" hidden style="right:0;left:auto">
-              <button data-toast="Abrindo visualizador..."><i data-lucide="eye"></i> Visualizar Detalhes</button>
-              <button data-toast="Link de compartilhamento copiado!"><i data-lucide="share-2"></i> Compartilhar Link</button>
-              <button data-toast="Download iniciado..."><i data-lucide="download"></i> Baixar Anexo</button>
-              <div class="po-dropdown-divider"></div>
-              <button class="danger" data-toast="Item revogado!"><i data-lucide="shield-x"></i> Revogar Permissões</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `, 'Menu Contextual em Linha de Registro'),
-
-    'po-link': wrap(`
-      <div class="showcase-stack">
-        <p>Utilize links PO UI para navegar entre páginas ou para referências externas com transição suave:</p>
-        <div class="showcase-row">
-          <a href="#/componente/po-table" class="po-link"><i data-lucide="arrow-right"></i> Ir para a Tabela de Dados</a>
-          <a href="https://po-ui.io/documentation" target="_blank" class="po-link">Documentação Oficial TOTVS <i data-lucide="external-link"></i></a>
-        </div>
-      </div>
-    `, 'Hiperlinks Estilizados (PO Link)'),
-
-    'po-popup': wrap(`
-      <div class="dropdown-wrap">
-        <button class="po-button" data-dropdown>
-          <i data-lucide="layers"></i>
-          <span>Exibir Painel Rápido</span>
-        </button>
-        <div class="po-dropdown-menu" hidden style="min-width:260px;padding:16px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:700;color:var(--brand)">
-            <i data-lucide="info"></i>
-            <span>Painel de Informações</span>
-          </div>
-          <p style="margin:0 0 12px;font-size:12px;color:var(--muted);line-height:1.5">
-            Você tem <b>3 notificações prioritárias</b> pendentes de aprovação na fila fiscal.
-          </p>
-          <button class="po-button sm primary" style="width:100%" data-toast="Navegando para fila fiscal...">Verificar Pendências</button>
-        </div>
-      </div>
-    `, 'Popup Flutuante Ancorado'),
-
-    'po-popover': wrap(`
-      <div class="popover-wrap">
-        <button class="po-button ghost" data-popover>
-          <i data-lucide="help-circle"></i>
-          <span>Como funciona a conciliação?</span>
-        </button>
-        <div class="po-popover" hidden>
-          <div class="po-popover-title">
-            <i data-lucide="badge-percent" style="color:var(--brand)"></i>
-            <span>Regras de Conciliação</span>
-          </div>
-          <div class="po-popover-body">
-            A conciliação bancária é processada automaticamente às 00:00 de cada dia útil, validando extratos OFX e webhooks.
-          </div>
-          <div class="po-popover-actions">
-            <button class="po-button sm ghost" data-popover-close>Fechar</button>
-            <button class="po-button sm primary" data-toast="Abrindo manual de regras...">Ver Manual</button>
-          </div>
-        </div>
-      </div>
-    `, 'Popover Contextual Interativo'),
-
-    // 2. FORMULÁRIOS
-    'po-field': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Field Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Field Basic</h4>
-          ${field('Razão Social da Empresa', '<input class="po-control" placeholder="Ex: TOTVS S/A">', 'Informe o nome completo conforme registro na Receita Federal.', true)}
-        </div>
-      </div>
-    `, 'Estrutura Base de Campo (PO Field)'),
-
-    'po-input': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Input Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Input Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          ${field('Nome Completo', `
-            <div class="po-input-group">
-              <input class="po-control" id="inputBasicDemo" value="Marina Silva Almeida" placeholder="Digite seu nome completo">
-              <button class="po-clean-btn" id="cleanInputBasicBtn" title="Limpar">${icon('x')}</button>
-            </div>
-          `, 'Como gostaria de ser chamado no sistema?')}
-        </div>
-
-        <!-- Sample 2: PO Input Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Input Labs</h4>
-            <span class="po-tag brand">Interativo</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:14px">
-            ${field('Campo de Teste', '<input class="po-control" id="labsInputTarget" placeholder="Digite aqui...">', 'Valores sincronizados em tempo real.')}
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Propriedades</label>
-              <div style="display:flex;gap:12px;margin-top:8px">
-                <label class="po-checkbox"><input type="checkbox" id="labsInputReq"> Obrigatório (*)</label>
-                <label class="po-checkbox"><input type="checkbox" id="labsInputDis"> Desabilitado</label>
+          <!-- Modal Mockup -->
+          <div id="demoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div class="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+              <div class="flex items-center justify-between border-b border-border pb-3">
+                <h3 class="font-heading text-lg font-bold text-foreground">Aprovar Faturamento</h3>
+                <button onclick="closeDemoModal()" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="x" class="h-4 w-4"></i></button>
+              </div>
+              <p class="text-xs text-muted-foreground leading-relaxed">
+                Você está prestes a aprovar a fatura #9481 no valor de <b>R$ 14.500,00</b>. Deseja registrar a operação?
+              </p>
+              <div class="flex justify-end gap-2 pt-2 border-t border-border">
+                <button onclick="closeDemoModal()" class="rounded-md border border-input px-4 py-2 text-xs font-semibold hover:bg-muted">Cancelar</button>
+                <button onclick="closeDemoModal(); showToast('Fatura aprovada com sucesso!')" class="rounded-md bg-brand px-4 py-2 text-xs font-semibold text-white shadow hover:bg-brand-hover">Confirmar</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `, 'PO Input: Basic, Limpeza e Labs'),
+      `;
+      break;
 
-    'po-password': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Password Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Password Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          ${field('Senha de Acesso', `
-            <div class="po-input-group">
-              <input class="po-control" type="password" id="passwordDemo" value="Totvs@2026">
-              <button class="po-addon-btn" id="togglePassword" aria-label="Alternar visibilidade">${icon('eye')}</button>
+    case 'card':
+      stage.innerHTML = `
+        <div class="rounded-xl border border-border bg-card p-6 shadow-sm max-w-sm mx-auto space-y-4">
+          <div class="flex items-center justify-between border-b border-border pb-3">
+            <div>
+              <h4 class="font-heading text-sm font-bold text-foreground">Receita Mensal</h4>
+              <p class="text-xs text-muted-foreground">Visão consolidada Q3</p>
             </div>
-          `, 'Mínimo de 8 caracteres incluindo letras maiúsculas, minúsculas e símbolos.', true)}
-        </div>
-
-        <!-- Sample 2: PO Password Real World (Login Corporativo) -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Password Login Corporativo</h4>
-            <span class="po-tag success">Caso Real</span>
+            <span class="rounded-full bg-emerald-500/15 p-2 text-emerald-600 dark:text-emerald-400"><i data-lucide="trending-up" class="h-4 w-4"></i></span>
           </div>
-          <div style="max-width:380px;margin:auto;display:grid;gap:12px">
-            ${field('E-mail Corporativo', '<input class="po-control" type="email" value="admin@totvs.com.br">')}
-            ${field('Senha', `
-              <div class="po-input-group">
-                <input class="po-control" type="password" id="loginPassInput" value="Portinari#2026">
-                <button class="po-addon-btn" id="toggleLoginPass">${icon('eye')}</button>
-              </div>
-            `)}
-            <button class="po-button primary full-width" data-toast="Autenticação efetuada com sucesso!"><i data-lucide="log-in"></i> Entrar no Portal</button>
+          <div class="space-y-1">
+            <span class="font-heading text-2xl font-extrabold text-foreground">R$ 128.450,00</span>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">+18.2% em relação ao mês anterior</p>
+          </div>
+          <div class="pt-2 border-t border-border flex justify-between items-center text-xs text-muted-foreground">
+            <span>Metas atingidas</span>
+            <span class="font-bold text-brand">94%</span>
           </div>
         </div>
-      </div>
-    `, 'PO Password: Basic e Login Corporativo'),
+      `;
+      break;
 
-    'po-number': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Number Basic</h4>
-          ${field('Quantidade de Licenças', '<input class="po-control" type="number" value="15" min="1" max="500">', 'Número de acessos simultâneos contratados.')}
-        </div>
-      </div>
-    `, 'Campo Numérico (PO Number)'),
-
-    'po-decimal': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Decimal / Moeda</h4>
-          ${field('Valor Unitário do Contrato (R$)', '<input class="po-control" value="8.450,00" style="text-align:right">', 'Formatação monetária padrão brasileira (BRL).')}
-        </div>
-      </div>
-    `, 'Campo Decimal / Monetário'),
-
-    'po-email': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Email</h4>
-          ${field('E-mail Corporativo', '<input class="po-control" type="email" placeholder="usuario@totvs.com.br">', 'Enviaremos a confirmação para este e-mail.', true)}
-        </div>
-      </div>
-    `, 'Campo de E-mail'),
-
-    'po-url': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO URL</h4>
-          ${field('Website Oficial', '<input class="po-control" type="url" value="https://po-ui.io">', 'URL completa iniciando com https://')}
-        </div>
-      </div>
-    `, 'Campo de URL'),
-
-    'po-datepicker': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Datepicker Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          ${field('Data de Vencimento', '<input class="po-control" type="date" value="2026-08-30">', 'Formato oficial PO UI')}
-        </div>
-      </div>
-    `, 'Seletor de Data (PO Datepicker)'),
-
-    'po-datepicker-range': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Datepicker Range (Período)</h4>
-            <span class="po-tag success">Filtro de Período</span>
-          </div>
-          <div class="showcase-row" style="gap:14px">
-            <div style="flex:1">${field('Data Inicial', '<input class="po-control" type="date" value="2026-08-01">')}</div>
-            <div style="flex:1">${field('Data Final', '<input class="po-control" type="date" value="2026-08-31">')}</div>
-          </div>
-        </div>
-      </div>
-    `, 'Intervalo de Datas (PO Datepicker Range)'),
-
-    'po-select': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Select Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          ${field('Unidade Federativa (UF)', `
-            <select class="po-control">
-              <option value="SP">São Paulo (SP)</option>
-              <option value="RJ">Rio de Janeiro (RJ)</option>
-              <option value="MG">Minas Gerais (MG)</option>
-              <option value="CE" selected>Ceará (CE)</option>
-              <option value="PR">Paraná (PR)</option>
-            </select>
-          `, 'Selecione o estado do cliente')}
-        </div>
-      </div>
-    `, 'Menu Seletor (PO Select)'),
-
-    'po-multiselect': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Multiselect com Tags</h4>
-            <span class="po-tag brand">Seleção Múltipla</span>
-          </div>
-          ${field('Módulos Habilitados', `
-            <div class="po-multiselect-tags" id="multiselectContainer">
-              <span class="po-tag brand">Faturamento <button class="multiselect-remove">×</button></span>
-              <span class="po-tag brand">Financeiro <button class="multiselect-remove">×</button></span>
-              <span class="po-tag brand">Estoque <button class="multiselect-remove">×</button></span>
-              <span class="po-tag brand">RH <button class="multiselect-remove">×</button></span>
+    case 'accordion':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-2">
+          <div class="rounded-lg border border-border bg-card overflow-hidden">
+            <button onclick="toggleAccordionItem(this)" class="flex w-full items-center justify-between p-4 text-xs font-bold text-foreground hover:bg-muted/50 transition-colors">
+              <span>Como instalo os componentes com o Monta CLI?</span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-200"></i>
+            </button>
+            <div class="accordion-content hidden px-4 pb-4 text-xs text-muted-foreground leading-relaxed border-t border-border/50 pt-2">
+              Execute <code class="bg-muted px-1.5 py-0.5 rounded font-mono text-brand">pnpm dlx monta-ui add [componente]</code> no terminal do seu projeto React para baixar o código fonte diretamente.
             </div>
-          `, 'Remova tags clicando no X')}
-        </div>
-      </div>
-    `, 'Seleção Múltipla (PO Multiselect)'),
-
-    'po-switch': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Switch Basic & Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Switch Basic</h4>
-            <span class="po-tag">Interruptor</span>
           </div>
-          <div style="display:grid;gap:14px">
-            <div class="showcase-row">
-              <label class="po-switch"><input type="checkbox" id="switchDemo1" checked><i></i></label>
-              <span id="switchStatusText1">Notificações em tempo real: <b>Ativadas</b></span>
-            </div>
-            <div class="showcase-row">
-              <label class="po-switch"><input type="checkbox" id="switchDemo2"><i></i></label>
-              <span id="switchStatusText2">Sincronização em nuvem: <b>Desativada</b></span>
+          <div class="rounded-lg border border-border bg-card overflow-hidden">
+            <button onclick="toggleAccordionItem(this)" class="flex w-full items-center justify-between p-4 text-xs font-bold text-foreground hover:bg-muted/50 transition-colors">
+              <span>Posso customizar os estilos com Tailwind?</span>
+              <i data-lucide="chevron-down" class="h-4 w-4 transition-transform duration-200"></i>
+            </button>
+            <div class="accordion-content hidden px-4 pb-4 text-xs text-muted-foreground leading-relaxed border-t border-border/50 pt-2">
+              Sim! Todo o código é seu (copy-paste). O estilo é 100% utilitário Tailwind CSS e aceita a prop <code class="bg-muted px-1.5 py-0.5 rounded font-mono">className</code>.
             </div>
           </div>
         </div>
-      </div>
-    `, 'Interruptor de Estado (PO Switch)'),
+      `;
+      break;
 
-    'po-checkbox': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Checkbox</h4>
-          <div style="display:grid;gap:10px">
-            <label class="po-checkbox"><input type="checkbox" checked> Aceito os termos de uso e privacidade de dados</label>
-            <label class="po-checkbox"><input type="checkbox"> Desejo receber notificações fiscais por e-mail</label>
-            <label class="po-checkbox"><input type="checkbox" disabled> Acesso restrito a administradores</label>
+    case 'tabs':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-4">
+          <div class="inline-flex h-11 w-full items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground border border-border">
+            <button onclick="switchTabPane('conta', this)" class="tab-btn inline-flex flex-1 items-center justify-center rounded-md bg-background px-3.5 py-1.5 text-xs font-bold text-brand shadow-sm">Conta</button>
+            <button onclick="switchTabPane('seguranca', this)" class="tab-btn inline-flex flex-1 items-center justify-center rounded-md px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground">Segurança</button>
+            <button onclick="switchTabPane('notif', this)" class="tab-btn inline-flex flex-1 items-center justify-center rounded-md px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground">Notificações</button>
+          </div>
+          <div id="pane-conta" class="tab-pane rounded-lg border border-border bg-card p-4 text-xs space-y-2">
+            <p class="font-bold text-foreground">Configurações de Conta</p>
+            <p class="text-muted-foreground">Atualize seu e-mail institucional e dados cadastrais.</p>
+          </div>
+          <div id="pane-seguranca" class="tab-pane hidden rounded-lg border border-border bg-card p-4 text-xs space-y-2">
+            <p class="font-bold text-foreground">Autenticação em 2 Etapas</p>
+            <p class="text-muted-foreground">Configure seu aplicativo autenticador ou chave de segurança.</p>
+          </div>
+          <div id="pane-notif" class="tab-pane hidden rounded-lg border border-border bg-card p-4 text-xs space-y-2">
+            <p class="font-bold text-foreground">Preferências de Alerta</p>
+            <p class="text-muted-foreground">Escolha os tipos de e-mails transacionais e avisos que deseja receber.</p>
           </div>
         </div>
-      </div>
-    `, 'Caixas de Seleção (PO Checkbox)'),
+      `;
+      break;
 
-    'po-radio': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <h4 style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--brand)">1. PO Radio Group</h4>
-          <div class="po-radio-group" style="display:flex;gap:20px">
-            <label class="po-radio"><input type="radio" name="planType" checked> Faturamento Mensal</label>
-            <label class="po-radio"><input type="radio" name="planType"> Semestral (-10%)</label>
-            <label class="po-radio"><input type="radio" name="planType"> Anual (-25%)</label>
+    case 'switch':
+      stage.innerHTML = `
+        <div class="w-full max-w-xs mx-auto space-y-3">
+          <div class="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+            <div>
+              <p class="text-xs font-bold text-foreground">Notificações Push</p>
+              <p class="text-[11px] text-muted-foreground">Alertar faturas pendentes</p>
+            </div>
+            <button onclick="toggleSwitch(this)" class="switch-btn relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-brand transition-colors">
+              <span class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"></span>
+            </button>
           </div>
         </div>
-      </div>
-    `, 'Botões de Opção (PO Radio)'),
+      `;
+      break;
 
-    'po-upload': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Upload Drag & Drop</h4>
-            <span class="po-tag success">Envio de Arquivos</span>
-          </div>
-          <div class="po-upload" id="dropAreaDemo">
-            ${icon('cloud-upload')}
-            <p>Arraste e solte documentos aqui ou</p>
-            <label for="uploadFileDemo">procure no computador</label>
-            <input id="uploadFileDemo" type="file" multiple>
-            <small id="uploadStatusText">Formatos aceitos: PDF, PNG, JPG, XML (máx. 25MB)</small>
-          </div>
+    case 'checkbox':
+      stage.innerHTML = `
+        <div class="w-full max-w-xs mx-auto space-y-2.5">
+          <label class="flex items-center gap-3 rounded-lg border border-border bg-card p-3 cursor-pointer hover:bg-muted/40 transition-colors">
+            <input type="checkbox" checked onchange="showToast(this.checked ? 'Opção Ativada' : 'Opção Desativada')" class="h-4 w-4 rounded border-border text-brand focus:ring-brand accent-[#753399]">
+            <div class="text-xs">
+              <span class="font-bold text-foreground block">Aceitar Termos LGPD</span>
+              <span class="text-[11px] text-muted-foreground">Concordo com o tratamento de dados.</span>
+            </div>
+          </label>
         </div>
-      </div>
-    `, 'Envio de Arquivos (PO Upload)'),
+      `;
+      break;
 
-    'po-rich-text': wrap(`
-      <div class="rich-toolbar">
-        <button data-cmd="bold" title="Negrito"><b>B</b></button>
-        <button data-cmd="italic" title="Itálico"><i>I</i></button>
-        <button data-cmd="underline" title="Sublinhado"><u>U</u></button>
-        <button data-cmd="insertUnorderedList" title="Lista">• Lista</button>
-      </div>
-      <div class="rich-editor" contenteditable="true">
-        Digite e formate o texto diretamente neste editor rich text compatível com PO UI.
-      </div>
-    `, 'Editor de Texto Formatado (Rich Text)'),
-
-    'po-search-ai': wrap(`
-      <div class="showcase-stack">
-        <div class="po-input-addon">
-          <input placeholder="Pergunte ao assistente de IA ou busque relatórios..." style="border-color:var(--brand)">
-          <button class="po-button primary"><i data-lucide="sparkles"></i> Gerar IA</button>
-        </div>
-        <small style="color:var(--muted)">Exemplos: “Criar resumo do cliente Clínica Aurora”, “Listar vendas de agosto”</small>
-      </div>
-    `, 'Busca Inteligente com IA (Search AI)'),
-
-    'po-clean': wrap(`
-      <div class="showcase-stack">
-        ${field('Pesquisar Registros', `
-          <div class="po-input-group">
-            <input id="cleanDemoInput" value="Termo preenchido para demonstrar limpeza">
-            <button class="po-clean-btn" id="cleanDemoBtn" title="Limpar campo">${icon('x')}</button>
+    case 'table':
+      stage.innerHTML = `
+        <div class="w-full space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="relative flex-1 max-w-xs">
+              <i data-lucide="search" class="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground"></i>
+              <input oninput="filterDemoTable(this.value)" class="h-8 w-full rounded-md border border-input bg-background pl-8 pr-3 text-xs shadow-sm focus:border-brand focus:outline-none" placeholder="Buscar cliente...">
+            </div>
+            <div class="flex gap-2">
+              <button onclick="showToast('Exportando CSV de 48 registros...')" class="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-semibold hover:bg-muted">
+                <i data-lucide="download" class="h-3 w-3"></i> Exportar
+              </button>
+            </div>
           </div>
-        `, 'Clique no botão X para limpar instantaneamente')}
-      </div>
-    `, 'Ação de Limpeza Integrada (Clean)'),
-
-    // 3. DADOS & VISUALIZAÇÃO
-    'po-table': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Table Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Table Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <div style="overflow:auto">
-            <table class="po-table">
-              <thead>
+          <div class="rounded-lg border border-border bg-card overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-muted/60 text-muted-foreground font-semibold border-b border-border">
                 <tr>
-                  <th style="width:40px"><input type="checkbox" id="selectAllDemo"></th>
-                  <th>Código</th>
-                  <th>Cliente</th>
-                  <th>Cidade</th>
-                  <th>Status</th>
-                  <th>Valor Total</th>
-                  <th style="text-align:right">Ações</th>
+                  <th class="p-3 w-8"><input type="checkbox" onchange="toggleSelectAllRows(this)" class="h-3.5 w-3.5 rounded border-border accent-[#753399]"></th>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Cliente / Empresa</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Valor Total</th>
+                  <th class="p-3 w-10"></th>
                 </tr>
               </thead>
-              <tbody id="tableDemoBody">
-                <tr>
-                  <td><input type="checkbox" checked></td>
-                  <td><b>PED-0820</b></td>
-                  <td>Clínica Aurora Saúde</td>
-                  <td>Fortaleza/CE</td>
-                  <td><span class="po-tag success">● Faturado</span></td>
-                  <td>R$ 14.820,00</td>
-                  <td style="text-align:right"><button class="po-button sm ghost" data-toast="Visualizando pedido PED-0820"><i data-lucide="eye"></i> Detalhes</button></td>
+              <tbody id="demoTableBody" class="divide-y divide-border/50">
+                <tr class="hover:bg-muted/30 transition-colors">
+                  <td class="p-3"><input type="checkbox" class="row-checkbox h-3.5 w-3.5 rounded border-border accent-[#753399]"></td>
+                  <td class="p-3 font-mono text-muted-foreground">#CLI-1024</td>
+                  <td class="p-3 font-semibold text-foreground flex items-center gap-2">
+                    <div class="h-6 w-6 rounded-full bg-brand/15 text-brand flex items-center justify-center font-bold text-[10px]">HC</div>
+                    <span>Hospital das Clínicas</span>
+                  </td>
+                  <td class="p-3"><span class="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Ativo</span></td>
+                  <td class="p-3 text-right font-mono font-semibold">R$ 24.500,00</td>
+                  <td class="p-3 text-center"><button onclick="showToast('Opções de CLI-1024')" class="text-muted-foreground hover:text-foreground"><i data-lucide="more-horizontal" class="h-4 w-4"></i></button></td>
                 </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><b>PED-0821</b></td>
-                  <td>Mercado Central Distribuição</td>
-                  <td>Recife/PE</td>
-                  <td><span class="po-tag warning">● Pendente</span></td>
-                  <td>R$ 6.190,00</td>
-                  <td style="text-align:right"><button class="po-button sm ghost" data-toast="Visualizando pedido PED-0821"><i data-lucide="eye"></i> Detalhes</button></td>
+                <tr class="hover:bg-muted/30 transition-colors">
+                  <td class="p-3"><input type="checkbox" class="row-checkbox h-3.5 w-3.5 rounded border-border accent-[#753399]"></td>
+                  <td class="p-3 font-mono text-muted-foreground">#CLI-1025</td>
+                  <td class="p-3 font-semibold text-foreground flex items-center gap-2">
+                    <div class="h-6 w-6 rounded-full bg-amber-500/15 text-amber-600 flex items-center justify-center font-bold text-[10px]">LE</div>
+                    <span>Logística Express S/A</span>
+                  </td>
+                  <td class="p-3"><span class="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">Pendente</span></td>
+                  <td class="p-3 text-right font-mono font-semibold">R$ 8.900,00</td>
+                  <td class="p-3 text-center"><button onclick="showToast('Opções de CLI-1025')" class="text-muted-foreground hover:text-foreground"><i data-lucide="more-horizontal" class="h-4 w-4"></i></button></td>
                 </tr>
-                <tr>
-                  <td><input type="checkbox"></td>
-                  <td><b>PED-0822</b></td>
-                  <td>Studio Norte Arquitetura</td>
-                  <td>São Paulo/SP</td>
-                  <td><span class="po-tag brand">● Novo</span></td>
-                  <td>R$ 8.450,00</td>
-                  <td style="text-align:right"><button class="po-button sm ghost" data-toast="Visualizando pedido PED-0822"><i data-lucide="eye"></i> Detalhes</button></td>
+                <tr class="hover:bg-muted/30 transition-colors">
+                  <td class="p-3"><input type="checkbox" class="row-checkbox h-3.5 w-3.5 rounded border-border accent-[#753399]"></td>
+                  <td class="p-3 font-mono text-muted-foreground">#CLI-1026</td>
+                  <td class="p-3 font-semibold text-foreground flex items-center gap-2">
+                    <div class="h-6 w-6 rounded-full bg-purple-500/15 text-purple-400 flex items-center justify-center font-bold text-[10px]">CA</div>
+                    <span>Construtora Alvorada</span>
+                  </td>
+                  <td class="p-3"><span class="rounded-full bg-brand/15 px-2.5 py-0.5 text-[10px] font-bold text-brand">Homologado</span></td>
+                  <td class="p-3 text-right font-mono font-semibold">R$ 45.000,00</td>
+                  <td class="p-3 text-center"><button onclick="showToast('Opções de CLI-1026')" class="text-muted-foreground hover:text-foreground"><i data-lucide="more-horizontal" class="h-4 w-4"></i></button></td>
                 </tr>
               </tbody>
             </table>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;font-size:12px;color:var(--muted)">
-            <span>Mostrando 3 de 42 pedidos fiscais</span>
-            <div class="po-button-group">
-              <button class="po-button sm ghost">‹ Anterior</button>
-              <button class="po-button sm ghost active">1</button>
-              <button class="po-button sm ghost">2</button>
-              <button class="po-button sm ghost">3</button>
-              <button class="po-button sm ghost">Próximo ›</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `, 'PO Table: Basic, Seleção e Ações em Linha'),
-
-    'po-chart': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Chart Performance</h4>
-            <span class="po-tag">Gráficos</span>
-          </div>
-          <div class="po-chart" aria-label="Gráfico de barras">
-            <i style="height:35%" title="Jan: R$ 35k"></i>
-            <i style="height:55%" title="Fev: R$ 55k"></i>
-            <i style="height:48%" title="Mar: R$ 48k"></i>
-            <i style="height:82%" title="Abr: R$ 82k"></i>
-            <i style="height:70%" title="Mai: R$ 70k"></i>
-            <i style="height:95%" title="Jun: R$ 95k"></i>
-            <i style="height:78%" title="Jul: R$ 78k"></i>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);text-transform:uppercase;margin-top:8px">
-            <span>Jan</span><span>Fev</span><span>Mar</span><span>Abr</span><span>Mai</span><span>Jun</span><span>Jul</span>
-          </div>
-        </div>
-      </div>
-    `, 'Gráfico de Desempenho (PO Chart)'),
-
-    'po-gauge': wrap(`
-      <div class="showcase-stack" style="text-align:center">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div class="po-gauge" data-value="78%"></div>
-          <b style="font-size:16px;color:var(--ink);margin-top:8px;display:block">Meta Comercial Trimestral</b>
-          <small style="color:var(--success);font-weight:700">↑ 14.5% acima da média prevista</small>
-        </div>
-      </div>
-    `, 'Medidor Circular (PO Gauge)'),
-
-    'po-grid': wrap(`
-      <div class="grid-demo">
-        <span>3 colunas</span>
-        <span>3 colunas</span>
-        <span>6 colunas</span>
-        <span>4 colunas</span>
-        <span>4 colunas</span>
-        <span>4 colunas</span>
-        <span>12 colunas (largura total)</span>
-      </div>
-    `, 'Grid de 12 Colunas Responsivo'),
-
-    'po-info': wrap(`
-      <div class="showcase-row" style="justify-content:space-between;gap:20px">
-        <div class="po-info"><span>Razão Social</span><b>Clínica Aurora Saúde S/A</b></div>
-        <div class="po-info"><span>CNPJ</span><b>12.345.678/0001-90</b></div>
-        <div class="po-info"><span>Regime Tributário</span><b>Lucro Presumido</b></div>
-        <div class="po-info"><span>Status</span><b style="color:var(--success)">Regular</b></div>
-      </div>
-    `, 'Exibição de Pares Rótulo-Valor (PO Info)'),
-
-    'po-list-view': wrap(`
-      <div class="po-listbox">
-        <button class="selected">
-          <span class="po-avatar">CA</span>
-          <div style="flex:1">
-            <b>Clínica Aurora Saúde</b>
-            <div style="font-size:11px;color:var(--muted)">Fortaleza/CE · 18 contratos ativos</div>
-          </div>
-          <span class="po-tag success">Ativo</span>
-        </button>
-        <button>
-          <span class="po-avatar" style="background:#2d82b7">MC</span>
-          <div style="flex:1">
-            <b>Mercado Central Distribuição</b>
-            <div style="font-size:11px;color:var(--muted)">Recife/PE · 6 contratos ativos</div>
-          </div>
-          <span class="po-tag warning">Pendente</span>
-        </button>
-      </div>
-    `, 'Lista de Registros (PO List View)'),
-
-    'po-listbox': wrap(`
-      <div class="po-listbox">
-        <button class="selected"><span class="po-avatar sm">MA</span> Marina Almeida (Gerente de Projetos)</button>
-        <button><span class="po-avatar sm">CS</span> Caio Silva (Desenvolvedor Sênior)</button>
-        <button><span class="po-avatar sm">RO</span> Rafaela Oliveira (Tech Lead)</button>
-        <button><span class="po-avatar sm">TL</span> Thiago Lima (Designer UI/UX)</button>
-      </div>
-    `, 'Caixa de Lista Selecionável (PO Listbox)'),
-
-    'po-dynamic-form': wrap(`
-      <div class="showcase-stack">
-        ${field('Nome do Produto', '<input class="po-control" value="TOTVS Fluig Platform">')}
-        <div class="showcase-row">
-          <div style="flex:1">${field('Categoria', '<select class="po-control"><option>Software</option><option>Serviços</option></select>')}</div>
-          <div style="flex:1">${field('Preço (R$)', '<input class="po-control" value="8.900,00">')}</div>
-        </div>
-        <label class="po-checkbox"><input type="checkbox" checked> Disponível para venda online</label>
-        <button class="po-button primary" data-toast="Formulário dinâmico validado e salvo!"><i data-lucide="save"></i> Salvar Formulário</button>
-      </div>
-    `, 'Formulário Gerado por Metadados JSON'),
-
-    'po-dynamic-view': wrap(`
-      <div class="po-widget">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:16px">
-          <div class="po-info"><span>Nome do Item</span><b>TOTVS Protheus ERP</b></div>
-          <div class="po-info"><span>Versão Atual</span><b>12.1.2410</b></div>
-          <div class="po-info"><span>Suporte</span><b style="color:var(--success)">Ativo 24/7</b></div>
-          <div class="po-info"><span>Última Atualização</span><b>18/08/2026</b></div>
-        </div>
-      </div>
-    `, 'Visualização Dinâmica de Metadados'),
-
-    // 4. FEEDBACK
-    'po-badge': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Badge Basic & Cores Semânticas</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <div class="showcase-row">
-            <span class="po-badge">8 Novas</span>
-            <span class="po-badge success"><i data-lucide="check"></i> 14 Aprovados</span>
-            <span class="po-badge warning"><i data-lucide="alert-triangle"></i> 3 Pendências</span>
-            <span class="po-badge danger"><i data-lucide="alert-octagon"></i> 2 Erros Críticos</span>
-          </div>
-        </div>
-      </div>
-    `, 'Badges e Indicadores Numéricos (PO Badge)'),
-
-    'po-tag': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Tag Status & Categorias</h4>
-            <span class="po-tag success">Etiquetas</span>
-          </div>
-          <div class="showcase-row">
-            <span class="po-tag success">● Concluído</span>
-            <span class="po-tag warning">● Em Andamento</span>
-            <span class="po-tag danger">● Bloqueado</span>
-            <span class="po-tag info">● Informativo</span>
-            <span class="po-tag brand">● TOTVS Portinari</span>
-          </div>
-        </div>
-      </div>
-    `, 'Etiquetas de Status (PO Tag)'),
-
-    'po-disclaimer': wrap(`
-      <span class="po-disclaimer">
-        <span>Filtro: Clientes Ativos</span>
-        <button aria-label="Remover filtro">×</button>
-      </span>
-    `, 'Etiqueta de Critério Aplicado'),
-
-    'po-disclaimer-group': wrap(`
-      <div class="showcase-row">
-        <span class="po-disclaimer"><span>Estado: Ceará</span><button>×</button></span>
-        <span class="po-disclaimer"><span>Status: Ativo</span><button>×</button></span>
-        <span class="po-disclaimer"><span>Período: Agosto/2026</span><button>×</button></span>
-        <button class="po-button sm ghost" style="color:var(--danger)">Limpar Todos</button>
-      </div>
-    `, 'Grupo de Filtros Ativos (Disclaimer Group)'),
-
-    'po-filter-chip': wrap(`
-      <div class="showcase-row">
-        <button class="filter-button active">Todos os Pedidos</button>
-        <button class="filter-button">Recentes</button>
-        <button class="filter-button">Aprovados</button>
-        <button class="filter-button">Pendentes</button>
-      </div>
-    `, 'Chips de Filtro Rápido'),
-
-    'po-loading': wrap(`
-      <div class="showcase-stack" style="text-align:center">
-        <div class="po-loading"></div>
-        <p style="color:var(--muted);font-size:12px;margin:0">Carregando dados com spinner oficial...</p>
-      </div>
-    `, 'Indicador de Carregamento (PO Loading)'),
-
-    'po-loading-overlay': wrap(`
-      <div class="po-widget" style="position:relative;min-height:160px;display:grid;place-items:center">
-        <div style="text-align:center">
-          <p style="margin:0 0 12px;color:var(--ink)">Conteúdo protegido em segundo plano.</p>
-          <button class="po-button primary" data-overlay><i data-lucide="play"></i> Simular Bloqueio com Overlay</button>
-        </div>
-      </div>
-    `, 'Bloqueio de Tela com Loading Overlay'),
-
-    'po-progress': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Progress Labs (Simulador Interativo)</h4>
-            <span class="po-tag brand">Interativo</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px">
-            <span>Sincronização de Dados com a Nuvem</span>
-            <span id="progressText">65%</span>
-          </div>
-          <div class="po-progress" style="margin-bottom:14px"><i id="progressBar" style="width:65%"></i></div>
-          <div class="showcase-row">
-            <button class="po-button sm primary" id="advanceProgressBtn">+ Avançar 15%</button>
-            <button class="po-button sm ghost" id="resetProgressBtn"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
-          </div>
-        </div>
-      </div>
-    `, 'Barra de Progresso (PO Progress)'),
-
-    'po-skeleton': wrap(`
-      <div class="showcase-stack">
-        <div class="po-skeleton" style="width:40%;height:20px"></div>
-        <div class="po-skeleton" style="width:100%"></div>
-        <div class="po-skeleton" style="width:85%"></div>
-        <div class="po-skeleton" style="width:100%;height:70px"></div>
-      </div>
-    `, 'Esqueleto de Carregamento (PO Skeleton)'),
-
-    'po-toaster': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Toaster / Notificações Flutuantes</h4>
-            <span class="po-tag success">Feedback</span>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button primary" data-toast="Sucesso! Operação fiscal gravada com êxito."><i data-lucide="check-circle"></i> Toast de Sucesso</button>
-            <button class="po-button" data-toast="Aviso: Foram encontradas 2 pendências no formulário."><i data-lucide="alert-triangle"></i> Toast de Alerta</button>
-            <button class="po-button danger" data-toast="Erro: Falha na conexão com o servidor."><i data-lucide="alert-octagon"></i> Toast de Erro</button>
-          </div>
-        </div>
-      </div>
-    `, 'Notificações Flutuantes (PO Toaster)'),
-
-    // 5. LAYOUT & CONTAINERS
-    'po-accordion': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Accordion Basic</h4>
-            <span class="po-tag">Sanfona</span>
-          </div>
-          <div class="po-accordion">
-            <div class="accordion-item open">
-              <button>1. Dados Cadastrais da Empresa <span>${icon('plus')}</span></button>
-              <div class="accordion-content">Razão social, nome fantasia, CNPJ e inscrição estadual.</div>
-            </div>
-            <div class="accordion-item">
-              <button>2. Endereço e Localização <span>${icon('plus')}</span></button>
-              <div class="accordion-content">Logradouro, número, complemento, bairro, cidade, UF e CEP.</div>
-            </div>
-            <div class="accordion-item">
-              <button>3. Parâmetros Tributários e Fiscais <span>${icon('plus')}</span></button>
-              <div class="accordion-content">Regime de tributação, alíquota de ICMS/ISS e certificados digitais.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `, 'Painel Sanfona (PO Accordion)'),
-
-    'po-container': wrap(`
-      <div style="padding:22px;border:1px solid var(--line);border-radius:8px;background:var(--surface)">
-        <h4 style="margin:0 0 6px;font-size:15px">Container Agrupador de Conteúdo</h4>
-        <p style="margin:0;color:var(--muted);font-size:13px">Delimita e organiza áreas específicas da tela com bordas e espaçamentos homogêneos.</p>
-      </div>
-    `, 'Container Estrutural'),
-
-    'po-divider': wrap(`
-      <div>
-        <p style="margin:0 0 12px;font-weight:700">Seção Superior: Identificação</p>
-        <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
-        <p style="margin:0;color:var(--muted)">Seção Inferior: Parâmetros Financeiros</p>
-      </div>
-    `, 'Divisor Horizontal'),
-
-    'po-header': wrap(`
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--surface-2);border-radius:6px">
-        <div>
-          <span style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase">CLIENTES</span>
-          <h3 style="margin:2px 0 0;font:800 20px 'Manrope',sans-serif">Clínica Aurora Saúde</h3>
-        </div>
-        <button class="po-button primary"><i data-lucide="edit"></i> Editar Cadastro</button>
-      </div>
-    `, 'Cabeçalho Contextual (Header)'),
-
-    'po-modal': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:28px 20px;background:var(--surface);text-align:center">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand);text-align:left">1. PO Modal Interativo</h4>
-            <span class="po-tag brand">Diálogo</span>
-          </div>
-          <p style="margin:0 0 16px;color:var(--muted)">Abra uma janela modal bloqueadora com backdrop blur e botões de confirmação/cancelamento.</p>
-          <button class="po-button primary" data-open-modal><i data-lucide="maximize-2"></i> Abrir Janela Modal</button>
-        </div>
-      </div>
-    `, 'Janela Modal (PO Modal)'),
-
-    'po-overlay': wrap(`
-      <div style="padding:20px;border:1px solid var(--line);border-radius:6px;background:var(--surface)">
-        <p style="margin:0 0 10px">O componente overlay aplica bloqueio visual com backdrop estilizado.</p>
-        <button class="po-button" data-toast="Overlay demonstrado com sucesso">Testar Camada</button>
-      </div>
-    `, 'Camada Overlay'),
-
-    'po-slide': wrap(`
-      <div class="po-slide">
-        <div class="po-slide-content">
-          <small style="letter-spacing:1.5px;font-weight:700">DESTAQUE DO MÊS</small>
-          <h2 style="margin:8px 0;font:800 24px 'Manrope',sans-serif">Design System WF willFran</h2>
-          <p style="margin:0;font-size:13px;opacity:0.9">Desenvolvimento ágil com 100% de autonomia e zero dependências.</p>
-        </div>
-        <div class="slide-dots"><i class="active"></i><i></i><i></i></div>
-      </div>
-    `, 'Carrossel de Slides (Slide)'),
-
-    'po-toolbar': wrap(`
-      <div class="po-toolbar-demo">
-        <div class="po-logo-demo" style="font-size:18px">WF <span>willFran</span></div>
-        <div class="showcase-row">
-          <button class="icon-button" aria-label="Buscar">${icon('search')}</button>
-          <button class="icon-button" aria-label="Notificações">${icon('bell')}</button>
-          <span class="po-avatar sm">MA</span>
-        </div>
-      </div>
-    `, 'Barra de Ferramentas (Toolbar)'),
-
-    'po-widget': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Widget de Dashboard</h4>
-            <span class="po-tag success">Métricas</span>
-          </div>
-          <div class="po-widget">
-            <div class="po-info">
-              <span>Receita Líquida Recorrente (MRR)</span>
-              <b style="font:800 28px 'Manrope',sans-serif;color:var(--brand);margin:4px 0">R$ 148.920,00</b>
-            </div>
-            <p style="color:var(--success);font-size:12px;font-weight:700;margin:4px 0 0">↑ +18,4% em relação ao mês anterior</p>
-          </div>
-        </div>
-      </div>
-    `, 'Widget de Dashboard (PO Widget)'),
-
-    // 6. NAVEGAÇÃO
-    'po-breadcrumb': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Breadcrumb Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Breadcrumb Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <nav class="po-breadcrumb" id="basicBreadcrumbNav">
-            <div class="po-breadcrumb-items">
-              <ul class="po-breadcrumb-item-container" id="basicBreadcrumbList">
-                <li class="po-breadcrumb-item">
-                  <a href="#" class="po-breadcrumb-link" data-step="0">PO Portal</a>
-                  <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-                </li>
-                <li class="po-breadcrumb-item">
-                  <span class="po-breadcrumb-item-activate" data-step="1" aria-current="page">PO Breadcrumb</span>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-
-        <!-- Sample 2: PO Breadcrumb with Favorite -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Breadcrumb com Favorito (Favorite Service)</h4>
-            <span class="po-tag success">Com Favoritar</span>
-          </div>
-          <nav class="po-breadcrumb" id="favBreadcrumbNav">
-            <div class="po-breadcrumb-items">
-              <ul class="po-breadcrumb-item-container" id="favBreadcrumbList">
-                <li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link" data-fav-step="0">Início</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>
-                <li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link" data-fav-step="1">Comercial</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>
-                <li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link" data-fav-step="2">Clientes</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>
-                <li class="po-breadcrumb-item"><span class="po-breadcrumb-item-activate" data-fav-step="3" aria-current="page">Clínica Aurora Saúde</span></li>
-              </ul>
-            </div>
-            <button class="po-breadcrumb-favorite" data-favorite-btn title="Adicionar aos Favoritos" aria-label="Favoritar"><i data-lucide="star"></i></button>
-          </nav>
-        </div>
-
-        <!-- Sample 3: PO Breadcrumb Collapsed (Dropdown para 4+ Níveis) -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">3. PO Breadcrumb Collapsed (Menu Mais)</h4>
-            <span class="po-tag warning">4+ Níveis</span>
-          </div>
-          <nav class="po-breadcrumb">
-            <div class="po-breadcrumb-items">
-              <ul class="po-breadcrumb-item-container">
-                <li class="po-breadcrumb-item">
-                  <a href="#/inicio" class="po-breadcrumb-link">TOTVS Protheus</a>
-                  <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-                </li>
-                <li class="po-breadcrumb-item dropdown-wrap">
-                  <button class="po-breadcrumb-icon-more" data-dropdown aria-label="Mais níveis"><i data-lucide="more-horizontal"></i></button>
-                  <div class="po-dropdown-menu" hidden style="min-width:180px">
-                    <button data-toast="Navegando para Módulo Financeiro..."><i data-lucide="folder"></i> Módulo Financeiro</button>
-                    <button data-toast="Navegando para Contas a Pagar..."><i data-lucide="folder"></i> Contas a Pagar</button>
-                  </div>
-                  <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-                </li>
-                <li class="po-breadcrumb-item">
-                  <a href="#/inicio" class="po-breadcrumb-link">Faturamento</a>
-                  <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-                </li>
-                <li class="po-breadcrumb-item">
-                  <span class="po-breadcrumb-item-activate" aria-current="page">Nota Fiscal #8294</span>
-                </li>
-              </ul>
-            </div>
-          </nav>
-        </div>
-
-        <!-- Sample 4: PO Breadcrumb Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">4. PO Breadcrumb Labs (Adicionar Itens Dinamicamente)</h4>
-            <span class="po-tag brand">Laboratório</span>
-          </div>
-
-          <div style="padding:16px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line);margin-bottom:16px">
-            <nav class="po-breadcrumb" id="labsBreadcrumbTarget">
-              <div class="po-breadcrumb-items">
-                <ul class="po-breadcrumb-item-container" id="labsBreadcrumbList">
-                  <li class="po-breadcrumb-item">
-                    <a href="#/inicio" class="po-breadcrumb-link">Início</a>
-                    <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-                  </li>
-                  <li class="po-breadcrumb-item">
-                    <span class="po-breadcrumb-item-activate" aria-current="page">Painel Geral</span>
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-
-          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <div style="flex:1;min-width:180px">
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Título da Página (Label)</label>
-              <input class="po-control" id="labsBreadcrumbLabel" placeholder="Ex: Relatórios Fiscais">
-            </div>
-            <button class="po-button primary" id="labsAddBreadcrumbBtn"><i data-lucide="plus"></i> Adicionar Nível</button>
-            <button class="po-button ghost" id="labsResetBreadcrumbBtn"><i data-lucide="rotate-ccw"></i> Resetar</button>
-          </div>
-        </div>
-      </div>
-    `, 'PO Breadcrumb: Basic, Favoritos, Collapsed e Labs'),
-
-    'po-tabs': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Tabs Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Tabs Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <div class="po-tabs">
-            <div class="po-tabs-head">
-              <button class="active"><i data-lucide="layout-dashboard"></i> Visão Geral</button>
-              <button><i data-lucide="file-text"></i> Contratos</button>
-              <button><i data-lucide="dollar-sign"></i> Faturamento</button>
-              <button><i data-lucide="paperclip"></i> Anexos (3)</button>
-            </div>
-            <div class="po-tab-content">
-              Visualizando painel de visão geral com métricas e atividades recentes do cliente.
-            </div>
-          </div>
-        </div>
-      </div>
-    `, 'PO Tabs: Abas Horizontais com Ícones e Badges'),
-
-    'po-context-tabs': wrap(`
-      <div class="po-tabs">
-        <div class="po-tabs-head">
-          <button class="active">Empresa 01 - Matriz SP</button>
-          <button>Empresa 02 - Filial CE</button>
-          <button>+ Novo Contexto</button>
-        </div>
-        <div class="po-tab-content">
-          Ambiente operacional selecionado: <b>Empresa 01 - Matriz SP</b>.
-        </div>
-      </div>
-    `, 'Abas Contextuais'),
-
-    'po-menu': wrap(`
-      <div class="po-menu-demo">
-        <button class="active">${icon('home')} Dashboard</button>
-        <button>${icon('users')} Clientes</button>
-        <button>${icon('shopping-bag')} Pedidos</button>
-        <button>${icon('chart-no-axes-column')} Relatórios</button>
-        <button>${icon('settings')} Configurações</button>
-      </div>
-    `, 'Menu de Navegação Lateral'),
-
-    'po-menu-panel': wrap(`
-      <div class="po-menu-demo" style="width:100%">
-        <button class="active">${icon('plus')} Cadastrar Novo Cliente</button>
-        <button>${icon('upload')} Importar Planilha CSV</button>
-        <button>${icon('file-text')} Emitir Extrato</button>
-      </div>
-    `, 'Painel de Menu de Ações'),
-
-    'po-navbar': wrap(`
-      <div class="po-tabs-head">
-        <button class="active">Início</button>
-        <button>Vendas</button>
-        <button>Logística</button>
-        <button>Financeiro</button>
-        <button>RH</button>
-      </div>
-    `, 'Barra de Navegação Superior'),
-
-    'po-tree-view': wrap(`
-      <div class="po-tree">
-        <ul>
-          <li>
-            <button data-tree>−</button> 📁 Raiz do Projeto
-            <ul>
-              <li>
-                <button data-tree>−</button> 📁 src
-                <ul>
-                  <li>📄 index.html</li>
-                  <li>📄 styles.css</li>
-                  <li>📄 app.js</li>
-                </ul>
-              </li>
-              <li>
-                <button data-tree>+</button> 📁 assets
-                <ul class="collapsed">
-                  <li>🖼️ logo.svg</li>
-                  <li>🖼️ banner.png</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    `, 'Navegação em Árvore (Tree View)'),
-
-    'po-stepper': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Stepper Labs (Interativo) -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Stepper Labs (Passo a Passo Interativo)</h4>
-            <span class="po-tag brand">Interativo</span>
-          </div>
-          <div class="po-stepper" id="stepperDemo" style="margin-bottom:24px">
-            <div class="po-step done" data-step="1"><i>${icon('check')}</i> Identificação</div>
-            <div class="po-step active" data-step="2"><i>2</i> Endereço</div>
-            <div class="po-step" data-step="3"><i>3</i> Pagamento</div>
-            <div class="po-step" data-step="4"><i>4</i> Confirmação</div>
-          </div>
-          <div style="padding:16px;background:var(--surface-2);border-radius:6px;margin-bottom:16px;font-size:13px;color:var(--ink)" id="stepperStepContent">
-            Etapa Atual (2/4): <b>Preenchimento do Endereço e Localização de Faturamento</b>.
-          </div>
-          <div class="showcase-row" style="justify-content:space-between">
-            <button class="po-button ghost" id="stepperPrevBtn">‹ Passo Anterior</button>
-            <button class="po-button primary" id="stepperNextBtn">Próximo Passo ›</button>
-          </div>
-        </div>
-      </div>
-    `, 'Passo a Passo Interativo (PO Stepper)'),
-
-    // 7. UTILIDADES
-    'po-avatar': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Avatar Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Avatar Basic & Escalas de Tamanho</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <p style="margin:0 0 16px;color:var(--muted);font-size:13px">Avatares com fotos reais, iniciais tipográficas e ícone padrão nos 5 tamanhos oficiais (XS, SM, MD, LG, XL):</p>
-          
-          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:18px">
-            <div style="text-align:center">
-              <div class="po-avatar xs" title="XS - 24px">
-                <span>XS</span>
-              </div>
-              <small style="display:block;margin-top:4px;color:var(--muted);font-size:10px">XS (24px)</small>
-            </div>
-
-            <div style="text-align:center">
-              <div class="po-avatar sm" title="SM - 34px">
-                <img class="po-avatar-image" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Ana">
-                <span class="po-avatar-status"></span>
-              </div>
-              <small style="display:block;margin-top:4px;color:var(--muted);font-size:10px">SM (34px)</small>
-            </div>
-
-            <div style="text-align:center">
-              <div class="po-avatar md" title="MD - 48px (Padrão)">
-                <img class="po-avatar-image" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" alt="Carlos">
-                <span class="po-avatar-status busy"></span>
-              </div>
-              <small style="display:block;margin-top:4px;color:var(--muted);font-size:10px">MD (48px)</small>
-            </div>
-
-            <div style="text-align:center">
-              <div class="po-avatar lg" title="LG - 80px" style="background:#2d82b7">
-                <span>MA</span>
-                <span class="po-avatar-status away"></span>
-              </div>
-              <small style="display:block;margin-top:4px;color:var(--muted);font-size:10px">LG (80px)</small>
-            </div>
-
-            <div style="text-align:center">
-              <div class="po-avatar xl" title="XL - 110px">
-                <img class="po-avatar-image" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Marina">
-                <span class="po-avatar-status" style="width:18px;height:18px;bottom:4px;right:4px"></span>
-              </div>
-              <small style="display:block;margin-top:4px;color:var(--muted);font-size:10px">XL (110px)</small>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sample 2: PO Avatar Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Avatar Labs (Simulador Interativo)</h4>
-            <span class="po-tag brand">Laboratório</span>
-          </div>
-
-          <div style="display:flex;align-items:center;justify-content:center;padding:28px;background:var(--surface-2);border-radius:8px;border:1px solid var(--line);margin-bottom:20px">
-            <div class="po-avatar lg po-clickable" id="labsAvatarTarget" title="Clique para interagir">
-              <img class="po-avatar-image" id="labsAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Avatar">
-              <span class="po-avatar-status" id="labsAvatarStatus"></span>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:16px">
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Tamanho (Size)</label>
-              <select class="po-control" id="labsAvatarSizeSelect">
-                <option value="xs">XS (24px)</option>
-                <option value="sm">SM (34px)</option>
-                <option value="md">MD (48px)</option>
-                <option value="lg" selected>LG (80px)</option>
-                <option value="xl">XL (110px)</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Status do Usuário</label>
-              <select class="po-control" id="labsAvatarStatusSelect">
-                <option value="online" selected>🟢 Online (Disponível)</option>
-                <option value="busy">🔴 Ocupado (Busy)</option>
-                <option value="away">🟠 Ausente (Away)</option>
-                <option value="offline">⚪ Offline (Desconectado)</option>
-                <option value="none">Sem Indicador de Status</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Tipo de Conteúdo</label>
-              <select class="po-control" id="labsAvatarTypeSelect">
-                <option value="image" selected>Foto de Perfil (Image)</option>
-                <option value="initials">Iniciais Tipográficas (Ex: MA)</option>
-                <option value="icon">Ícone Padrão de Usuário</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="showcase-row">
-            <button class="po-button ghost" id="labsAvatarRestoreBtn"><i data-lucide="rotate-ccw"></i> Restaurar Labs</button>
-          </div>
-        </div>
-
-        <!-- Sample 3: PO Avatar Business Card (Oficial PO UI) -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">3. PO Avatar Business Card (Cartão de Contato Oficial)</h4>
-            <span class="po-tag success">Caso Real</span>
-          </div>
-
-          <div style="padding:20px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);display:flex;gap:20px;align-items:center;flex-wrap:wrap">
-            <div class="po-avatar lg po-clickable" id="businessCardAvatar" title="Clique para expandir foto" style="cursor:pointer">
-              <img class="po-avatar-image" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Marina Almeida">
-              <span class="po-avatar-status"></span>
-            </div>
-
-            <div style="flex:1;min-width:200px">
-              <h3 style="margin:0 0 4px;font:800 18px 'Manrope',sans-serif;color:var(--ink)">Marina Almeida</h3>
-              <p style="margin:0 0 10px;color:var(--brand);font-weight:700;font-size:12px">Gerente de Produtos e Inovação</p>
-              
-              <div style="display:grid;gap:4px;font-size:12px;color:var(--muted)">
-                <div><b>Telefone:</b> +55 (11) 98765-4321</div>
-                <div><b>E-mail:</b> marina.almeida@totvs.com.br</div>
-                <div><b>Unidade:</b> TOTVS Matriz São Paulo</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="showcase-row" style="margin-top:14px">
-            <button class="po-button primary" data-toast="Iniciando chamada para Marina Almeida (+55 11 98765-4321)..."><i data-lucide="phone"></i> Ligar para Contato</button>
-            <button class="po-button ghost" data-toast="Abrindo cliente de e-mail para marina.almeida@totvs.com.br"><i data-lucide="mail"></i> Enviar E-mail</button>
-          </div>
-        </div>
-      </div>
-    `, 'PO Avatar: Escalas XS a XL, Simulador Labs e Business Card'),
-
-    'po-calendar': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Calendar Basic -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Calendar Basic</h4>
-            <span class="po-tag">Amostra Básica</span>
-          </div>
-          <div class="po-calendar" id="calendarBasic">
-            <div class="calendar-head">
-              <button class="calendar-nav-btn" data-cal-nav="prev">‹</button>
-              <span class="calendar-title">Agosto 2026</span>
-              <button class="calendar-nav-btn" data-cal-nav="next">›</button>
-            </div>
-            <div class="calendar-grid">
-              <span class="day-name">Dom</span><span class="day-name">Seg</span><span class="day-name">Ter</span><span class="day-name">Qua</span><span class="day-name">Qui</span><span class="day-name">Sex</span><span class="day-name">Sáb</span>
-              <button class="calendar-day other-month">26</button>
-              <button class="calendar-day other-month">27</button>
-              <button class="calendar-day other-month">28</button>
-              <button class="calendar-day other-month">29</button>
-              <button class="calendar-day other-month">30</button>
-              <button class="calendar-day other-month">31</button>
-              <button class="calendar-day">1</button>
-              <button class="calendar-day">2</button>
-              <button class="calendar-day">3</button>
-              <button class="calendar-day">4</button>
-              <button class="calendar-day">5</button>
-              <button class="calendar-day">6</button>
-              <button class="calendar-day">7</button>
-              <button class="calendar-day">8</button>
-              <button class="calendar-day">9</button>
-              <button class="calendar-day">10</button>
-              <button class="calendar-day">11</button>
-              <button class="calendar-day">12</button>
-              <button class="calendar-day">13</button>
-              <button class="calendar-day">14</button>
-              <button class="calendar-day">15</button>
-              <button class="calendar-day">16</button>
-              <button class="calendar-day">17</button>
-              <button class="calendar-day">18</button>
-              <button class="calendar-day">19</button>
-              <button class="calendar-day">20</button>
-              <button class="calendar-day">21</button>
-              <button class="calendar-day">22</button>
-              <button class="calendar-day">23</button>
-              <button class="calendar-day">24</button>
-              <button class="calendar-day">25</button>
-              <button class="calendar-day">26</button>
-              <button class="calendar-day">27</button>
-              <button class="calendar-day">28</button>
-              <button class="calendar-day">29</button>
-              <button class="calendar-day today selected">30</button>
-              <button class="calendar-day">31</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sample 2: PO Calendar - Range and Presets -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">2. PO Calendar - Range and Presets</h4>
-            <span class="po-tag brand">Intervalo & Atalhos</span>
-          </div>
-          <div class="po-calendar-wrap">
-            <div class="po-calendar-presets" id="calendarPresetsGroup">
-              <button class="active" data-preset="week">Esta Semana</button>
-              <button data-preset="month">Este Mês</button>
-              <button data-preset="last7">Últimos 7 dias</button>
-              <button data-preset="last30">Últimos 30 dias</button>
-              <button data-preset="custom">Personalizado</button>
-            </div>
-
-            <div class="po-calendar" id="calendarRange">
-              <div class="calendar-head">
-                <button class="calendar-nav-btn">‹</button>
-                <span class="calendar-title">Agosto 2026</span>
-                <button class="calendar-nav-btn">›</button>
-              </div>
-              <div class="calendar-grid">
-                <span class="day-name">Dom</span><span class="day-name">Seg</span><span class="day-name">Ter</span><span class="day-name">Qua</span><span class="day-name">Qui</span><span class="day-name">Sex</span><span class="day-name">Sáb</span>
-                <button class="calendar-day other-month">26</button>
-                <button class="calendar-day other-month">27</button>
-                <button class="calendar-day other-month">28</button>
-                <button class="calendar-day other-month">29</button>
-                <button class="calendar-day other-month">30</button>
-                <button class="calendar-day other-month">31</button>
-                <button class="calendar-day">1</button>
-                <button class="calendar-day">2</button>
-                <button class="calendar-day">3</button>
-                <button class="calendar-day">4</button>
-                <button class="calendar-day">5</button>
-                <button class="calendar-day">6</button>
-                <button class="calendar-day">7</button>
-                <button class="calendar-day">8</button>
-                <button class="calendar-day">9</button>
-                <button class="calendar-day range-start">10</button>
-                <button class="calendar-day in-range">11</button>
-                <button class="calendar-day in-range">12</button>
-                <button class="calendar-day in-range">13</button>
-                <button class="calendar-day in-range">14</button>
-                <button class="calendar-day range-end">15</button>
-                <button class="calendar-day">16</button>
-                <button class="calendar-day">17</button>
-                <button class="calendar-day">18</button>
-                <button class="calendar-day">19</button>
-                <button class="calendar-day">20</button>
-                <button class="calendar-day">21</button>
-                <button class="calendar-day">22</button>
-                <button class="calendar-day">23</button>
-                <button class="calendar-day">24</button>
-                <button class="calendar-day">25</button>
-                <button class="calendar-day">26</button>
-                <button class="calendar-day">27</button>
-                <button class="calendar-day">28</button>
-                <button class="calendar-day">29</button>
-                <button class="calendar-day today">30</button>
-                <button class="calendar-day">31</button>
+            <div class="flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+              <span>Mostrando 3 de 48 registros</span>
+              <div class="flex gap-1">
+                <button class="h-6 px-2 rounded border border-border bg-card text-[11px] disabled:opacity-50" disabled>Anterior</button>
+                <button onclick="showToast('Página 2')" class="h-6 px-2 rounded border border-border bg-card text-[11px] hover:bg-muted">Próximo</button>
               </div>
             </div>
           </div>
         </div>
+      `;
+      break;
 
-        <!-- Sample 3: PO Calendar Labs -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">3. PO Calendar Labs (Simulador Interativo)</h4>
-            <span class="po-tag brand">Laboratório</span>
-          </div>
-
-          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin-bottom:20px">
-            <div class="po-calendar" id="labsCalendarTarget" style="flex:1;min-width:280px">
-              <div class="calendar-head">
-                <button class="calendar-nav-btn">‹</button>
-                <span class="calendar-title" id="labsCalMonthYear">Agosto 2026</span>
-                <button class="calendar-nav-btn">›</button>
-              </div>
-              <div class="calendar-grid" id="labsCalGrid">
-                <span class="day-name">Dom</span><span class="day-name">Seg</span><span class="day-name">Ter</span><span class="day-name">Qua</span><span class="day-name">Qui</span><span class="day-name">Sex</span><span class="day-name">Sáb</span>
-                <button class="calendar-day other-month">26</button>
-                <button class="calendar-day other-month">27</button>
-                <button class="calendar-day other-month">28</button>
-                <button class="calendar-day other-month">29</button>
-                <button class="calendar-day other-month">30</button>
-                <button class="calendar-day other-month">31</button>
-                <button class="calendar-day">1</button>
-                <button class="calendar-day">2</button>
-                <button class="calendar-day">3</button>
-                <button class="calendar-day">4</button>
-                <button class="calendar-day">5</button>
-                <button class="calendar-day">6</button>
-                <button class="calendar-day">7</button>
-                <button class="calendar-day">8</button>
-                <button class="calendar-day">9</button>
-                <button class="calendar-day">10</button>
-                <button class="calendar-day">11</button>
-                <button class="calendar-day">12</button>
-                <button class="calendar-day">13</button>
-                <button class="calendar-day">14</button>
-                <button class="calendar-day">15</button>
-                <button class="calendar-day">16</button>
-                <button class="calendar-day">17</button>
-                <button class="calendar-day">18</button>
-                <button class="calendar-day">19</button>
-                <button class="calendar-day">20</button>
-                <button class="calendar-day">21</button>
-                <button class="calendar-day">22</button>
-                <button class="calendar-day">23</button>
-                <button class="calendar-day">24</button>
-                <button class="calendar-day">25</button>
-                <button class="calendar-day">26</button>
-                <button class="calendar-day">27</button>
-                <button class="calendar-day">28</button>
-                <button class="calendar-day">29</button>
-                <button class="calendar-day today selected">30</button>
-                <button class="calendar-day">31</button>
-              </div>
+    case 'chart':
+      stage.innerHTML = `
+        <div class="w-full max-w-xl mx-auto space-y-4">
+          <!-- Chart Type Selector Buttons -->
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+            <div class="space-y-0.5 text-left">
+              <h4 class="font-heading text-xs font-bold text-foreground">Monta UI Corporate Charts</h4>
+              <p class="text-[11px] text-muted-foreground">4 tipos nativos em SVG & Tailwind com acessibilidade e tooltips.</p>
             </div>
-
-            <div style="flex:1;min-width:240px;display:grid;gap:12px">
-              <div style="padding:14px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line)">
-                <span style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Model (Data Selecionada)</span>
-                <code id="labsCalModel" style="font-family:monospace;color:var(--brand);font-weight:700">"2026-08-30"</code>
-              </div>
-              <div style="padding:14px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line)">
-                <span style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Event Disparado</span>
-                <code id="labsCalEvent" style="font-family:monospace;color:var(--success);font-weight:700">p-change: "2026-08-30"</code>
-              </div>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:16px">
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Modo (p-mode)</label>
-              <select class="po-control" id="labsCalMode">
-                <option value="single" selected>Single (Data Única)</option>
-                <option value="range">Range (Intervalo)</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px">Idioma (p-locale)</label>
-              <select class="po-control" id="labsCalLocale">
-                <option value="pt" selected>Português (pt-BR)</option>
-                <option value="en">English (en-US)</option>
-                <option value="es">Español (es-ES)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="showcase-row">
-            <button class="po-button ghost" id="labsCalRestoreBtn"><i data-lucide="rotate-ccw"></i> Restaurar Labs</button>
-          </div>
-        </div>
-
-        <!-- Sample 4: PO Calendar - Ticket Sales -->
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">4. PO Calendar - Ticket Sales (Venda de Ingressos)</h4>
-            <span class="po-tag success">Caso Real Oficial</span>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:24px;align-items:start">
-            <div>
-              <h5 style="margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">Tabela de Preços (Prices)</h5>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-                <div class="po-info"><span>Fins de semana e feriados</span><b style="color:var(--brand)">R$ 20,00</b></div>
-                <div class="po-info"><span>Dias úteis (Segunda a Sexta)</span><b style="color:var(--ink)">R$ 10,00</b></div>
-              </div>
-
-              <h5 style="margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">Quantidade (Quantity)</h5>
-              <div style="display:grid;gap:12px;margin-bottom:20px">
-                ${field('Ingressos Adultos (a partir de 12 anos)', `
-                  <select class="po-control" id="ticketAdults">
-                    <option value="1" selected>1 ingresso</option>
-                    <option value="2">2 ingressos</option>
-                    <option value="3">3 ingressos</option>
-                    <option value="4">4 ingressos</option>
-                  </select>
-                `)}
-                ${field('Meia-Entrada / Crianças (04 a 11 anos e idosos)', `
-                  <select class="po-control" id="ticketKids">
-                    <option value="0" selected>Nenhum</option>
-                    <option value="1">1 ingresso</option>
-                    <option value="2">2 ingressos</option>
-                  </select>
-                `)}
-              </div>
-
-              <div style="padding:14px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line);margin-bottom:16px">
-                <span style="font-size:12px;color:var(--muted)">Valor Total Previsto:</span>
-                <div style="font:800 24px 'Manrope',sans-serif;color:var(--success)" id="ticketTotalAmount">R$ 20,00</div>
-              </div>
-
-              <button class="po-button primary" id="ticketBuyBtn"><i data-lucide="shopping-cart"></i> Comprar Ingressos</button>
-            </div>
-
-            <div class="po-calendar" id="ticketCalendar">
-              <div class="calendar-head">
-                <button class="calendar-nav-btn">‹</button>
-                <span class="calendar-title">Agosto 2026</span>
-                <button class="calendar-nav-btn">›</button>
-              </div>
-              <div class="calendar-grid">
-                <span class="day-name">Dom</span><span class="day-name">Seg</span><span class="day-name">Ter</span><span class="day-name">Qua</span><span class="day-name">Qui</span><span class="day-name">Sex</span><span class="day-name">Sáb</span>
-                <button class="calendar-day other-month">26</button>
-                <button class="calendar-day other-month">27</button>
-                <button class="calendar-day other-month">28</button>
-                <button class="calendar-day other-month">29</button>
-                <button class="calendar-day other-month">30</button>
-                <button class="calendar-day other-month">31</button>
-                <button class="calendar-day">1</button>
-                <button class="calendar-day">2</button>
-                <button class="calendar-day">3</button>
-                <button class="calendar-day">4</button>
-                <button class="calendar-day">5</button>
-                <button class="calendar-day">6</button>
-                <button class="calendar-day">7</button>
-                <button class="calendar-day">8</button>
-                <button class="calendar-day">9</button>
-                <button class="calendar-day">10</button>
-                <button class="calendar-day">11</button>
-                <button class="calendar-day">12</button>
-                <button class="calendar-day">13</button>
-                <button class="calendar-day">14</button>
-                <button class="calendar-day">15</button>
-                <button class="calendar-day">16</button>
-                <button class="calendar-day">17</button>
-                <button class="calendar-day">18</button>
-                <button class="calendar-day">19</button>
-                <button class="calendar-day">20</button>
-                <button class="calendar-day">21</button>
-                <button class="calendar-day">22</button>
-                <button class="calendar-day">23</button>
-                <button class="calendar-day">24</button>
-                <button class="calendar-day">25</button>
-                <button class="calendar-day">26</button>
-                <button class="calendar-day">27</button>
-                <button class="calendar-day">28</button>
-                <button class="calendar-day">29</button>
-                <button class="calendar-day today selected">30</button>
-                <button class="calendar-day">31</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `, 'PO Calendar: Basic, Range and Presets, Labs e Ticket Sales'),
-
-    'po-helper': wrap(`
-      <div class="showcase-stack">
-        ${field('Código Único SKU', '<input class="po-control" value="TOTVS-SKU-990">', 'O código SKU deve possuir 12 dígitos alfanuméricos.')}
-        <div class="po-alert success"><i data-lucide="info"></i> Dica: Você pode gerar códigos SKU em lote via integração API.</div>
-      </div>
-    `, 'Ajuda e Dicas Contextuais (PO Helper)'),
-
-    'po-icon': wrap(`
-      <div class="showcase-stack">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">1. PO Icon: Galeria de Ícones Vetoriais</h4>
-            <span class="po-tag">Ícones</span>
-          </div>
-          <div class="showcase-row lucide-gallery">
-            ${['home', 'search', 'bell', 'settings', 'user', 'calendar', 'check-circle', 'trash-2', 'download', 'upload', 'share-2', 'filter', 'edit', 'eye', 'lock'].map(n => icon(n, n)).join('')}
-          </div>
-        </div>
-      </div>
-    `, 'Galeria de Ícones Vetoriais (PO Icon)'),
-
-    'po-image': wrap(`
-      <div class="showcase-stack">
-        <div style="height:180px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand-soft),var(--surface-2));border-radius:8px;border:1px solid var(--line)">
-          <div style="text-align:center;color:var(--brand)">
-            ${icon('image')}
-            <b style="display:block;margin-top:6px">Imagem Responsiva com Fallback</b>
-            <small style="color:var(--muted)">Renderização otimizada para todas as resoluções</small>
-          </div>
-        </div>
-      </div>
-    `, 'Exibição de Imagens (PO Image)'),
-
-    'po-label': wrap(`
-      <div class="showcase-row">
-        <span class="po-label">Rótulo Padrão</span>
-        <span class="po-tag success">Concluído</span>
-        <span class="po-tag danger">Cancelado</span>
-      </div>
-    `, 'Rótulos Tipográficos (PO Label)'),
-
-    'po-logo': wrap(`
-      <div class="po-logo-demo">TOTVS <span>PO UI</span></div>
-    `, 'Assinatura Visual de Marca (PO Logo)'),
-
-    'po-search': wrap(`
-      <div class="showcase-stack">
-        <div class="po-input-addon">
-          <input class="po-control" id="localSearchDemo" placeholder="Digite para filtrar instantaneamente...">
-          <button class="po-button primary"><i data-lucide="search"></i></button>
-        </div>
-        <small id="localSearchHint" style="color:var(--muted)">Aguardando termo de pesquisa...</small>
-      </div>
-    `, 'Campo de Busca Rápida (PO Search)'),
-
-    'po-timer': wrap(`
-      <div class="showcase-stack" style="text-align:center">
-        <div style="border:1px solid var(--line);border-radius:8px;padding:24px;background:var(--surface)">
-          <div class="po-timer" id="timerDisplay" style="margin-bottom:14px">01:05</div>
-          <div class="showcase-row" style="justify-content:center">
-            <button class="po-button primary" id="timerStartBtn"><i data-lucide="play"></i> Iniciar</button>
-            <button class="po-button ghost" id="timerResetBtn"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
-          </div>
-        </div>
-      </div>
-    `, 'Temporizador / Cronômetro (PO Timer)'),
-
-    // ==========================================
-    // 8. TEMPLATES DE PÁGINA COMPLETOS & PROFISSIONAIS
-    'po-page-default': wrap(`
-      <div class="po-page-demo" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)">
-        <!-- Top Toolbar / Header -->
-        <div class="po-toolbar-demo" style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <nav class="po-breadcrumb" style="margin-bottom:4px">
-              <div class="po-breadcrumb-items">
-                <ul class="po-breadcrumb-item-container" style="font-size:11px">
-                  <li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link">Início</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>
-                  <li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link">Gestão</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>
-                  <li class="po-breadcrumb-item"><span class="po-breadcrumb-item-activate">Pedidos de Venda</span></li>
-                </ul>
-              </div>
-            </nav>
-            <div style="display:flex;align-items:center;gap:10px">
-              <h3 style="margin:0;font:800 20px 'Manrope',sans-serif;color:var(--ink)">Gestão de Pedidos</h3>
-              <span class="po-tag success" id="defaultOrdersCountBadge">3 Pedidos</span>
-            </div>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button ghost" data-toast="Exportando relatório em formato CSV..."><i data-lucide="download"></i> Exportar</button>
-            <button class="po-button ghost" data-toast="Imprimindo página de pedidos..."><i data-lucide="printer"></i> Imprimir</button>
-            <button class="po-button primary" data-toast="Abrindo formulário de novo pedido..."><i data-lucide="plus"></i> Novo Pedido</button>
-          </div>
-        </div>
-
-        <!-- KPI Metrics Summary Bar -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;padding:16px 20px;background:var(--surface-2);border-bottom:1px solid var(--line)">
-          <div style="padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-            <small style="color:var(--muted);font-weight:700">FATURAMENTO TOTAL</small>
-            <div style="font:800 20px 'Manrope',sans-serif;color:var(--brand);margin-top:2px">R$ 148.520,00</div>
-          </div>
-          <div style="padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-            <small style="color:var(--muted);font-weight:700">PEDIDOS PENDENTES</small>
-            <div style="font:800 20px 'Manrope',sans-serif;color:var(--warning);margin-top:2px">12 Pedidos</div>
-          </div>
-          <div style="padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-            <small style="color:var(--muted);font-weight:700">TICKET MÉDIO</small>
-            <div style="font:800 20px 'Manrope',sans-serif;color:var(--success);margin-top:2px">R$ 4.368,00</div>
-          </div>
-        </div>
-
-        <!-- Filter Bar with Disclaimers -->
-        <div style="padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:240px">
-            <div style="position:relative;width:100%">
-              <input class="po-control" id="defaultPageSearchInput" placeholder="Buscar pedido por cliente, código ou valor..." style="padding-left:36px;width:100%">
-              <i data-lucide="search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" id="defaultDisclaimersContainer">
-            <span class="po-disclaimer" data-disclaimer="status">Status: Em Aberto <button type="button" class="po-disclaimer-remove" data-remove-disclaimer="status" aria-label="Remover filtro"><i data-lucide="x" style="width:12px;height:12px"></i></button></span>
-            <span class="po-disclaimer" data-disclaimer="periodo">Período: Este Mês <button type="button" class="po-disclaimer-remove" data-remove-disclaimer="periodo" aria-label="Remover filtro"><i data-lucide="x" style="width:12px;height:12px"></i></button></span>
-            <div class="dropdown-wrap" style="position:relative;display:inline-block">
-              <button class="po-button ghost sm" id="defaultAddFilterBtn" style="font-size:11px"><i data-lucide="plus"></i> Adicionar Filtro</button>
-              <div class="po-dropdown-menu" id="defaultAddFilterMenu" hidden style="position:absolute;right:0;top:100%;z-index:50;min-width:180px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px;box-shadow:var(--shadow)">
-                <button type="button" class="po-dropdown-item" data-add-disclaimer="Prioridade: Alta" style="display:block;width:100%;text-align:left;padding:6px 10px;background:none;border:0;cursor:pointer;color:var(--ink)">Prioridade: Alta</button>
-                <button type="button" class="po-dropdown-item" data-add-disclaimer="Região: Nordeste" style="display:block;width:100%;text-align:left;padding:6px 10px;background:none;border:0;cursor:pointer;color:var(--ink)">Região: Nordeste</button>
-                <button type="button" class="po-dropdown-item" data-add-disclaimer="Status: Faturado" style="display:block;width:100%;text-align:left;padding:6px 10px;background:none;border:0;cursor:pointer;color:var(--ink)">Status: Faturado</button>
-              </div>
-            </div>
-            <button class="po-button ghost sm" id="defaultClearFiltersBtn" style="font-size:11px;color:var(--danger)"><i data-lucide="trash-2"></i> Limpar</button>
-          </div>
-        </div>
-
-        <!-- Page Body Content -->
-        <div class="po-page-body" style="padding:20px;background:var(--surface)">
-          <table class="po-table" id="defaultOrdersTable">
-            <thead>
-              <tr><th>Pedido</th><th>Cliente</th><th>Emissão</th><th>Valor</th><th>Status</th><th>Ações</th></tr>
-            </thead>
-            <tbody>
-              <tr data-order-row="ped-8941" data-status="Faturado"><td><b>#PED-8941</b></td><td>Clínica Aurora Saúde</td><td>30/08/2026</td><td>R$ 4.820,00</td><td><span class="po-tag success">Faturado</span></td><td><button class="po-button ghost sm" data-toast="Visualizando pedido #8941">Ver</button></td></tr>
-              <tr data-order-row="ped-8940" data-status="Aguardando"><td><b>#PED-8940</b></td><td>Mercado Central Sul</td><td>29/08/2026</td><td>R$ 1.250,00</td><td><span class="po-tag warning">Aguardando</span></td><td><button class="po-button ghost sm" data-toast="Visualizando pedido #8940">Ver</button></td></tr>
-              <tr data-order-row="ped-8939" data-status="Em Separação"><td><b>#PED-8939</b></td><td>Indústria Alpha Tech</td><td>28/08/2026</td><td>R$ 18.900,00</td><td><span class="po-tag brand">Em Separação</span></td><td><button class="po-button ghost sm" data-toast="Visualizando pedido #8939">Ver</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `, 'Template: Página Padrão (Page Default)'),
-
-    'po-page-list': wrap(`
-      <div class="po-page-demo" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div class="po-toolbar-demo" style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <h3 style="margin:0;font:800 20px 'Manrope',sans-serif;color:var(--ink)">Catálogo de Clientes</h3>
-            <small style="color:var(--muted)" id="listPageTotalCount">3 clientes exibidos de 142</small>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button ghost" data-toast="Exportando lista de clientes em Excel..."><i data-lucide="file-spreadsheet"></i> Exportar</button>
-            <button class="po-button primary" data-toast="Abrindo cadastro de novo cliente..."><i data-lucide="user-plus"></i> Novo Cliente</button>
-          </div>
-        </div>
-
-        <!-- Search and Action Filters -->
-        <div style="padding:12px 20px;background:var(--surface-2);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-          <div style="flex:1;min-width:240px;position:relative">
-            <input class="po-control" id="listPageSearchInput" placeholder="Buscar por Razão Social, CNPJ ou Cidade..." style="padding-left:36px;width:100%">
-            <i data-lucide="search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button class="po-button ghost sm" id="listFilterActiveBtn"><i data-lucide="check-circle-2"></i> Somente Ativos</button>
-            <button class="po-button ghost sm" id="listFilterAllBtn"><i data-lucide="list"></i> Ver Todos</button>
-          </div>
-        </div>
-
-        <!-- Selection Batch Bar -->
-        <div id="listPageBatchBar" hidden style="padding:8px 20px;background:var(--brand-soft);border-bottom:1px solid var(--brand);display:flex;align-items:center;justify-content:space-between;font-size:12px">
-          <span><b id="listPageSelectedCount">0</b> registros selecionados</span>
-          <div style="display:flex;gap:8px">
-            <button class="po-button ghost sm" id="listBatchExportBtn"><i data-lucide="download"></i> Exportar Selecionados</button>
-            <button class="po-button ghost sm" style="color:var(--danger)" id="listBatchDeleteBtn"><i data-lucide="trash-2"></i> Excluir</button>
-          </div>
-        </div>
-
-        <!-- Data Table -->
-        <div class="po-page-body" style="padding:0;background:var(--surface);overflow-x:auto">
-          <table class="po-table" id="listPageTable">
-            <thead>
-              <tr>
-                <th style="width:40px"><input type="checkbox" id="listPageSelectAll" aria-label="Selecionar todos"></th>
-                <th>Cliente / Razão Social</th>
-                <th>CNPJ / CPF</th>
-                <th>Localidade</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr data-client-row="aurora" data-status="Ativo">
-                <td><input type="checkbox" class="list-row-check"></td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <span class="po-avatar sm">CA</span>
-                    <div><b>Clínica Aurora Saúde S/A</b><br><small style="color:var(--muted)">contato@aurora.com.br</small></div>
-                  </div>
-                </td>
-                <td>12.345.678/0001-90</td>
-                <td>Fortaleza / CE</td>
-                <td><span class="po-tag success">Ativo</span></td>
-                <td>
-                  <div style="display:flex;gap:4px">
-                    <button class="po-button ghost sm" title="Editar" data-toast="Editando Clínica Aurora"><i data-lucide="pencil"></i></button>
-                    <button class="po-button ghost sm" title="Visualizar" data-toast="Visualizando Clínica Aurora"><i data-lucide="eye"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-client-row="mercado" data-status="Pendente">
-                <td><input type="checkbox" class="list-row-check"></td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <span class="po-avatar sm" style="background:#0d593f">MC</span>
-                    <div><b>Mercado Central de Alimentos</b><br><small style="color:var(--muted)">financeiro@mercadocentral.com</small></div>
-                  </div>
-                </td>
-                <td>98.765.432/0001-10</td>
-                <td>Recife / PE</td>
-                <td><span class="po-tag warning">Pendente</span></td>
-                <td>
-                  <div style="display:flex;gap:4px">
-                    <button class="po-button ghost sm" title="Editar" data-toast="Editando Mercado Central"><i data-lucide="pencil"></i></button>
-                    <button class="po-button ghost sm" title="Visualizar" data-toast="Visualizando Mercado Central"><i data-lucide="eye"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr data-client-row="techlog" data-status="Ativo">
-                <td><input type="checkbox" class="list-row-check"></td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <span class="po-avatar sm" style="background:#5b21b6">TL</span>
-                    <div><b>TechLog Soluções Logísticas</b><br><small style="color:var(--muted)">suporte@techlog.io</small></div>
-                  </div>
-                </td>
-                <td>45.123.789/0001-55</td>
-                <td>São Paulo / SP</td>
-                <td><span class="po-tag success">Ativo</span></td>
-                <td>
-                  <div style="display:flex;gap:4px">
-                    <button class="po-button ghost sm" title="Editar" data-toast="Editando TechLog"><i data-lucide="pencil"></i></button>
-                    <button class="po-button ghost sm" title="Visualizar" data-toast="Visualizando TechLog"><i data-lucide="eye"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination Footer -->
-        <div style="padding:12px 20px;background:var(--surface-2);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px" id="listPagination">
-          <span style="color:var(--muted)">Página <b id="listCurrentPageNum">1</b> de <b>5</b> (Total: 142)</span>
-          <div style="display:flex;align-items:center;gap:4px">
-            <button class="po-button ghost sm" id="listPrevPageBtn"><i data-lucide="chevron-left"></i> Anterior</button>
-            <button class="po-button primary sm list-page-num" data-page="1">1</button>
-            <button class="po-button ghost sm list-page-num" data-page="2">2</button>
-            <button class="po-button ghost sm list-page-num" data-page="3">3</button>
-            <button class="po-button ghost sm" id="listNextPageBtn">Próximo <i data-lucide="chevron-right"></i></button>
-          </div>
-        </div>
-      </div>
-    `, 'Template: Listagem de Registros (Page List)'),
-
-    'po-page-detail': wrap(`
-      <div class="showcase-stack">
-        <!-- PO Page Detail Completa -->
-        <div class="po-detail-card-container">
-          <!-- Header Bar -->
-          <div class="po-detail-header-bar">
-            <div>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button class="po-button ghost sm" data-toast="Retornando para a listagem de clientes..."><i data-lucide="arrow-left"></i> Voltar</button>
-                <span class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></span>
-                <span style="font-size:12px;color:var(--muted)">Clientes</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                <span class="po-avatar md" style="background:var(--brand)">CA</span>
-                <div>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <h3 style="margin:0;font:800 22px 'Manrope',sans-serif;color:var(--ink)" id="detailTitleText">Clínica Aurora Saúde S/A</h3>
-                    <span class="po-tag success" id="detailStatusBadge">Homologado</span>
-                  </div>
-                  <small style="color:var(--muted)">Código: #CLI-2026-994 · CNPJ: 12.345.678/0001-90</small>
-                </div>
-              </div>
-            </div>
-
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="po-button ghost" data-toast="Gerando relatório em PDF..."><i data-lucide="printer"></i> Imprimir</button>
-              <button class="po-button ghost" data-toast="Duplicando cadastro de cliente..."><i data-lucide="copy"></i> Duplicar</button>
-              <button class="po-button primary" data-toast="Abrindo tela de edição do cadastro..."><i data-lucide="pencil"></i> Editar Cadastro</button>
-            </div>
-          </div>
-
-          <!-- Summary Metrics -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;padding:16px 24px;background:var(--surface-2);border-bottom:1px solid var(--line)">
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">LIMITE TOTAL</small>
-              <div style="font:800 18px 'Manrope',sans-serif;color:var(--brand);margin-top:2px" id="detailCreditVal">R$ 150.000,00</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">SALDO UTILIZADO</small>
-              <div style="font:800 18px 'Manrope',sans-serif;color:var(--ink);margin-top:2px">R$ 38.450,00</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">FATURAMENTO 2026</small>
-              <div style="font:800 18px 'Manrope',sans-serif;color:var(--success);margin-top:2px">R$ 294.180,00</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">SCORE</small>
-              <div style="font:800 18px 'Manrope',sans-serif;color:var(--brand);margin-top:2px">980 / 1000</div>
-            </div>
-          </div>
-
-          <!-- Body Content -->
-          <div style="padding:24px;display:grid;gap:24px">
-            <!-- Seção 1: Dados Cadastrais -->
-            <div>
-              <div class="po-detail-section-title"><i data-lucide="building-2"></i> 1. Identificação Corporativa</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px">
-                <div class="po-detail-info-card"><span>Razão Social</span><b>Clínica Aurora Saúde S/A</b></div>
-                <div class="po-detail-info-card"><span>Nome Fantasia</span><b>Aurora Saúde & Diagnósticos</b></div>
-                <div class="po-detail-info-card"><span>CNPJ</span><b>12.345.678/0001-90</b></div>
-                <div class="po-detail-info-card"><span>Inscrição Estadual</span><b>06.123.456-7</b></div>
-                <div class="po-detail-info-card"><span>CNAE Principal</span><b>8630-5/03 - Médica Ambulatorial</b></div>
-                <div class="po-detail-info-card"><span>Regime Tributário</span><b>Lucro Presumido</b></div>
-              </div>
-            </div>
-
-            <!-- Seção 2: Contato e Endereço -->
-            <div>
-              <div class="po-detail-section-title"><i data-lucide="map-pin"></i> 2. Contato & Localização</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px">
-                <div class="po-detail-info-card"><span>E-mail Corporativo</span><b style="color:var(--brand)">contato@aurorasaude.com.br</b></div>
-                <div class="po-detail-info-card"><span>Telefone Principal</span><b>(85) 3456-7890</b></div>
-                <div class="po-detail-info-card"><span>Responsável Legal</span><b>Dra. Marina Almeida Santos</b></div>
-                <div class="po-detail-info-card"><span>Endereço</span><b>Av. Santos Dumont, 1200 - Sala 801</b></div>
-                <div class="po-detail-info-card"><span>Cidade / UF</span><b>Fortaleza / CE</b></div>
-                <div class="po-detail-info-card"><span>CEP</span><b>60150-160</b></div>
-              </div>
-            </div>
-
-            <!-- Seção 3: Documentos Anexos -->
-            <div>
-              <div class="po-detail-section-title"><i data-lucide="paperclip"></i> 3. Documentos Anexados</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px">
-                <div class="po-file-card">
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <i data-lucide="file-text" style="color:var(--danger);width:22px;height:22px"></i>
-                    <div><b>Contrato_Social_2026.pdf</b><br><small style="color:var(--muted)">2.4 MB · 14/01/2026</small></div>
-                  </div>
-                  <button class="po-button ghost sm" data-toast="Baixando Contrato Social..."><i data-lucide="download"></i></button>
-                </div>
-
-                <div class="po-file-card">
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <i data-lucide="file-spreadsheet" style="color:var(--success);width:22px;height:22px"></i>
-                    <div><b>Balanco_Patrimonial_2025.xlsx</b><br><small style="color:var(--muted)">4.1 MB · 20/03/2026</small></div>
-                  </div>
-                  <button class="po-button ghost sm" data-toast="Baixando Balanço Patrimonial..."><i data-lucide="download"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PO Page Detail Labs -->
-        <div style="border:1px solid var(--line);border-radius:10px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">PO Page Detail Labs (Controles Dinâmicos)</h4>
-            <span class="po-tag brand">Laboratório</span>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;align-items:flex-end">
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Status do Registro</label>
-              <select class="po-control" id="detailLabStatusSelect">
-                <option value="success" selected>Homologado (Ativo)</option>
-                <option value="warning">Em Análise / Pendente</option>
-                <option value="danger">Bloqueado / Inadimplente</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Alterar Limite de Crédito (R$)</label>
-              <input class="po-control" id="detailLabCreditInput" value="150.000,00">
-            </div>
-
-            <button class="po-button primary" id="detailLabApplyBtn"><i data-lucide="check"></i> Atualizar Ficha</button>
-          </div>
-        </div>
-      </div>
-    `, 'Template: Detalhes de Registro (Page Detail)'),
-
-    'po-page-edit': wrap(`
-      <div class="po-page-demo" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div class="po-toolbar-demo" style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <h3 style="margin:0;font:800 20px 'Manrope',sans-serif;color:var(--ink)">Editar Registro de Cliente</h3>
-            <small style="color:var(--muted)">Preencha os campos obrigatórios marcados com (*)</small>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button ghost" id="pageEditCancelBtn">Cancelar</button>
-            <button class="po-button primary" id="pageEditSaveBtn"><i data-lucide="save"></i> Salvar Alterações</button>
-          </div>
-        </div>
-
-        <form id="pageEditForm" class="po-page-body" style="padding:22px;background:var(--surface);display:grid;gap:24px" onsubmit="event.preventDefault();">
-          <!-- Seção 1 -->
-          <div>
-            <h4 style="margin:0 0 14px;font:700 14px 'Manrope',sans-serif;color:var(--brand);display:flex;align-items:center;gap:6px"><i data-lucide="building-2"></i> 1. Identificação Corporativa</h4>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px">
-              ${field('Razão Social *', '<input class="po-control" id="pageEditRazaoSocial" value="Clínica Aurora Saúde S/A">')}
-              ${field('Nome Fantasia', '<input class="po-control" id="pageEditNomeFantasia" value="Aurora Saúde">')}
-              ${field('CNPJ *', '<input class="po-control" id="pageEditCnpj" value="12.345.678/0001-90">')}
-              ${field('Inscrição Estadual', '<input class="po-control" id="pageEditInscricao" value="06.123.456-7">')}
-            </div>
-          </div>
-
-          <!-- Seção 2 -->
-          <div style="border-top:1px solid var(--line);padding-top:18px">
-            <h4 style="margin:0 0 14px;font:700 14px 'Manrope',sans-serif;color:var(--brand);display:flex;align-items:center;gap:6px"><i data-lucide="map-pin"></i> 2. Contato & Endereço</h4>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px">
-              ${field('E-mail Comercial *', '<input class="po-control" id="pageEditEmail" type="email" value="financeiro@aurora.com.br">')}
-              ${field('Telefone de Contato', '<input class="po-control" id="pageEditTelefone" value="(85) 3456-7890">')}
-              ${field('CEP', '<input class="po-control" id="pageEditCep" value="60150-160">')}
-              ${field('Cidade / UF', '<input class="po-control" id="pageEditCidade" value="Fortaleza / CE">')}
-            </div>
-          </div>
-
-          <!-- Seção 3 -->
-          <div style="border-top:1px solid var(--line);padding-top:18px">
-            <h4 style="margin:0 0 14px;font:700 14px 'Manrope',sans-serif;color:var(--brand);display:flex;align-items:center;gap:6px"><i data-lucide="dollar-sign"></i> 3. Condições Comerciais</h4>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px">
-              ${field('Limite de Crédito (R$)', '<input class="po-control" id="pageEditLimite" value="150.000,00">')}
-              ${field('Forma de Pagamento Padrão', '<select class="po-control" id="pageEditFormaPag"><option selected>Boleto Bancário (30 dias)</option><option>PIX à Vista</option><option>Cartão Corporativo</option></select>')}
-            </div>
-          </div>
-        </form>
-      </div>
-    `, 'Template: Edição de Registro (Page Edit)'),
-
-    'po-page-login': wrap(`
-      <div class="po-login-card-container">
-        <div class="po-login-header">
-          <div class="brand">
-            <span class="brand-mark" aria-hidden="true">
-              <i></i><i></i><i></i><i></i>
-            </span>
-            <span style="font-size:22px"><b>WF</b> willFran</span>
-          </div>
-          <h2>Acesso ao Portal Corporativo</h2>
-          <p>Entre com suas credenciais de usuário</p>
-        </div>
-
-        <form class="showcase-stack" id="pageLoginForm" onsubmit="event.preventDefault();">
-          <div>
-            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Usuário ou E-mail *</label>
-            <div style="position:relative">
-              <input class="po-control" id="loginUsername" placeholder="nome@empresa.com" value="diretoria@empresa.com" style="padding-left:36px;width:100%">
-              <i data-lucide="mail" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-            </div>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Senha de Acesso *</label>
-            <div style="position:relative">
-              <input class="po-control" id="loginPassword" type="password" value="SenhaForte@2026" placeholder="••••••••" style="padding-left:36px;padding-right:36px;width:100%">
-              <i data-lucide="lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-              <button type="button" id="loginTogglePass" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;padding:4px;color:var(--muted);cursor:pointer" aria-label="Mostrar/Ocultar Senha">
-                <i data-lucide="eye" style="width:16px;height:16px"></i>
+            <div class="flex items-center gap-1 rounded-lg border border-border bg-muted/60 p-1">
+              <button id="chartTabBtn-bar" onclick="switchChartDemoType('bar')" class="chart-tab-btn inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1 text-xs font-bold text-foreground shadow-sm transition-all">
+                <i data-lucide="bar-chart-3" class="h-3.5 w-3.5 text-[#753399]"></i> Barras
+              </button>
+              <button id="chartTabBtn-area" onclick="switchChartDemoType('area')" class="chart-tab-btn inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">
+                <i data-lucide="activity" class="h-3.5 w-3.5"></i> Área / Linha
+              </button>
+              <button id="chartTabBtn-donut" onclick="switchChartDemoType('donut')" class="chart-tab-btn inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">
+                <i data-lucide="pie-chart" class="h-3.5 w-3.5"></i> Rosca / Donut
+              </button>
+              <button id="chartTabBtn-horizontal" onclick="switchChartDemoType('horizontal')" class="chart-tab-btn inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-all">
+                <i data-lucide="align-left" class="h-3.5 w-3.5"></i> Ranking
               </button>
             </div>
           </div>
 
-          <div>
-            <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Ambiente</label>
-            <select class="po-control" id="loginEnvSelect">
-              <option value="prd" selected>Produção - Servidor Principal (PRD)</option>
-              <option value="hml">Homologação / Testes (HML)</option>
-            </select>
-          </div>
-
-          <div class="po-login-row-remember" style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;margin:8px 0 4px">
-            <label class="po-checkbox" style="display:inline-flex;align-items:center;gap:8px;white-space:nowrap;margin:0;cursor:pointer">
-              <input type="checkbox" id="loginRememberCheck" checked style="margin:0;width:16px;height:16px;flex-shrink:0">
-              <span style="white-space:nowrap;font-size:13px">Lembrar meu usuário</span>
-            </label>
-            <a href="#" id="loginForgotPassLink" style="color:var(--brand);font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">Esqueceu a senha?</a>
-          </div>
-
-          <button class="po-button primary" id="loginSubmitBtn" style="width:100%;margin-top:8px;font-size:14px;min-height:44px"><i data-lucide="log-in"></i> Acessar Sistema</button>
-        </form>
-
-        <div style="margin-top:20px;text-align:center">
-          <span style="font-size:11px;color:var(--muted);position:relative;display:block;margin-bottom:12px">ou acesse com conta corporativa</span>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <button class="po-button ghost sm" data-toast="Autenticando via TOTVS ID..."><i data-lucide="shield"></i> TOTVS ID</button>
-            <button class="po-button ghost sm" data-toast="Autenticando via Microsoft 365..."><i data-lucide="layout-grid"></i> Microsoft 365</button>
-          </div>
-        </div>
-
-        <div style="text-align:center;margin-top:24px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)">
-          WF willFran · Design System Sem Framework · v4.12.0
-        </div>
-      </div>
-    `, 'Template: Tela de Autenticação (Page Login)'),
-
-    'po-page-dynamic-table': wrap(`
-      <div class="po-page-demo" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div class="po-toolbar-demo" style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <h3 style="margin:0;font:800 20px 'Manrope',sans-serif;color:var(--ink)">Tabela Dinâmica Automática (JSON Schema)</h3>
-            <small style="color:var(--muted)">Colunas e dados gerados dinamicamente a partir de metadados</small>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button ghost" id="toggleSchemaBtn" data-toast="Alternando visualização de schema JSON..."><i data-lucide="code"></i> Ver Schema JSON</button>
-            <button class="po-button primary" data-toast="Schema recarregado com sucesso!"><i data-lucide="refresh-cw"></i> Recarregar Schema</button>
-          </div>
-        </div>
-
-        <div class="po-page-body" style="padding:0;background:var(--surface);overflow-x:auto">
-          <table class="po-table">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Serviço Integrado</th>
-                <th>Tipo de Protocolo</th>
-                <th>Frequência</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>#INT-001</b></td>
-                <td>Integração ERP Protheus</td>
-                <td>REST API</td>
-                <td>Tempo Real (Webhook)</td>
-                <td><span class="po-tag success">Operacional</span></td>
-                <td><button class="po-button ghost sm" data-toast="Executando teste no serviço #INT-001"><i data-lucide="play"></i> Testar</button></td>
-              </tr>
-              <tr>
-                <td><b>#INT-002</b></td>
-                <td>Sincronização Fiscal SEFAZ</td>
-                <td>SOAP XML</td>
-                <td>A cada 15 minutos</td>
-                <td><span class="po-tag brand">Ativo</span></td>
-                <td><button class="po-button ghost sm" data-toast="Executando teste no serviço #INT-002"><i data-lucide="play"></i> Testar</button></td>
-              </tr>
-              <tr>
-                <td><b>#INT-003</b></td>
-                <td>Backup em Nuvem AWS S3</td>
-                <td>CLI S3 Sync</td>
-                <td>Diário (02:00h)</td>
-                <td><span class="po-tag success">Concluído</span></td>
-                <td><button class="po-button ghost sm" data-toast="Executando teste no serviço #INT-003"><i data-lucide="play"></i> Testar</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `, 'Template: Tabela Dinâmica Automática'),
-
-    'po-page-dynamic-edit': wrap(`
-      <div class="po-page-demo" style="border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm)">
-        <div class="po-toolbar-demo" style="padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-          <div>
-            <h3 style="margin:0;font:800 20px 'Manrope',sans-serif;color:var(--ink)">Formulário Dinâmico Automatizado</h3>
-            <small style="color:var(--muted)">Inputs, seletores e validações gerados por JSON Schema</small>
-          </div>
-          <div class="showcase-row">
-            <button class="po-button ghost" data-toast="Edição dinâmica cancelada.">Descartar</button>
-            <button class="po-button primary" data-toast="Parâmetros dinâmicos validados e salvos!"><i data-lucide="check"></i> Salvar Parâmetros</button>
-          </div>
-        </div>
-
-        <div class="po-page-body" style="padding:22px;background:var(--surface)">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px">
-            ${field('Nome do Parâmetro (Key)', '<input value="CONF_MAX_UPLOAD_SIZE_MB">')}
-            ${field('Tipo de Dado', '<select><option selected>Numérico (Integer)</option><option>Texto (String)</option><option>Booleano (Boolean)</option></select>')}
-            ${field('Valor Configurado', '<input value="50">')}
-            ${field('Ambiente Alvo', '<select><option selected>Produção (PRD)</option><option>Homologação (HML)</option><option>Desenvolvimento (DEV)</option></select>')}
-          </div>
-        </div>
-      </div>
-    `, 'Template: Edição Dinâmica Automatizada'),
-
-    'po-page-dynamic-detail': wrap(`
-      <div class="showcase-stack">
-        <!-- Sample 1: PO Page Dynamic Detail Renderizado -->
-        <div class="po-detail-card-container" id="dynamicDetailCard">
-          <!-- Top Header with Actions -->
-          <div class="po-detail-header-bar">
-            <div>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button class="po-button ghost sm" data-toast="Retornando para listagem dinâmica..."><i data-lucide="arrow-left"></i> Voltar</button>
-                <span class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></span>
-                <span style="font-size:12px;color:var(--muted)" id="dynamicDetailCategoryBreadcrumb">Serviços / Integrações ERP</span>
+          <!-- 1. BAR CHART CONTAINER -->
+          <div id="chartView-bar" class="chart-view-pane rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h5 class="font-heading text-xs font-bold text-foreground">Faturamento vs Meta Mensal</h5>
+                <p class="text-[11px] text-muted-foreground">Evolução do primeiro semestre (valores em R$ mil)</p>
               </div>
-              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                <span class="po-avatar md" style="background:var(--brand)" id="dynamicDetailAvatar">ERP</span>
-                <div>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <h3 style="margin:0;font:800 22px 'Manrope',sans-serif;color:var(--ink)" id="dynamicDetailTitle">Integração TOTVS Protheus REST API</h3>
-                    <span class="po-tag success" id="dynamicDetailStatusTag">Operacional</span>
+              <div class="flex items-center gap-3 text-[11px] font-medium">
+                <span class="flex items-center gap-1 text-[#753399] font-bold"><span class="h-2 w-2 rounded-sm bg-[#753399]"></span> Receita</span>
+                <span class="flex items-center gap-1 text-muted-foreground"><span class="h-2 w-2 rounded-sm bg-muted-foreground/30"></span> Meta</span>
+              </div>
+            </div>
+
+            <!-- Bar Visualizer -->
+            <div class="pt-4 flex items-end justify-between gap-3 h-48 border-b border-border pb-2 px-2">
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Janeiro: R$ 85.000 (Meta 70k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981]" style="height: 65%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 50%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-muted-foreground">Jan</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Fevereiro: R$ 92.000 (Meta 75k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981]" style="height: 72%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 55%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-muted-foreground">Fev</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Março: R$ 110.000 (Meta 80k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981]" style="height: 85%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 60%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-muted-foreground">Mar</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Abril: R$ 98.000 (Meta 85k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981]" style="height: 76%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 65%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-muted-foreground">Abr</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Maio: R$ 130.000 (Meta 90k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981]" style="height: 95%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 70%;"></div>
+                </div>
+                <span class="text-[10px] font-semibold text-muted-foreground">Mai</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Junho (Recorde!): R$ 145.000 (Meta 95k)')">
+                <div class="w-full flex items-end justify-center gap-1 h-36">
+                  <div class="w-3/5 bg-[#753399] rounded-t transition-all group-hover:bg-[#622981] shadow-lg shadow-[#753399]/20" style="height: 100%;"></div>
+                  <div class="w-2/5 bg-muted-foreground/20 rounded-t" style="height: 72%;"></div>
+                </div>
+                <span class="text-[10px] font-bold text-[#753399]">Jun</span>
+              </div>
+            </div>
+            <div class="flex justify-between items-center text-xs text-muted-foreground pt-1">
+              <span>Média Semestral: <b class="text-foreground font-mono">R$ 110.3k</b></span>
+              <span class="text-emerald-500 font-bold flex items-center gap-1"><i data-lucide="trending-up" class="h-3.5 w-3.5"></i> +24.8% YoY</span>
+            </div>
+          </div>
+
+          <!-- 2. AREA / LINE CHART CONTAINER -->
+          <div id="chartView-area" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h5 class="font-heading text-xs font-bold text-foreground">Tráfego de API & Requisições</h5>
+                <p class="text-[11px] text-muted-foreground">Volume de chamadas por hora (em milhares)</p>
+              </div>
+              <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span> 99.98% Uptime
+              </span>
+            </div>
+
+            <!-- SVG Smooth Area Chart -->
+            <div class="relative h-44 w-full pt-2">
+              <svg viewBox="0 0 500 160" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="montaAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#753399" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#753399" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <!-- Grid Lines -->
+                <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
+                <line x1="0" y1="80" x2="500" y2="80" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
+                <line x1="0" y1="120" x2="500" y2="120" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
+
+                <!-- Area Fill -->
+                <path d="M 0,120 Q 80,100 120,60 T 240,40 T 360,70 T 500,20 L 500,160 L 0,160 Z" fill="url(#montaAreaGradient)"/>
+                <!-- Line Stroke -->
+                <path d="M 0,120 Q 80,100 120,60 T 240,40 T 360,70 T 500,20" fill="none" stroke="#753399" stroke-width="3" stroke-linecap="round"/>
+
+                <!-- Data Dots -->
+                <circle cx="120" cy="60" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('04:00 - 45k req/s')"/>
+                <circle cx="240" cy="40" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('08:00 - 82k req/s')"/>
+                <circle cx="360" cy="70" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('12:00 - 64k req/s')"/>
+                <circle cx="500" cy="20" r="5" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('Pico: 16:00 - 118k req/s')"/>
+              </svg>
+            </div>
+            <div class="flex justify-between text-[10px] text-muted-foreground font-mono px-1 border-t border-border pt-2">
+              <span>00:00</span>
+              <span>04:00</span>
+              <span>08:00</span>
+              <span>12:00</span>
+              <span>16:00</span>
+              <span>20:00</span>
+              <span>23:59</span>
+            </div>
+          </div>
+
+          <!-- 3. DONUT / PIE CHART CONTAINER -->
+          <div id="chartView-donut" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h5 class="font-heading text-xs font-bold text-foreground">Distribuição por Canal de Vendas</h5>
+                <p class="text-[11px] text-muted-foreground">Participação no volume financeiro total</p>
+              </div>
+              <span class="font-mono text-xs font-bold text-foreground">Total: R$ 1.28M</span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-around gap-6 pt-2">
+              <!-- SVG Donut -->
+              <div class="relative w-40 h-40 flex items-center justify-center">
+                <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                  <!-- Background Track -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" stroke-opacity="0.1" stroke-width="4.5"/>
+                  <!-- Segment 1: E-commerce (45%) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#753399" stroke-width="4.5" stroke-dasharray="39.6 88" stroke-dashoffset="0" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('E-commerce: 45% (R$ 576.000)')"/>
+                  <!-- Segment 2: PDV / Lojas (30%) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="4.5" stroke-dasharray="26.4 88" stroke-dashoffset="-39.6" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Lojas Físicas: 30% (R$ 384.000)')"/>
+                  <!-- Segment 3: Marketplace (15%) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="13.2 88" stroke-dashoffset="-66" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Marketplace: 15% (R$ 192.000)')"/>
+                  <!-- Segment 4: API B2B (10%) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#3b82f6" stroke-width="4.5" stroke-dasharray="8.8 88" stroke-dashoffset="-79.2" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Integrações B2B: 10% (R$ 128.000)')"/>
+                </svg>
+                <div class="absolute flex flex-col items-center justify-center text-center">
+                  <span class="font-heading text-lg font-bold text-foreground">100%</span>
+                  <span class="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">Canais</span>
+                </div>
+              </div>
+
+              <!-- Legend List -->
+              <div class="space-y-2 flex-1 max-w-xs">
+                <div class="flex items-center justify-between text-xs cursor-pointer p-1.5 rounded-lg hover:bg-muted transition-colors" onclick="showToast('E-commerce: 45%')">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-[#753399]"></span>
+                    <span class="font-medium text-foreground">E-commerce / Web</span>
                   </div>
-                  <small style="color:var(--muted)" id="dynamicDetailSubtitle">Schema: SCH-PROTHEUS-V2 · ID do Registro: #INT-2026-9081</small>
+                  <span class="font-mono font-bold text-foreground">45% <span class="text-muted-foreground font-normal">(576k)</span></span>
+                </div>
+                <div class="flex items-center justify-between text-xs cursor-pointer p-1.5 rounded-lg hover:bg-muted transition-colors" onclick="showToast('Lojas Físicas: 30%')">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-medium text-foreground">Lojas / PDV</span>
+                  </div>
+                  <span class="font-mono font-bold text-foreground">30% <span class="text-muted-foreground font-normal">(384k)</span></span>
+                </div>
+                <div class="flex items-center justify-between text-xs cursor-pointer p-1.5 rounded-lg hover:bg-muted transition-colors" onclick="showToast('Marketplace: 15%')">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-medium text-foreground">Marketplace</span>
+                  </div>
+                  <span class="font-mono font-bold text-foreground">15% <span class="text-muted-foreground font-normal">(192k)</span></span>
+                </div>
+                <div class="flex items-center justify-between text-xs cursor-pointer p-1.5 rounded-lg hover:bg-muted transition-colors" onclick="showToast('API B2B: 10%')">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>
+                    <span class="font-medium text-foreground">Integração API</span>
+                  </div>
+                  <span class="font-mono font-bold text-foreground">10% <span class="text-muted-foreground font-normal">(128k)</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. HORIZONTAL BAR / RANKING CONTAINER -->
+          <div id="chartView-horizontal" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <h5 class="font-heading text-xs font-bold text-foreground">Desempenho por Unidade Regional</h5>
+                <p class="text-[11px] text-muted-foreground">Atingimento da meta orçamentária do Q3</p>
+              </div>
+              <span class="text-[11px] font-bold text-emerald-500">+18% Geral</span>
+            </div>
+
+            <!-- Horizontal Bars -->
+            <div class="space-y-3 pt-1">
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-foreground font-bold">1. Filial São Paulo (Matriz)</span>
+                  <span class="font-mono text-[#753399] font-bold">R$ 450k (112%)</span>
+                </div>
+                <div class="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-[#753399] rounded-full" style="width: 100%;"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-foreground font-bold">2. Filial Rio de Janeiro</span>
+                  <span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">R$ 380k (95%)</span>
+                </div>
+                <div class="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-emerald-500 rounded-full" style="width: 85%;"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-foreground font-bold">3. Filial Minas Gerais</span>
+                  <span class="font-mono text-amber-600 dark:text-amber-400 font-bold">R$ 290k (78%)</span>
+                </div>
+                <div class="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-amber-500 rounded-full" style="width: 68%;"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-foreground font-bold">4. Filial Paraná</span>
+                  <span class="font-mono text-blue-600 dark:text-blue-400 font-bold">R$ 240k (72%)</span>
+                </div>
+                <div class="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div class="h-full bg-blue-500 rounded-full" style="width: 58%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'calendar':
+      stage.innerHTML = `
+        <div class="w-full max-w-sm mx-auto rounded-xl border border-border bg-card p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <span class="font-heading text-sm font-bold text-foreground">Agosto de 2026</span>
+            <div class="flex gap-1">
+              <button onclick="showToast('Mês Anterior')" class="h-7 w-7 rounded border border-border flex items-center justify-center hover:bg-muted"><i data-lucide="chevron-left" class="h-3.5 w-3.5"></i></button>
+              <button onclick="showToast('Próximo Mês')" class="h-7 w-7 rounded border border-border flex items-center justify-center hover:bg-muted"><i data-lucide="chevron-right" class="h-3.5 w-3.5"></i></button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold text-muted-foreground mb-1">
+            <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center text-xs">
+            <div class="p-1.5 text-muted-foreground/30">26</div><div class="p-1.5 text-muted-foreground/30">27</div><div class="p-1.5 text-muted-foreground/30">28</div><div class="p-1.5 text-muted-foreground/30">29</div><div class="p-1.5 text-muted-foreground/30">30</div><div class="p-1.5 text-muted-foreground/30">31</div>
+            <div onclick="selectCalDay(this, 1)" class="p-1.5 rounded hover:bg-muted cursor-pointer">1</div>
+            <div onclick="selectCalDay(this, 2)" class="p-1.5 rounded hover:bg-muted cursor-pointer">2</div>
+            <div onclick="selectCalDay(this, 3)" class="p-1.5 rounded hover:bg-muted cursor-pointer">3</div>
+            <div onclick="selectCalDay(this, 4)" class="p-1.5 rounded hover:bg-muted cursor-pointer">4</div>
+            <div onclick="selectCalDay(this, 5)" class="p-1.5 rounded hover:bg-muted cursor-pointer">5</div>
+            <div onclick="selectCalDay(this, 6)" class="p-1.5 rounded hover:bg-muted cursor-pointer">6</div>
+            <div onclick="selectCalDay(this, 7)" class="p-1.5 rounded hover:bg-muted cursor-pointer">7</div>
+            <div onclick="selectCalDay(this, 8)" class="p-1.5 rounded hover:bg-muted cursor-pointer">8</div>
+            <div onclick="selectCalDay(this, 9)" class="p-1.5 rounded hover:bg-muted cursor-pointer">9</div>
+            <div onclick="selectCalDay(this, 10)" class="p-1.5 rounded hover:bg-muted cursor-pointer">10</div>
+            <div onclick="selectCalDay(this, 11)" class="p-1.5 rounded hover:bg-muted cursor-pointer">11</div>
+            <div onclick="selectCalDay(this, 12)" class="p-1.5 rounded hover:bg-muted cursor-pointer">12</div>
+            <div onclick="selectCalDay(this, 13)" class="p-1.5 rounded hover:bg-muted cursor-pointer">13</div>
+            <div onclick="selectCalDay(this, 14)" class="p-1.5 rounded hover:bg-muted cursor-pointer">14</div>
+            <div onclick="selectCalDay(this, 15)" class="p-1.5 rounded hover:bg-muted cursor-pointer font-bold relative">15<span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-brand"></span></div>
+            <div onclick="selectCalDay(this, 16)" class="p-1.5 rounded hover:bg-muted cursor-pointer">16</div>
+            <div onclick="selectCalDay(this, 17)" class="p-1.5 rounded hover:bg-muted cursor-pointer">17</div>
+            <div onclick="selectCalDay(this, 18)" class="p-1.5 rounded hover:bg-muted cursor-pointer">18</div>
+            <div onclick="selectCalDay(this, 19)" class="p-1.5 rounded hover:bg-muted cursor-pointer">19</div>
+            <div onclick="selectCalDay(this, 20)" class="p-1.5 rounded hover:bg-muted cursor-pointer">20</div>
+            <div onclick="selectCalDay(this, 21)" class="p-1.5 rounded hover:bg-muted cursor-pointer">21</div>
+            <div onclick="selectCalDay(this, 22)" class="p-1.5 rounded hover:bg-muted cursor-pointer">22</div>
+            <div onclick="selectCalDay(this, 23)" class="p-1.5 rounded hover:bg-muted cursor-pointer">23</div>
+            <div onclick="selectCalDay(this, 24)" class="p-1.5 rounded hover:bg-muted cursor-pointer">24</div>
+            <div onclick="selectCalDay(this, 25)" class="p-1.5 rounded hover:bg-muted cursor-pointer">25</div>
+            <div onclick="selectCalDay(this, 26)" class="p-1.5 rounded hover:bg-muted cursor-pointer">26</div>
+            <div onclick="selectCalDay(this, 27)" class="p-1.5 rounded hover:bg-muted cursor-pointer">27</div>
+            <div onclick="selectCalDay(this, 28)" class="p-1.5 rounded hover:bg-muted cursor-pointer font-bold relative">28<span class="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-emerald-500"></span></div>
+            <div onclick="selectCalDay(this, 29)" class="p-1.5 rounded hover:bg-muted cursor-pointer">29</div>
+            <div onclick="selectCalDay(this, 30)" class="p-1.5 rounded hover:bg-muted cursor-pointer">30</div>
+            <div onclick="selectCalDay(this, 31)" class="p-1.5 rounded bg-brand text-white font-bold cursor-pointer shadow">31</div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'tree-view':
+      stage.innerHTML = `
+        <div class="w-full max-w-sm mx-auto rounded-xl border border-border bg-card p-4 space-y-1 text-xs">
+          <div class="font-bold text-foreground pb-2 border-b border-border mb-2 flex items-center justify-between">
+            <span>Explorador de Arquivos</span>
+            <span class="text-[10px] text-muted-foreground font-mono">src/</span>
+          </div>
+          <div>
+            <div onclick="toggleTreeNode(this)" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer font-semibold">
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform"></i>
+              <i data-lucide="folder" class="h-4 w-4 text-brand"></i>
+              <span>components</span>
+            </div>
+            <div class="pl-5 space-y-1 border-l border-border/60 ml-2 mt-1">
+              <div>
+                <div onclick="toggleTreeNode(this)" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer font-semibold">
+                  <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform"></i>
+                  <i data-lucide="folder" class="h-4 w-4 text-brand"></i>
+                  <span>monta-ui</span>
+                </div>
+                <div class="pl-5 space-y-1 border-l border-border/60 ml-2 mt-1">
+                  <div onclick="selectTreeFile(this, 'button.tsx')" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer text-muted-foreground hover:text-foreground">
+                    <i data-lucide="file-code" class="h-3.5 w-3.5 text-blue-400"></i>
+                    <span>button.tsx</span>
+                  </div>
+                  <div onclick="selectTreeFile(this, 'dialog.tsx')" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer text-muted-foreground hover:text-foreground">
+                    <i data-lucide="file-code" class="h-3.5 w-3.5 text-blue-400"></i>
+                    <span>dialog.tsx</span>
+                  </div>
+                  <div onclick="selectTreeFile(this, 'table.tsx')" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer text-muted-foreground hover:text-foreground">
+                    <i data-lucide="file-code" class="h-3.5 w-3.5 text-blue-400"></i>
+                    <span>table.tsx</span>
+                  </div>
+                </div>
+              </div>
+              <div onclick="selectTreeFile(this, 'App.tsx')" class="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer text-muted-foreground hover:text-foreground">
+                <i data-lucide="file-code" class="h-3.5 w-3.5 text-blue-400"></i>
+                <span>App.tsx</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'stepper':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-6">
+          <!-- Stepper Header Navigation -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs text-muted-foreground font-semibold px-1">
+              <span>Progresso do Cadastro</span>
+              <span id="stepperPct" class="text-brand font-mono font-bold">50% Concluído</span>
+            </div>
+            <div class="h-1.5 w-full rounded-full bg-muted overflow-hidden border border-border">
+              <div id="stepperBar" class="h-full bg-brand rounded-full transition-all duration-300" style="width: 50%;"></div>
+            </div>
+          </div>
+
+          <!-- Perfectly Aligned Grid Steps -->
+          <div class="grid grid-cols-4 relative px-2">
+            <!-- Step 1 -->
+            <div id="step-node-1" onclick="jumpToStep(1)" class="flex flex-col items-center text-center cursor-pointer group relative">
+              <div id="step-line-1" class="absolute top-4 left-1/2 w-full h-0.5 bg-emerald-600 -z-0"></div>
+              <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shadow ring-4 ring-card group-hover:scale-105 transition-all">
+                <i data-lucide="check" class="h-4 w-4"></i>
+              </div>
+              <span class="mt-2 text-xs font-bold text-foreground">1. Empresa</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step-node-2" onclick="jumpToStep(2)" class="flex flex-col items-center text-center cursor-pointer group relative">
+              <div id="step-line-2" class="absolute top-4 left-1/2 w-full h-0.5 bg-border -z-0"></div>
+              <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white font-bold text-xs shadow ring-4 ring-brand/20 group-hover:scale-105 transition-all">
+                2
+              </div>
+              <span class="mt-2 text-xs font-bold text-brand">2. Logística</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="step-node-3" onclick="jumpToStep(3)" class="flex flex-col items-center text-center cursor-pointer group relative">
+              <div id="step-line-3" class="absolute top-4 left-1/2 w-full h-0.5 bg-border -z-0"></div>
+              <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground border border-border font-bold text-xs ring-4 ring-card group-hover:scale-105 transition-all">
+                3
+              </div>
+              <span class="mt-2 text-xs font-medium text-muted-foreground">3. Pagamento</span>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="step-node-4" onclick="jumpToStep(4)" class="flex flex-col items-center text-center cursor-pointer group relative">
+              <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground border border-border font-bold text-xs ring-4 ring-card group-hover:scale-105 transition-all">
+                4
+              </div>
+              <span class="mt-2 text-xs font-medium text-muted-foreground">4. Conclusão</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Step Content Form -->
+          <div class="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
+            <div class="border-b border-border pb-3">
+              <h3 id="stepTitle" class="font-heading text-sm font-bold text-foreground">Etapa 2: Endereço & Logística</h3>
+              <p id="stepDesc" class="text-xs text-muted-foreground mt-0.5">Informe os dados para entrega e conferência tributária.</p>
+            </div>
+
+            <!-- Form Content Box -->
+            <div id="stepFormContainer" class="space-y-3 text-xs">
+              <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                  <label class="font-semibold text-foreground">CEP</label>
+                  <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none font-mono" value="04538-133">
+                </div>
+                <div class="space-y-1">
+                  <label class="font-semibold text-foreground">UF / Estado</label>
+                  <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="São Paulo - SP">
+                </div>
+              </div>
+              <div class="space-y-1">
+                <label class="font-semibold text-foreground">Logradouro & Número</label>
+                <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="Av. Brigadeiro Faria Lima, 4300 - 10º Andar">
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex justify-between items-center pt-3 border-t border-border">
+              <button onclick="prevStepDemo()" id="stepperBackBtn" class="inline-flex h-9 items-center gap-1.5 rounded-md border border-input bg-background px-4 text-xs font-semibold hover:bg-muted transition-colors">
+                <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i> Voltar
+              </button>
+              <div class="flex gap-2">
+                <button onclick="resetStepperDemo()" class="h-9 px-3 rounded-md text-xs text-muted-foreground hover:text-foreground">
+                  Reiniciar
+                </button>
+                <button onclick="nextStepDemo()" id="stepperNextBtn" class="inline-flex h-9 items-center gap-1.5 rounded-md bg-brand px-5 text-xs font-semibold text-white shadow hover:bg-brand-hover transition-colors">
+                  <span>Avançar Etapa</span> <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'timeline':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-4">
+          <!-- Timeline Header -->
+          <div class="flex items-center justify-between border-b border-border pb-3">
+            <div>
+              <h4 class="font-heading text-sm font-bold text-foreground">Auditoria do Pedido #PED-9481</h4>
+              <p class="text-xs text-muted-foreground">Rastreamento de ponta a ponta em tempo real</p>
+            </div>
+            <span class="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Conectado
+            </span>
+          </div>
+
+          <!-- Perfectly Aligned Timeline Events -->
+          <div class="space-y-4 pt-2">
+            
+            <!-- Event 1: Concluído -->
+            <div class="flex gap-4 items-start relative">
+              <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
+              <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm ring-4 ring-card">
+                <i data-lucide="check" class="h-3.5 w-3.5"></i>
+              </div>
+              <div class="flex-1 rounded-xl border border-border bg-card p-4 space-y-2 hover:border-brand/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-heading text-xs font-bold text-foreground">Pedido Criado via API Gateway</span>
+                  <span class="text-[10px] font-mono text-muted-foreground">09:15 · 31/08</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">
+                  Payload JSON recebido de <b>ERP Monta UI Enterprise</b>. 42 itens incluídos no pedido.
+                </p>
+                <div class="flex items-center gap-2 pt-1">
+                  <div class="flex items-center gap-1 text-[10px] text-muted-foreground font-semibold">
+                    <div class="h-4 w-4 rounded-full bg-muted flex items-center justify-center text-[9px]">API</div>
+                    <span>Webhook Integrador</span>
+                  </div>
+                  <span class="text-[10px] rounded bg-muted px-1.5 py-0.5 font-mono text-muted-foreground">status: 201_CREATED</span>
                 </div>
               </div>
             </div>
 
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="po-button ghost" id="dynamicDetailToggleJsonBtn"><i data-lucide="code"></i> Ver Schema JSON</button>
-              <button class="po-button ghost" data-toast="Gerando relatório de metadados..."><i data-lucide="printer"></i> Imprimir</button>
-              <button class="po-button primary" data-toast="Abrindo edição dinâmica deste schema..."><i data-lucide="pencil"></i> Editar Registro</button>
-            </div>
-          </div>
-
-          <!-- KPI Summary Strip -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;padding:16px 24px;background:var(--surface-2);border-bottom:1px solid var(--line)" id="dynamicDetailKpis">
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">PROTOCOLO</small>
-              <div style="font:800 16px 'Manrope',sans-serif;color:var(--brand);margin-top:2px" id="dynamicKpiProtocol">REST API (JSON)</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">TAXA DE DISPONIBILIDADE</small>
-              <div style="font:800 16px 'Manrope',sans-serif;color:var(--success);margin-top:2px" id="dynamicKpiUptime">99.98% (SLA AAA)</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">REQUISIÇÕES / DIA</small>
-              <div style="font:800 16px 'Manrope',sans-serif;color:var(--ink);margin-top:2px" id="dynamicKpiReqs">148.920 reqs</div>
-            </div>
-            <div style="padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px">
-              <small style="color:var(--muted);font-weight:700">ÚLTIMA SINCRONIZAÇÃO</small>
-              <div style="font:800 16px 'Manrope',sans-serif;color:var(--brand);margin-top:2px" id="dynamicKpiSync">Hoje, 14:32:05</div>
-            </div>
-          </div>
-
-          <!-- Dynamic Rendered View Content -->
-          <div id="dynamicDetailRenderedView" style="padding:24px;display:grid;gap:24px">
-            <!-- Seção 1: Configuração Técnica -->
-            <div>
-              <div class="po-detail-section-title"><i data-lucide="server"></i> 1. Especificações Técnicas do Endpoint</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px" id="dynamicFieldsSection1">
-                <div class="po-detail-info-card"><span>Nome do Serviço</span><b>Integração TOTVS Protheus</b></div>
-                <div class="po-detail-info-card"><span>URL Base do Endpoint</span><b style="color:var(--brand);font-family:monospace">https://api.erp.totvs.com.br/v2</b></div>
-                <div class="po-detail-info-card"><span>Método HTTP Padrão</span><b>POST / GET (OAuth 2.0)</b></div>
-                <div class="po-detail-info-card"><span>Tempo Limite (Timeout)</span><b>30 segundos</b></div>
-                <div class="po-detail-info-card"><span>Tentativas em Falha (Retry)</span><b>3 tentativas automáticas</b></div>
-                <div class="po-detail-info-card"><span>Ambiente Conectado</span><b>Produção (PRD-CLUSTER-01)</b></div>
+            <!-- Event 2: Pagamento Aprovado -->
+            <div class="flex gap-4 items-start relative">
+              <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
+              <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm ring-4 ring-card">
+                <i data-lucide="check" class="h-3.5 w-3.5"></i>
+              </div>
+              <div class="flex-1 rounded-xl border border-border bg-card p-4 space-y-2 hover:border-brand/40 transition-colors shadow-sm">
+                <div class="flex items-center justify-between">
+                  <span class="font-heading text-xs font-bold text-foreground">Pagamento R$ 38.450,00 Confirmado</span>
+                  <span class="text-[10px] font-mono text-muted-foreground">10:42 · 31/08</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">
+                  Conciliação automática via PIX Corporativo Banco Itaú. NF-e emitida com sucesso.
+                </p>
+                <div class="flex items-center justify-between pt-1">
+                  <span class="rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-bold">NF-e #48.910 Aprovada</span>
+                  <button onclick="showToast('Baixando XML da NF-e #48910...')" class="text-[11px] text-brand font-semibold hover:underline flex items-center gap-1">
+                    <i data-lucide="file-text" class="h-3 w-3"></i> Ver DANFE
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Seção 2: Parâmetros Fiscais & Segurança -->
-            <div>
-              <div class="po-detail-section-title"><i data-lucide="shield-check"></i> 2. Parâmetros de Autenticação & Faturamento</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px" id="dynamicFieldsSection2">
-                <div class="po-detail-info-card"><span>Tipo de Credencial</span><b>Client ID + Secret Key (Bearer Token)</b></div>
-                <div class="po-detail-info-card"><span>Filial Autorizada</span><b>Filial 01 - Matriz São Paulo/SP</b></div>
-                <div class="po-detail-info-card"><span>Validação de Esquema</span><b style="color:var(--success)">JSON-Schema Draft-07 (Válido)</b></div>
-                <div class="po-detail-info-card"><span>Notificação de Erro</span><b>webhook-ops@empresa.com.br</b></div>
+            <!-- Event 3: Em Separação (Ativo Pulsante) -->
+            <div class="flex gap-4 items-start relative">
+              <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
+              <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-4 ring-brand/20 animate-pulse">
+                <i data-lucide="package" class="h-3.5 w-3.5"></i>
+              </div>
+              <div class="flex-1 rounded-xl border-2 border-brand/50 bg-card p-4 space-y-2 shadow-md">
+                <div class="flex items-center justify-between">
+                  <span class="font-heading text-xs font-bold text-brand">Separação em Andamento no CD-01</span>
+                  <span class="text-[10px] font-bold text-brand font-mono">14:00 (Agora)</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">
+                  Operador <b>Carlos Mendes</b> realizando leitura de código de barras das caixas de expedição.
+                </p>
+                <div class="flex items-center justify-between pt-1 text-[11px]">
+                  <span class="text-xs text-muted-foreground">Progresso: <b class="text-foreground">38 / 42 itens</b></span>
+                  <button onclick="showToast('Notificação enviada ao operador!')" class="rounded bg-brand px-2.5 py-1 text-[10px] font-semibold text-white shadow hover:bg-brand-hover">
+                    Priorizar Lote
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Event 4: Próxima Etapa -->
+            <div class="flex gap-4 items-start relative opacity-60">
+              <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted border border-border text-muted-foreground ring-4 ring-card">
+                <i data-lucide="truck" class="h-3.5 w-3.5"></i>
+              </div>
+              <div class="flex-1 rounded-xl border border-border bg-card/60 p-4 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-heading text-xs font-semibold text-muted-foreground">Coleta por Transportadora Jadlog</span>
+                  <span class="text-[10px] font-mono text-muted-foreground">Previsão: 17:30</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground">Caminhão de rota agendado para entrega expressa.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'statistic':
+      stage.innerHTML = `
+        <div class="w-full grid gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-border bg-card p-4 space-y-2 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-muted-foreground">MRR Total</span>
+              <span class="rounded-full bg-emerald-500/15 p-1 text-emerald-500"><i data-lucide="trending-up" class="h-3.5 w-3.5"></i></span>
+            </div>
+            <h3 class="font-heading text-xl font-extrabold text-foreground">R$ 482.900</h3>
+            <p class="text-[10px] text-emerald-500 font-bold">+14.8% vs mês anterior</p>
+          </div>
+
+          <div class="rounded-xl border border-border bg-card p-4 space-y-2 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-muted-foreground">NPS Corporativo</span>
+              <span class="rounded-full bg-brand/15 p-1 text-brand"><i data-lucide="star" class="h-3.5 w-3.5"></i></span>
+            </div>
+            <h3 class="font-heading text-xl font-extrabold text-foreground">89 <span class="text-xs font-normal text-muted-foreground">/ 100</span></h3>
+            <p class="text-[10px] text-brand font-bold">Zona de Excelência</p>
+          </div>
+
+          <div class="rounded-xl border border-border bg-card p-4 space-y-2 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-muted-foreground">SLA de Atendimento</span>
+              <span class="rounded-full bg-purple-500/15 p-1 text-purple-400"><i data-lucide="shield-check" class="h-3.5 w-3.5"></i></span>
+            </div>
+            <h3 class="font-heading text-xl font-extrabold text-foreground">99.4%</h3>
+            <p class="text-[10px] text-muted-foreground font-medium">1.420 chamados finalizados</p>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'page-header':
+      stage.innerHTML = `
+        <div class="w-full rounded-xl border border-border bg-card p-6 space-y-4">
+          <div class="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>Financeiro</span>
+            <i data-lucide="chevron-right" class="h-3 w-3"></i>
+            <span class="font-semibold text-foreground">Faturamento</span>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <h2 class="font-heading text-2xl font-bold text-foreground">Gestão de Faturas</h2>
+                <span class="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Produção</span>
+              </div>
+              <p class="text-xs text-muted-foreground">Gerencie cobranças, boletos e conciliações financeiras da sua empresa.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showToast('Exportando relatório...')" class="inline-flex h-8 items-center gap-1.5 rounded-md border border-input px-3 text-xs font-semibold hover:bg-muted">
+                <i data-lucide="download" class="h-3.5 w-3.5"></i> Exportar
+              </button>
+              <button onclick="showToast('Abrindo formulário de nova fatura')" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-white shadow hover:bg-brand-hover">
+                <i data-lucide="plus" class="h-3.5 w-3.5"></i> Nova Fatura
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'avatar':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center gap-6">
+          <div class="flex items-center justify-center gap-4">
+            <div class="relative inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white font-heading font-bold text-sm shadow-md">
+              <span>FJ</span>
+              <span class="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500"></span>
+            </div>
+            <div class="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground font-heading font-bold text-xs border border-border">
+              <span>DS</span>
+            </div>
+            <div class="relative inline-flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-purple-300 font-heading font-bold text-[10px] border border-purple-500/30">
+              <span>MU</span>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="h-8 w-8 rounded-full border-2 border-background bg-purple-600 text-white text-xs font-bold flex items-center justify-center -mr-2">A</div>
+            <div class="h-8 w-8 rounded-full border-2 border-background bg-emerald-600 text-white text-xs font-bold flex items-center justify-center -mr-2">B</div>
+            <div class="h-8 w-8 rounded-full border-2 border-background bg-blue-600 text-white text-xs font-bold flex items-center justify-center -mr-2">C</div>
+            <div class="h-8 w-8 rounded-full border-2 border-background bg-zinc-800 text-zinc-300 text-[10px] font-bold flex items-center justify-center">+4</div>
+            <span class="text-xs text-muted-foreground ml-3">Equipe de Desenvolvimento</span>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'breadcrumb':
+      stage.innerHTML = `
+        <nav class="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+          <a href="#/inicio" class="flex items-center gap-1 hover:text-brand transition-colors"><i data-lucide="home" class="h-3.5 w-3.5"></i> Início</a>
+          <i data-lucide="chevron-right" class="h-3 w-3"></i>
+          <span class="hover:text-brand cursor-pointer">Cadastros</span>
+          <i data-lucide="chevron-right" class="h-3 w-3"></i>
+          <span class="font-bold text-foreground">Clientes Corporativos</span>
+        </nav>
+      `;
+      break;
+
+    case 'dropdown-menu':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-4 relative py-6">
+          <div class="relative inline-block text-left">
+            <button onclick="toggleDropdownDemo()" class="inline-flex h-9 items-center gap-2 rounded-md bg-brand px-4 text-xs font-semibold text-white shadow hover:bg-brand-hover transition-all">
+              <i data-lucide="user" class="h-3.5 w-3.5"></i>
+              <span>Minha Conta</span>
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
+            </button>
+
+            <!-- Dropdown Menu Box -->
+            <div id="demoDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-56 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div class="px-2.5 py-2 border-b border-border mb-1">
+                <p class="text-xs font-bold text-foreground">Monta UI Enterprise</p>
+                <p class="text-[10px] text-muted-foreground font-mono">admin@montaui.com.br</p>
+              </div>
+              <div class="space-y-0.5 text-xs">
+                <button onclick="showToast('Abrindo Perfil'); toggleDropdownDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="user-cog" class="h-3.5 w-3.5 text-muted-foreground"></i> Perfil Corporativo</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+P</span>
+                </button>
+                <button onclick="showToast('Abrindo Faturamento'); toggleDropdownDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="credit-card" class="h-3.5 w-3.5 text-muted-foreground"></i> Faturamento & NF-e</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+B</span>
+                </button>
+                <button onclick="showToast('Abrindo Gestão de Equipe'); toggleDropdownDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="users" class="h-3.5 w-3.5 text-muted-foreground"></i> Gestão de Equipe</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+T</span>
+                </button>
+              </div>
+              <div class="h-px bg-border my-1"></div>
+              <button onclick="showToast('Sessão encerrada'); toggleDropdownDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md text-rose-500 hover:bg-rose-500/10 text-xs font-semibold transition-colors">
+                <span class="flex items-center gap-2"><i data-lucide="log-out" class="h-3.5 w-3.5"></i> Encerrar Sessão</span>
+                <span class="text-[10px] font-mono opacity-70">Ctrl+Q</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'context-menu':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-4">
+          <!-- Right Click Trigger Area -->
+          <div oncontextmenu="handleContextMenuDemo(event)" class="rounded-xl border-2 border-dashed border-border bg-muted/20 p-8 text-center space-y-2 cursor-context-menu hover:border-brand/50 hover:bg-muted/40 transition-all select-none relative">
+            <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand mx-auto">
+              <i data-lucide="mouse-pointer-click" class="h-5 w-5"></i>
+            </div>
+            <h4 class="font-heading text-xs font-bold text-foreground">Área com Menu de Contexto</h4>
+            <p class="text-[11px] text-muted-foreground">Clique com o botão direito do mouse dentro deste cartão para abrir o menu contextual.</p>
+            <div class="pt-2">
+              <button onclick="toggleContextMenuDirect()" class="inline-flex h-7 items-center gap-1 rounded border border-border bg-card px-2.5 text-[11px] font-semibold text-muted-foreground hover:text-foreground">
+                Ou clique aqui para simular
+              </button>
+            </div>
+
+            <!-- Context Menu Float Box -->
+            <div id="demoContextMenu" class="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-52 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 text-left animate-in fade-in zoom-in-95 duration-100">
+              <div class="space-y-0.5 text-xs">
+                <button onclick="showToast('Link copiado!'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="copy" class="h-3.5 w-3.5 text-muted-foreground"></i> Copiar Link</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+C</span>
+                </button>
+                <button onclick="showToast('Registro duplicado!'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="files" class="h-3.5 w-3.5 text-muted-foreground"></i> Duplicar</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+D</span>
+                </button>
+                <button onclick="showToast('Modo de edição'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="pencil" class="h-3.5 w-3.5 text-muted-foreground"></i> Renomear</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">F2</span>
+                </button>
+              </div>
+              <div class="h-px bg-border my-1"></div>
+              <div class="space-y-0.5 text-xs">
+                <button onclick="showToast('Exportando PDF...'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="file-down" class="h-3.5 w-3.5 text-muted-foreground"></i> Exportar PDF</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+E</span>
+                </button>
+                <button onclick="showToast('Item movido para lixeira'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md text-rose-500 hover:bg-rose-500/10 font-semibold transition-colors">
+                  <span class="flex items-center gap-2"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i> Excluir</span>
+                  <span class="text-[10px] font-mono opacity-70">Del</span>
+                </button>
               </div>
             </div>
           </div>
-
-          <!-- Dynamic JSON Schema Inspector (Toggleable) -->
-          <div id="dynamicDetailJsonView" hidden style="padding:24px;background:#15121c;color:#e8e4ee;border-top:1px solid var(--line)">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-              <span style="font-size:12px;font-weight:700;color:var(--brand-soft)"><i data-lucide="file-json"></i> Schema JSON Definidor deste Registro</span>
-              <button class="po-button ghost sm" style="color:#ffffff" data-toast="Schema JSON copiado para a área de transferência!"><i data-lucide="copy"></i> Copiar JSON</button>
-            </div>
-            <pre style="margin:0;padding:16px;background:#0d0a14;border-radius:8px;font-size:12px;line-height:1.6;overflow-x:auto;color:#a3e635" id="dynamicJsonCodeBlock">{
-  "title": "Integração TOTVS Protheus REST API",
-  "version": "2.4.0",
-  "schemaId": "SCH-PROTHEUS-V2",
-  "status": "Operacional",
-  "fields": [
-    { "property": "serviceName", "label": "Nome do Serviço", "type": "string", "value": "Integração TOTVS Protheus" },
-    { "property": "endpointUrl", "label": "URL Base do Endpoint", "type": "url", "value": "https://api.erp.totvs.com.br/v2" },
-    { "property": "httpMethod", "label": "Método HTTP", "type": "string", "value": "POST / GET" },
-    { "property": "timeout", "label": "Timeout (s)", "type": "number", "value": 30 },
-    { "property": "authType", "label": "Tipo de Autenticação", "type": "string", "value": "OAuth 2.0 Bearer" },
-    { "property": "status", "label": "Status", "type": "tag", "value": "Operacional", "color": "success" }
-  ],
-  "actions": [
-    { "action": "edit", "label": "Editar Registro", "icon": "pencil" },
-    { "action": "print", "label": "Imprimir", "icon": "printer" },
-    { "action": "back", "label": "Voltar", "icon": "arrow-left" }
-  ]
-}</pre>
-          </div>
         </div>
+      `;
+      break;
 
-        <!-- Sample 2: PO Page Dynamic Detail Labs (Alternador de Schemas em Tempo Real) -->
-        <div style="border:1px solid var(--line);border-radius:10px;padding:20px;background:var(--surface)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h4 style="margin:0;font-size:14px;font-weight:700;color:var(--brand)">PO Page Dynamic Detail Labs (Alternar Schema Dinâmico)</h4>
-            <span class="po-tag brand">Laboratório de Metadados</span>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;align-items:flex-end">
-            <div>
-              <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px">Selecione o Schema Dinâmico de Teste</label>
-              <select class="po-control" id="dynamicLabSchemaSelect">
-                <option value="protheus" selected>1. Integração ERP Protheus (Tecnologia/API)</option>
-                <option value="cliente">2. Cadastro de Cliente Corporativo (Comercial)</option>
-                <option value="nfe">3. Nota Fiscal Eletrônica NF-e (Fiscal)</option>
-              </select>
-            </div>
-
-            <button class="po-button primary" id="dynamicLabApplySchemaBtn"><i data-lucide="refresh-cw"></i> Carregar e Renderizar Schema</button>
-          </div>
-        </div>
-      </div>
-    `, 'Template: Detalhes Dinâmicos (Page Dynamic Detail)'),
-
-    'po-page-change-password': wrap(`
-      <div style="max-width:440px;margin:0 auto;padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:40px;height:40px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);border-radius:8px">
-            <i data-lucide="key-round"></i>
-          </div>
-          <div>
-            <h3 style="margin:0;font:800 18px 'Manrope',sans-serif;color:var(--ink)">Troca Obrigatória de Senha</h3>
-            <small style="color:var(--muted)">Por política de segurança, redefina sua senha de acesso</small>
-          </div>
-        </div>
-
-        <form class="showcase-stack" onsubmit="event.preventDefault();">
-          <div>
-            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">Senha Atual</label>
-            <input class="po-control" type="password" placeholder="Digite a senha temporária" style="width:100%">
-          </div>
-
-          <div>
-            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">Nova Senha</label>
-            <input class="po-control" id="changePassInput" type="password" value="Portinari@2026" placeholder="Digite a nova senha forte" style="width:100%">
+    case 'menubar':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-4">
+          <!-- Menubar Container -->
+          <div class="inline-flex h-9 items-center rounded-lg border border-border bg-card p-1 text-xs shadow-sm relative">
             
-            <!-- Password Strength Bar -->
-            <div style="margin-top:8px">
-              <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:4px">
-                <span style="color:var(--muted)">Força da Senha:</span>
-                <span id="changePassStrengthLabel" style="color:var(--success)">Forte</span>
+            <!-- Item 1: Arquivo -->
+            <div class="relative">
+              <button onclick="toggleMenubarMenu('file')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
+                Arquivo
+              </button>
+              <div id="menubar-menu-file" class="menubar-dropdown hidden absolute left-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 space-y-0.5 text-xs">
+                <button onclick="showToast('Novo Arquivo'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Novo Arquivo</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+N</span>
+                </button>
+                <button onclick="showToast('Abrindo Arquivo...'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Abrir...</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+O</span>
+                </button>
+                <button onclick="showToast('Arquivo Salvo!'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Salvar</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+S</span>
+                </button>
               </div>
-              <div style="height:6px;background:var(--surface-2);border-radius:10px;overflow:hidden">
-                <div id="changePassStrengthBar" style="width:90%;height:100%;background:var(--success);transition:all 0.3s ease"></div>
+            </div>
+
+            <!-- Item 2: Editar -->
+            <div class="relative">
+              <button onclick="toggleMenubarMenu('edit')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
+                Editar
+              </button>
+              <div id="menubar-menu-edit" class="menubar-dropdown hidden absolute left-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 space-y-0.5 text-xs">
+                <button onclick="showToast('Desfazer ação'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Desfazer</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+Z</span>
+                </button>
+                <button onclick="showToast('Refazer ação'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Refazer</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+Y</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Item 3: Exibir -->
+            <div class="relative">
+              <button onclick="toggleMenubarMenu('view')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
+                Exibir
+              </button>
+              <div id="menubar-menu-view" class="menubar-dropdown hidden absolute left-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 space-y-0.5 text-xs">
+                <button onclick="toggleTheme(); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Alternar Tema</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">Ctrl+T</span>
+                </button>
+                <button onclick="showToast('Tela cheia'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Tela Cheia</span>
+                  <span class="text-[10px] text-muted-foreground font-mono">F11</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Item 4: Ajuda -->
+            <div class="relative">
+              <button onclick="toggleMenubarMenu('help')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
+                Ajuda
+              </button>
+              <div id="menubar-menu-help" class="menubar-dropdown hidden absolute left-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 space-y-0.5 text-xs">
+                <button onclick="showToast('Documentação do Monta UI'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Docs Monta UI</span>
+                </button>
+                <button onclick="showToast('Versão 2.0.0 instalada'); closeAllMenubars()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted text-foreground">
+                  <span>Sobre o Sistema</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="rounded-xl border border-border bg-muted/20 p-6 text-center text-xs text-muted-foreground">
+            Clique nos itens da barra superior para navegar pelos menus em cascata com atalhos de teclado nativos.
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'navigation-menu':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-4">
+          <!-- Navigation Menu Bar -->
+          <div class="flex items-center justify-center gap-1 relative">
+            
+            <!-- Dropdown Trigger 1 -->
+            <div class="relative">
+              <button onclick="toggleNavMegaMenu('solucoes')" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                <span>Soluções</span>
+                <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
+              </button>
+
+              <!-- Mega Menu Dropdown -->
+              <div id="nav-mega-solucoes" class="nav-mega-dropdown hidden absolute left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+                <div class="grid grid-cols-2 gap-2">
+                  <div onclick="showToast('Módulo Core'); closeAllNavMenus()" class="rounded-lg p-2.5 hover:bg-muted cursor-pointer transition-colors space-y-1">
+                    <div class="flex items-center gap-1.5 font-bold text-xs text-brand">
+                      <i data-lucide="component" class="h-3.5 w-3.5"></i>
+                      <span>Monta Core</span>
+                    </div>
+                    <p class="text-[10px] text-muted-foreground leading-tight">27 componentes acessíveis e customizáveis.</p>
+                  </div>
+                  <div onclick="showToast('Módulo CLI'); closeAllNavMenus()" class="rounded-lg p-2.5 hover:bg-muted cursor-pointer transition-colors space-y-1">
+                    <div class="flex items-center gap-1.5 font-bold text-xs text-foreground">
+                      <i data-lucide="terminal" class="h-3.5 w-3.5 text-muted-foreground"></i>
+                      <span>Monta CLI</span>
+                    </div>
+                    <p class="text-[10px] text-muted-foreground leading-tight">Instalação direta via pnpm dlx / npx.</p>
+                  </div>
+                  <div onclick="showToast('Módulo Analytics'); closeAllNavMenus()" class="rounded-lg p-2.5 hover:bg-muted cursor-pointer transition-colors space-y-1">
+                    <div class="flex items-center gap-1.5 font-bold text-xs text-foreground">
+                      <i data-lucide="bar-chart-3" class="h-3.5 w-3.5 text-emerald-500"></i>
+                      <span>Analytics</span>
+                    </div>
+                    <p class="text-[10px] text-muted-foreground leading-tight">Dashboards de KPIs e métricas corporativas.</p>
+                  </div>
+                  <div onclick="showToast('Módulo Enterprise'); closeAllNavMenus()" class="rounded-lg p-2.5 hover:bg-muted cursor-pointer transition-colors space-y-1">
+                    <div class="flex items-center gap-1.5 font-bold text-xs text-purple-400">
+                      <i data-lucide="shield-check" class="h-3.5 w-3.5"></i>
+                      <span>Enterprise</span>
+                    </div>
+                    <p class="text-[10px] text-muted-foreground leading-tight">Suporte 24/7 e auditoria avançada.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dropdown Trigger 2 -->
+            <div class="relative">
+              <button onclick="toggleNavMegaMenu('docs')" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                <span>Documentação</span>
+                <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
+              </button>
+
+              <div id="nav-mega-docs" class="nav-mega-dropdown hidden absolute left-1/2 -translate-x-1/2 mt-2 w-72 rounded-xl border border-border bg-card p-3 shadow-2xl z-50 space-y-1 text-xs animate-in fade-in zoom-in-95 duration-150">
+                <a href="#/docs/instalacao" onclick="closeAllNavMenus()" class="block rounded-lg p-2 hover:bg-muted text-foreground transition-colors">
+                  <p class="font-bold">Guia de Instalação</p>
+                  <p class="text-[10px] text-muted-foreground">Configuração em 5 passos com Tailwind CSS.</p>
+                </a>
+                <a href="#/docs/storybook" onclick="closeAllNavMenus()" class="block rounded-lg p-2 hover:bg-muted text-foreground transition-colors">
+                  <p class="font-bold">Storybook 8</p>
+                  <p class="text-[10px] text-muted-foreground">Ambiente isolado de testes de componentes.</p>
+                </a>
+              </div>
+            </div>
+
+            <!-- Direct Nav Link -->
+            <a href="#/docs/tailwind" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
+              Tailwind Config
+            </a>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'popover':
+      stage.innerHTML = `
+        <div class="flex flex-col items-center justify-center gap-4">
+          <button onclick="togglePopoverDemo()" class="inline-flex h-9 items-center gap-1.5 rounded-md bg-brand px-4 text-xs font-semibold text-white shadow hover:bg-brand-hover">
+            <i data-lucide="sliders-horizontal" class="h-3.5 w-3.5"></i> Configurações Rápidas
+          </button>
+          <div id="demoPopover" class="hidden rounded-lg border border-border bg-card p-4 shadow-xl max-w-xs space-y-2.5 animate-in fade-in zoom-in-95 duration-150">
+            <h4 class="font-bold text-xs text-foreground">Filtro Rápido</h4>
+            <p class="text-[11px] text-muted-foreground">Defina os parâmetros de visualização do grid.</p>
+            <div class="pt-2 flex justify-end">
+              <button onclick="togglePopoverDemo()" class="text-xs text-brand font-semibold hover:underline">Fechar</button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'select':
+      stage.innerHTML = `
+        <div class="w-full max-w-xs mx-auto space-y-1.5">
+          <label class="text-xs font-semibold text-foreground">Filial de Faturamento</label>
+          <select onchange="showToast('Filial selecionada: ' + this.value)" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+            <option value="01 - Matriz São Paulo">01 - Matriz São Paulo</option>
+            <option value="02 - Filial Rio de Janeiro">02 - Filial Rio de Janeiro</option>
+            <option value="03 - Filial Belo Horizonte">03 - Filial Belo Horizonte</option>
+            <option value="04 - Filial Porto Alegre">04 - Filial Porto Alegre</option>
+          </select>
+        </div>
+      `;
+      break;
+
+    case 'textarea':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-1.5">
+          <label class="text-xs font-semibold text-foreground">Observações do Pedido</label>
+          <textarea id="demoTextarea" oninput="updateCharCount(this)" rows="3" class="flex w-full rounded-md border border-input bg-background p-3 text-xs shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand resize-none placeholder:text-muted-foreground" placeholder="Descreva os detalhes da entrega..."></textarea>
+          <div class="flex justify-between text-[11px] text-muted-foreground">
+            <span>Máximo 250 caracteres</span>
+            <span id="demoCharCount" class="font-mono">0/250</span>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'radio-group':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-4">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-foreground">Plano de Subscrição Corporativa</label>
+            <p class="text-[11px] text-muted-foreground">Selecione a capacidade computacional da sua organização.</p>
+          </div>
+          
+          <div class="grid gap-2.5">
+            <!-- Card 1 -->
+            <div onclick="selectRadioDemo('enterprise')" id="radio-card-enterprise" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border-2 border-brand bg-brand/5 dark:bg-brand/10 p-4 shadow-sm transition-all">
+              <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-brand bg-brand flex items-center justify-center">
+                <div class="h-1.5 w-1.5 rounded-full bg-white"></div>
+              </div>
+              <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="building-2" class="h-4 w-4 text-brand"></i>
+                    <span class="font-heading text-xs font-bold text-foreground">Enterprise Dedicado</span>
+                  </div>
+                  <span class="rounded-full bg-brand/15 px-2 py-0.5 text-[10px] font-bold text-brand dark:text-purple-300">Recomendado</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">SLA 99.9%, instâncias dedicadas e suporte 24/7 com engenheiro nomeado.</p>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div onclick="selectRadioDemo('business')" id="radio-card-business" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border border-border bg-card p-4 shadow-sm hover:border-brand/40 transition-all">
+              <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-input bg-background flex items-center justify-center"></div>
+              <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="briefcase" class="h-4 w-4 text-muted-foreground"></i>
+                    <span class="font-heading text-xs font-bold text-foreground">Business Cloud</span>
+                  </div>
+                  <span class="text-xs font-bold font-mono text-muted-foreground">R$ 890/mês</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">Até 50 usuários simultâneos com backups diários automáticos.</p>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div onclick="selectRadioDemo('starter')" id="radio-card-starter" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border border-border bg-card p-4 shadow-sm hover:border-brand/40 transition-all">
+              <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-input bg-background flex items-center justify-center"></div>
+              <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="rocket" class="h-4 w-4 text-muted-foreground"></i>
+                    <span class="font-heading text-xs font-bold text-foreground">Starter Startup</span>
+                  </div>
+                  <span class="text-xs font-bold font-mono text-muted-foreground">R$ 290/mês</span>
+                </div>
+                <p class="text-[11px] text-muted-foreground leading-relaxed">Ideal para testes rápidos e pequenos times de até 5 membros.</p>
               </div>
             </div>
           </div>
-
-          <!-- Requirements Checklist -->
-          <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:11px;display:grid;gap:4px">
-            <span style="color:var(--success);display:flex;align-items:center;gap:6px"><i data-lucide="check" style="width:13px;height:13px"></i> Mínimo de 8 caracteres</span>
-            <span style="color:var(--success);display:flex;align-items:center;gap:6px"><i data-lucide="check" style="width:13px;height:13px"></i> Ao menos uma letra maiúscula e minúscula</span>
-            <span style="color:var(--success);display:flex;align-items:center;gap:6px"><i data-lucide="check" style="width:13px;height:13px"></i> Pelo menos 1 número</span>
-            <span style="color:var(--success);display:flex;align-items:center;gap:6px"><i data-lucide="check" style="width:13px;height:13px"></i> Caractere especial (!@#$%)</span>
-          </div>
-
-          <div>
-            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">Confirmar Nova Senha</label>
-            <input class="po-control" type="password" value="Portinari@2026" placeholder="Repita a nova senha exatamente igual" style="width:100%">
-          </div>
-
-          <button class="po-button primary" id="changePassSubmitBtn" style="width:100%;margin-top:6px" data-toast="Senha atualizada com sucesso! Redirecionando..."><i data-lucide="shield-check"></i> Atualizar Senha e Continuar</button>
-        </form>
-      </div>
-    `, 'Template: Troca de Senha (Change Password)'),
-
-    'po-page-blocked-user': wrap(`
-      <div style="max-width:520px;margin:0 auto;padding:40px 28px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);text-align:center">
-        <div style="width:68px;height:68px;margin:0 auto 20px;display:grid;place-items:center;background:var(--danger-soft);color:var(--danger);border-radius:50%;border:4px solid color-mix(in srgb, var(--danger) 15%, transparent)">
-          <i data-lucide="shield-ban" style="width:34px;height:34px"></i>
         </div>
+      `;
+      break;
 
-        <span class="po-tag danger" style="margin-bottom:10px">BLOQUEIO PREVENTIVO DE SEGURANÇA</span>
-        <h2 style="margin:4px 0 10px;font:800 24px 'Manrope',sans-serif;color:var(--ink)">Acesso Temporariamente Suspenso</h2>
-        <p style="margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.6">
-          Sua conta foi temporariamente bloqueada após <b>5 tentativas consecutivas</b> de autenticação com credenciais incorretas.
-        </p>
-
-        <!-- Countdown Timer Card -->
-        <div style="padding:14px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:10px">
-          <i data-lucide="clock" style="color:var(--brand)"></i>
-          <span style="font-size:13px">Tempo restante de espera: <b id="blockedTimerCountdown" style="color:var(--brand);font-size:16px">14:59 min</b></span>
-        </div>
-
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-          <button class="po-button ghost" data-toast="Tentando autenticação novamente..."><i data-lucide="rotate-ccw"></i> Tentar Novamente</button>
-          <button class="po-button primary" data-toast="Abrindo chamado prioritário com o Help Desk de TI..."><i data-lucide="headset"></i> Falar com Suporte de TI</button>
-        </div>
-
-        <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)">
-          ID do Incidente: <b>#SEC-2026-8819</b> · Endereço IP: <b>189.40.12.98</b>
-        </div>
-      </div>
-    `, 'Template: Usuário Bloqueado (Blocked User)'),
-
-    'po-modal-password-recovery': wrap(`
-      <div style="max-width:460px;margin:0 auto;padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:36px;height:36px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);border-radius:8px">
-              <i data-lucide="mail-question"></i>
-            </div>
+    case 'slider':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-6">
+          <div class="flex items-center justify-between">
             <div>
-              <h3 style="margin:0;font:800 18px 'Manrope',sans-serif;color:var(--ink)">Recuperar Senha</h3>
-              <small style="color:var(--muted)">Redefinição segura por e-mail</small>
+              <h4 class="font-heading text-xs font-bold text-foreground">Limite de Crédito Aprovado</h4>
+              <p class="text-[11px] text-muted-foreground">Arraste para ajustar o teto orçamentário operacional.</p>
+            </div>
+            <span id="sliderBadgeValue" class="rounded-lg bg-brand/15 px-3 py-1 text-xs font-bold font-mono text-brand dark:text-purple-300">
+              R$ 45.000,00
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="relative flex items-center">
+              <input id="demoSliderRange" type="range" min="0" max="100000" step="1000" value="45000" oninput="updateSliderDemo(this.value)" class="absolute inset-0 h-full w-full cursor-pointer opacity-0 z-10">
+              <div class="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                <div id="sliderFillBar" class="h-full bg-brand transition-all" style="width: 45%;"></div>
+              </div>
+              <div id="sliderThumbDot" class="pointer-events-none absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-brand bg-background shadow-md ring-4 ring-brand/20 transition-all" style="left: 45%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] font-mono text-muted-foreground">
+              <span>R$ 0,00</span>
+              <span class="text-[10px] text-muted-foreground font-sans">Passo: R$ 1.000,00</span>
+              <span>R$ 100.000,00</span>
             </div>
           </div>
-          <button class="icon-button sm" data-toast="Modal fechado." aria-label="Fechar"><i data-lucide="x"></i></button>
+
+          <div class="rounded-xl border border-border bg-muted/20 p-3.5 flex items-center justify-between text-xs">
+            <span class="text-muted-foreground">Projeção de Juros Estimada:</span>
+            <span id="sliderInterestEst" class="font-bold text-foreground font-mono">R$ 540,00 / mês</span>
+          </div>
         </div>
+      `;
+      break;
 
-        <p style="margin:0 0 16px;font-size:13px;color:var(--muted);line-height:1.5">
-          Informe seu e-mail corporativo cadastrado. Enviaremos um link temporário para você criar uma nova senha.
-        </p>
+    case 'date-picker':
+      stage.innerHTML = `
+        <div class="w-full max-w-sm mx-auto space-y-4">
+          <div class="space-y-1.5 relative">
+            <label class="text-xs font-semibold text-foreground">Data de Vencimento da NF-e</label>
+            <div class="relative flex items-center">
+              <button onclick="toggleDatePickerDemo()" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3.5 text-xs shadow-sm hover:border-brand transition-colors focus:ring-1 focus:ring-brand">
+                <span class="flex items-center gap-2 text-foreground font-medium">
+                  <i data-lucide="calendar" class="h-4 w-4 text-brand"></i>
+                  <span id="demoDatePickerLabel">31/08/2026</span>
+                </span>
+                <span onclick="clearDatePickerDemo(event)" class="rounded p-1 hover:bg-muted text-muted-foreground hover:text-foreground">
+                  <i data-lucide="x" class="h-3.5 w-3.5"></i>
+                </span>
+              </button>
+            </div>
 
-        <form class="showcase-stack" id="recoveryPassForm" onsubmit="event.preventDefault();">
-          <div>
-            <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px">E-mail Cadastrado</label>
-            <input class="po-control" id="recoveryEmailInput" type="email" value="colaborador@empresa.com" placeholder="seu-email@empresa.com" style="width:100%">
+            <!-- Date Picker Calendar Popover -->
+            <div id="demoDatePickerPopover" class="hidden absolute left-0 top-full mt-2 w-72 rounded-xl border border-border bg-card p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
+              <!-- Shortcuts -->
+              <div class="flex gap-1 border-b border-border pb-2 mb-2">
+                <button onclick="selectDatePreset(0)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">Hoje</button>
+                <button onclick="selectDatePreset(1)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">Amanhã</button>
+                <button onclick="selectDatePreset(7)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">+7 Dias</button>
+                <button onclick="selectDatePreset(30)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">+30 Dias</button>
+              </div>
+
+              <!-- Header -->
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-border/60">
+                <button onclick="navDateMonth(-1)" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="chevron-left" class="h-3.5 w-3.5"></i></button>
+                <span id="datePickerMonthYear" class="font-heading text-xs font-bold text-foreground">Agosto 2026</span>
+                <button onclick="navDateMonth(1)" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="chevron-right" class="h-3.5 w-3.5"></i></button>
+              </div>
+
+              <!-- Days Grid -->
+              <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-muted-foreground mb-1">
+                <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+              </div>
+              <div id="datePickerDaysGrid" class="grid grid-cols-7 gap-1"></div>
+            </div>
           </div>
-          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
-            <button class="po-button ghost" type="button" data-toast="Operação cancelada.">Cancelar</button>
-            <button class="po-button primary" id="recoverySubmitBtn" type="button" data-toast="Instruções de recuperação enviadas com sucesso para o e-mail!"><i data-lucide="send"></i> Enviar Instruções</button>
+          <p class="text-[11px] text-muted-foreground">Clique no campo para abrir o calendário mensal com seleção dinâmica.</p>
+        </div>
+      `;
+      setTimeout(renderCalendarDaysDemo, 50);
+      break;
+
+    case 'lookup':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-foreground">Cliente / Parceiro Comercial</label>
+            <div class="relative flex items-center">
+              <button onclick="openLookupDemo()" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3.5 text-xs shadow-sm hover:border-brand transition-colors focus:ring-1 focus:ring-brand">
+                <span id="lookupSelectedDisplay" class="flex items-center gap-2 font-medium text-foreground">
+                  <span class="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">CLI-102</span>
+                  <span>Vale S/A Mineração</span>
+                </span>
+                <span class="flex items-center gap-1 text-brand font-semibold text-xs">
+                  <i data-lucide="search" class="h-4 w-4"></i>
+                  <span>Buscar</span>
+                </span>
+              </button>
+            </div>
           </div>
-        </form>
+
+          <!-- Lookup Modal -->
+          <div id="demoLookupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+            <div class="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
+              <div class="flex items-center justify-between border-b border-border bg-muted/40 px-5 py-3.5">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="building-2" class="h-4 w-4 text-brand"></i>
+                  <h3 class="font-heading text-sm font-bold text-foreground">Consulta de Clientes Corporativos</h3>
+                </div>
+                <button onclick="closeLookupDemo()" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="x" class="h-4 w-4"></i></button>
+              </div>
+
+              <div class="p-4 space-y-3">
+                <div class="relative">
+                  <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"></i>
+                  <input id="lookupSearchInput" oninput="filterLookupDemo(this.value)" type="text" placeholder="Filtrar por código, CNPJ ou razão social..." class="flex h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-xs shadow-sm focus:border-brand focus:outline-none">
+                </div>
+
+                <div id="lookupItemsContainer" class="max-h-60 overflow-y-auto rounded-lg border border-border divide-y divide-border/60">
+                  <!-- Inserido dinamicamente via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-muted-foreground">Abre diálogo modal com busca em tempo real e retorno formatado de entidade.</p>
+        </div>
+      `;
+      setTimeout(renderLookupItemsDemo, 50);
+      break;
+
+    case 'combo':
+      stage.innerHTML = `
+        <div class="w-full max-w-sm mx-auto space-y-4 relative">
+          <div class="space-y-1.5 relative">
+            <label class="text-xs font-semibold text-foreground">Centro de Custo / Departamento</label>
+            <button onclick="toggleComboDemo()" class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3.5 text-xs shadow-sm hover:border-brand transition-colors">
+              <span id="comboSelectedLabel" class="font-medium text-foreground">Tecnologia da Informação</span>
+              <i data-lucide="chevrons-up-down" class="h-3.5 w-3.5 opacity-50"></i>
+            </button>
+
+            <!-- Combo Dropdown -->
+            <div id="demoComboDropdown" class="hidden absolute left-0 top-full mt-1.5 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
+              <div class="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
+                <i data-lucide="search" class="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0"></i>
+                <input id="comboSearchInput" oninput="filterComboDemo(this.value)" type="text" placeholder="Buscar departamento..." class="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none">
+              </div>
+              <div id="comboOptionsList" class="max-h-48 overflow-y-auto space-y-0.5"></div>
+            </div>
+          </div>
+          <p class="text-[11px] text-muted-foreground">Select enriquecido com caixa de filtragem instantânea.</p>
+        </div>
+      `;
+      setTimeout(renderComboOptionsDemo, 50);
+      break;
+
+    case 'multiselect':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-4 relative">
+          <div class="space-y-1.5 relative">
+            <label class="text-xs font-semibold text-foreground">Permissões de Acesso por Módulo</label>
+            <div onclick="toggleMultiSelectDemo()" class="flex min-h-[42px] w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background p-1.5 text-xs shadow-sm hover:border-brand cursor-pointer">
+              <div id="multiSelectTagsContainer" class="flex flex-wrap gap-1.5"></div>
+              <i data-lucide="chevrons-up-down" class="ml-auto h-3.5 w-3.5 opacity-50 pr-1 shrink-0"></i>
+            </div>
+
+            <!-- MultiSelect Dropdown -->
+            <div id="demoMultiSelectDropdown" class="hidden absolute left-0 top-full mt-1.5 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
+              <div class="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
+                <i data-lucide="search" class="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0"></i>
+                <input id="multiSelectSearchInput" oninput="filterMultiSelectDemo(this.value)" type="text" placeholder="Filtrar permissões..." class="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none">
+              </div>
+              <div id="multiSelectOptionsList" class="max-h-48 overflow-y-auto space-y-0.5"></div>
+            </div>
+          </div>
+          <p class="text-[11px] text-muted-foreground">Seleção múltipla com remoção de tags por chip e checkboxes de seleção.</p>
+        </div>
+      `;
+      setTimeout(renderMultiSelectDemo, 50);
+      break;
+
+    case 'badge':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg space-y-6 text-left">
+          <!-- 1. Variantes Semânticas -->
+          <div class="space-y-2">
+            <h4 class="font-heading text-xs font-bold text-foreground">1. Variantes Semânticas</h4>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center rounded-full bg-[#753399]/15 px-3 py-1 text-xs font-bold text-[#753399] dark:bg-[#753399]/30 dark:text-purple-300">
+                Primary Brand
+              </span>
+              <span class="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                <i data-lucide="check" class="h-3 w-3 mr-1"></i> Aprovado
+              </span>
+              <span class="inline-flex items-center rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
+                <i data-lucide="clock" class="h-3 w-3 mr-1"></i> Pendente
+              </span>
+              <span class="inline-flex items-center rounded-full bg-rose-500/15 px-3 py-1 text-xs font-bold text-rose-600 dark:text-rose-400">
+                <i data-lucide="alert-triangle" class="h-3 w-3 mr-1"></i> Cancelado
+              </span>
+              <span class="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground">
+                Outline
+              </span>
+              <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                Secondary
+              </span>
+            </div>
+          </div>
+
+          <!-- 2. Badges com Dot Indicator -->
+          <div class="space-y-2">
+            <h4 class="font-heading text-xs font-bold text-foreground">2. Indicadores de Status (Luminous Dot)</h4>
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Servidor Online</span>
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+                <span>Manutenção Programada</span>
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-[#753399]"></span>
+                <span>Sincronizando</span>
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground shadow-sm">
+                <span class="h-2 w-2 rounded-full bg-zinc-400"></span>
+                <span>Inativo</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 3. Tags Removíveis Interativas -->
+          <div class="space-y-2">
+            <h4 class="font-heading text-xs font-bold text-foreground">3. Badges Removíveis (Clique para remover)</h4>
+            <div id="demoBadgeChipsContainer" class="flex flex-wrap items-center gap-2">
+              <span id="chip-1" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+                <span>React 19</span>
+                <button onclick="removeBadgeChipDemo('chip-1')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+              </span>
+              <span id="chip-2" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+                <span>TypeScript</span>
+                <button onclick="removeBadgeChipDemo('chip-2')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+              </span>
+              <span id="chip-3" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+                <span>Tailwind CSS</span>
+                <button onclick="removeBadgeChipDemo('chip-3')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+              </span>
+              <span id="chip-4" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+                <span>Zero Radix</span>
+                <button onclick="removeBadgeChipDemo('chip-4')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+              </span>
+              <button onclick="resetBadgeChipsDemo()" class="text-[11px] font-semibold text-[#753399] hover:underline ml-1">Restaurar tags</button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'toast':
+      stage.innerHTML = `
+        <div class="w-full max-w-md space-y-6 text-left">
+          <div class="space-y-3">
+            <h4 class="font-heading text-xs font-bold text-foreground">Disparar Notificações Corporativas</h4>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button onclick="showToastDemo('success')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 active:scale-95 transition-all">
+                <i data-lucide="check-circle" class="h-4 w-4"></i> Toast Sucesso
+              </button>
+              <button onclick="showToastDemo('danger')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-rose-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-rose-700 active:scale-95 transition-all">
+                <i data-lucide="alert-circle" class="h-4 w-4"></i> Toast Erro
+              </button>
+              <button onclick="showToastDemo('warning')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-amber-700 active:scale-95 transition-all">
+                <i data-lucide="alert-triangle" class="h-4 w-4"></i> Toast Aviso
+              </button>
+              <button onclick="showToastDemo('brand')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#753399] px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#622981] active:scale-95 transition-all">
+                <i data-lucide="bell" class="h-4 w-4"></i> Toast Monta Brand
+              </button>
+            </div>
+          </div>
+
+          <!-- Toast Card Preview Inline -->
+          <div class="space-y-2 pt-2">
+            <h4 class="font-heading text-xs font-bold text-foreground">Estrutura Visual do Toast</h4>
+            <div class="relative flex items-start justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300 shadow-md">
+              <div class="flex items-start gap-3">
+                <div class="rounded-full bg-emerald-500/20 p-1 mt-0.5">
+                  <i data-lucide="check" class="h-4 w-4 text-emerald-600 dark:text-emerald-400"></i>
+                </div>
+                <div class="space-y-1">
+                  <h5 class="font-heading text-xs font-bold">Fatura Emitida com Sucesso</h5>
+                  <p class="text-[11px] opacity-90 leading-relaxed">A Nota Fiscal NF-e #4920 foi autorizada pela SEFAZ e enviada ao cliente.</p>
+                </div>
+              </div>
+              <button class="text-emerald-700 dark:text-emerald-400 hover:opacity-100 opacity-60 p-0.5">
+                <i data-lucide="x" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'progress':
+      stage.innerHTML = `
+        <div class="w-full max-w-md space-y-6 text-left">
+          <!-- 1. Barra Controlada com Botões -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="font-heading text-xs font-bold text-foreground">1. Upload de Arquivos / Backup</span>
+              <span id="demoProgressValueBadge" class="font-mono text-xs font-bold text-[#753399] bg-[#753399]/10 px-2 py-0.5 rounded">65%</span>
+            </div>
+            <div class="relative h-3 w-full overflow-hidden rounded-full bg-muted">
+              <div id="demoProgressBar" class="h-full bg-[#753399] transition-all duration-300 shadow-sm" style="width: 65%;"></div>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex items-center gap-2">
+                <button onclick="adjustProgressDemo(-15)" class="rounded-md border border-input bg-card px-2.5 py-1 text-xs font-medium hover:bg-muted">-15%</button>
+                <button onclick="adjustProgressDemo(15)" class="rounded-md border border-input bg-card px-2.5 py-1 text-xs font-medium hover:bg-muted">+15%</button>
+                <button onclick="setProgressDemo(100)" class="rounded-md border border-input bg-card px-2.5 py-1 text-xs font-medium hover:bg-muted">100%</button>
+              </div>
+              <button onclick="simulateProgressDemo()" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399] px-3 py-1 text-xs font-semibold text-white shadow hover:bg-[#622981]">
+                <i data-lucide="play" class="h-3 w-3"></i> Simular Download
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Variantes de Cores e Estados -->
+          <div class="space-y-3 pt-2">
+            <h4 class="font-heading text-xs font-bold text-foreground">2. Variantes Semânticas & Tamanhos</h4>
+            
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] text-muted-foreground font-medium">
+                <span>Armazenamento em Nuvem</span>
+                <span class="text-amber-500 font-bold">88% (Alerta)</span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div class="h-full bg-amber-500" style="width: 88%;"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] text-muted-foreground font-medium">
+                <span>Migração de Banco de Dados</span>
+                <span class="text-emerald-500 font-bold">100% (Concluído)</span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div class="h-full bg-emerald-500" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] text-muted-foreground font-medium">
+                <span>Processamento em Segundo Plano (Indeterminate)</span>
+                <span class="text-[#753399] font-mono text-[10px]">Calculando...</span>
+              </div>
+              <div class="relative h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                <div class="absolute h-full w-1/3 bg-[#753399] rounded-full animate-[indeterminate_1.5s_infinite_ease-in-out]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'skeleton':
+      stage.innerHTML = `
+        <div class="w-full max-w-md space-y-4 text-left">
+          <div class="flex items-center justify-between border-b border-border pb-3">
+            <div>
+              <h4 class="font-heading text-xs font-bold text-foreground">Simulador de Estado de Carregamento</h4>
+              <p class="text-[11px] text-muted-foreground">Alternar entre conteúdo carregado e animação pulse/shimmer.</p>
+            </div>
+            <button id="toggleSkeletonBtn" onclick="toggleSkeletonDemo()" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399] px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-[#622981] transition-all">
+              <i data-lucide="refresh-cw" class="h-3.5 w-3.5"></i> <span id="skeletonBtnText">Simular Loading</span>
+            </button>
+          </div>
+
+          <!-- Skeleton Loading Card -->
+          <div id="demoSkeletonContainer" class="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
+            <!-- Header Skeleton -->
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded-full bg-muted animate-pulse shrink-0"></div>
+              <div class="space-y-2 flex-1">
+                <div class="h-3.5 w-1/3 rounded bg-muted animate-pulse"></div>
+                <div class="h-2.5 w-1/2 rounded bg-muted/70 animate-pulse"></div>
+              </div>
+            </div>
+            <!-- Body Skeleton -->
+            <div class="space-y-2 pt-2">
+              <div class="h-3 w-full rounded bg-muted animate-pulse"></div>
+              <div class="h-3 w-5/6 rounded bg-muted animate-pulse"></div>
+              <div class="h-3 w-2/3 rounded bg-muted animate-pulse"></div>
+            </div>
+            <!-- Footer Skeleton -->
+            <div class="flex items-center justify-between pt-2 border-t border-border/50">
+              <div class="h-7 w-20 rounded-md bg-muted animate-pulse"></div>
+              <div class="h-7 w-28 rounded-md bg-muted animate-pulse"></div>
+            </div>
+          </div>
+
+          <!-- Real Content Card (Hidden by default in demo) -->
+          <div id="demoRealContentContainer" class="hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                FJ
+              </div>
+              <div class="space-y-0.5">
+                <h4 class="font-heading text-xs font-bold text-foreground">Francinilton Júnior</h4>
+                <p class="text-[11px] text-muted-foreground">Engenheiro de Software Sênior · Monta UI</p>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground leading-relaxed">
+              Ambiente de dados sincronizado com sucesso. O módulo financeiro registrou 1.480 transações conciliadas nas últimas 24 horas.
+            </p>
+            <div class="flex items-center justify-between pt-2 border-t border-border/50">
+              <span class="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Ativo</span>
+              <button onclick="showToast('Abrindo perfil...')" class="inline-flex h-7 items-center rounded-md bg-[#753399] px-3 text-xs font-semibold text-white shadow hover:bg-[#622981]">
+                Ver Perfil
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'alert':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg space-y-3.5 text-left">
+          <!-- 1. Alerta Informativo Brand -->
+          <div id="alert-info" class="relative flex items-start gap-3 rounded-xl border border-[#753399]/40 bg-[#753399]/10 p-4 text-[#753399] dark:text-purple-300 shadow-sm">
+            <i data-lucide="info" class="h-5 w-5 shrink-0 mt-0.5 text-[#753399] dark:text-purple-300"></i>
+            <div class="flex-1 space-y-1">
+              <h5 class="font-heading text-xs font-bold text-foreground">Atualização do Monta UI Disponível</h5>
+              <p class="text-xs text-muted-foreground leading-relaxed">A versão 2.4.0 inclui novos componentes 100% nativos sem dependência do Radix.</p>
+            </div>
+            <button onclick="dismissAlertDemo('alert-info')" class="rounded p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100">
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            </button>
+          </div>
+
+          <!-- 2. Alerta Sucesso -->
+          <div id="alert-success" class="relative flex items-start gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300 shadow-sm">
+            <i data-lucide="check-circle" class="h-5 w-5 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400"></i>
+            <div class="flex-1 space-y-1">
+              <h5 class="font-heading text-xs font-bold text-emerald-800 dark:text-emerald-200">Conciliação Bancária Concluída</h5>
+              <p class="text-xs text-emerald-700 dark:text-emerald-300/90 leading-relaxed">Todos os 340 lançamentos do Banco do Brasil e Itaú foram conciliados com sucesso.</p>
+            </div>
+            <button onclick="dismissAlertDemo('alert-success')" class="rounded p-1 text-emerald-700 dark:text-emerald-300 opacity-70 hover:opacity-100">
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            </button>
+          </div>
+
+          <!-- 3. Alerta Aviso -->
+          <div id="alert-warning" class="relative flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-800 dark:text-amber-300 shadow-sm">
+            <i data-lucide="alert-triangle" class="h-5 w-5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400"></i>
+            <div class="flex-1 space-y-1">
+              <h5 class="font-heading text-xs font-bold text-amber-800 dark:text-amber-200">Certificado Digital Prestes a Vencer</h5>
+              <p class="text-xs text-amber-700 dark:text-amber-300/90 leading-relaxed">O certificado A1 da Matriz expira em 7 dias. Renove para evitar bloqueio de emissão de NF-e.</p>
+            </div>
+            <button onclick="dismissAlertDemo('alert-warning')" class="rounded p-1 text-amber-700 dark:text-amber-300 opacity-70 hover:opacity-100">
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            </button>
+          </div>
+
+          <!-- 4. Alerta Destrutivo / Erro -->
+          <div id="alert-danger" class="relative flex items-start gap-3 rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-rose-800 dark:text-rose-300 shadow-sm">
+            <i data-lucide="alert-octagon" class="h-5 w-5 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400"></i>
+            <div class="flex-1 space-y-1">
+              <h5 class="font-heading text-xs font-bold text-rose-800 dark:text-rose-200">Falha de Autenticação na API SEFAZ</h5>
+              <p class="text-xs text-rose-700 dark:text-rose-300/90 leading-relaxed">Tempo limite excedido na consulta de status do serviço do estado de São Paulo.</p>
+            </div>
+            <button onclick="dismissAlertDemo('alert-danger')" class="rounded p-1 text-rose-700 dark:text-rose-300 opacity-70 hover:opacity-100">
+              <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            </button>
+          </div>
+
+          <div class="text-center pt-1">
+            <button onclick="restoreAlertsDemo()" class="text-xs font-semibold text-[#753399] hover:underline">
+              Restaurar todos os alertas fechados
+            </button>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'navbar':
+      stage.innerHTML = `
+        <div class="w-full max-w-2xl mx-auto space-y-4 text-left">
+          <!-- Navbar Preview Header Component -->
+          <div class="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
+            <header class="h-14 border-b border-border bg-card/90 backdrop-blur px-4 flex items-center justify-between gap-4">
+              <!-- Left: Brand & Links -->
+              <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showToast('Logo Monta UI clicado')">
+                  <div class="h-7 w-7 rounded-lg bg-[#753399] flex items-center justify-center text-white shadow-sm font-black text-xs">
+                    M
+                  </div>
+                  <span class="font-heading text-sm font-bold text-foreground tracking-tight">Monta<span class="text-[#753399]">UI</span></span>
+                  <span class="rounded-full bg-[#753399]/15 px-1.5 py-0.2 text-[9px] font-bold text-[#753399] dark:text-purple-300">PRO</span>
+                </div>
+
+                <!-- Nav Links Desktop -->
+                <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
+                  <button onclick="selectNavbarLinkDemo(this, 'Dashboard')" class="navbar-demo-link rounded-md bg-[#753399]/10 px-2.5 py-1 font-bold text-[#753399] dark:text-purple-300 transition-colors">
+                    Dashboard
+                  </button>
+                  <button onclick="selectNavbarLinkDemo(this, 'Clientes')" class="navbar-demo-link rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    Clientes
+                  </button>
+                  <button onclick="selectNavbarLinkDemo(this, 'Faturamento')" class="navbar-demo-link rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    Faturamento
+                  </button>
+                  <button onclick="selectNavbarLinkDemo(this, 'Relatórios')" class="navbar-demo-link rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    Relatórios
+                  </button>
+                </nav>
+              </div>
+
+              <!-- Right: Search, Notifications & User -->
+              <div class="flex items-center gap-2">
+                <!-- Search Input Quick Trigger -->
+                <div class="hidden sm:flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground cursor-pointer hover:border-input transition-colors" onclick="openSearchModal()">
+                  <i data-lucide="search" class="h-3.5 w-3.5"></i>
+                  <span>Buscar no sistema...</span>
+                  <kbd class="ml-2 rounded border border-border bg-background px-1 py-0.2 text-[9px] font-mono">⌘K</kbd>
+                </div>
+
+                <!-- Notification Bell -->
+                <button onclick="showToast('3 novas notificações não lidas')" class="relative rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                  <i data-lucide="bell" class="h-4 w-4"></i>
+                  <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#753399] animate-pulse"></span>
+                </button>
+
+                <!-- User Profile Dropdown Trigger -->
+                <div class="flex items-center gap-2 pl-2 border-l border-border cursor-pointer group" onclick="showToast('Perfil: Monta UI')">
+                  <div class="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                    MU
+                  </div>
+                  <div class="hidden lg:block text-left">
+                    <p class="text-xs font-semibold text-foreground leading-none">Monta UI</p>
+                    <p class="text-[10px] text-muted-foreground leading-none mt-0.5">admin@montaui.com.br</p>
+                  </div>
+                  <i data-lucide="chevron-down" class="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors"></i>
+                </div>
+              </div>
+            </header>
+
+            <!-- Mock Page Body under Navbar -->
+            <div class="p-6 bg-muted/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h5 class="font-heading text-xs font-bold text-foreground">Visão Geral da Operação</h5>
+                  <p class="text-[11px] text-muted-foreground">Área de trabalho conectada com a Navbar corporativa.</p>
+                </div>
+                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Online
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'sidebar':
+      stage.innerHTML = `
+        <div class="w-full max-w-2xl mx-auto space-y-3 text-left">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div>
+              <h4 class="font-heading text-xs font-bold text-foreground">Collapsible Enterprise Sidebar</h4>
+              <p class="text-[11px] text-muted-foreground">Alternar entre modo expandido (250px) e recolhido icon-only (68px).</p>
+            </div>
+            <button id="sidebarToggleDemoBtn" onclick="toggleSidebarCollapseDemo()" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399] px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-[#622981] transition-all">
+              <i data-lucide="panel-left-close" class="h-3.5 w-3.5"></i> <span id="sidebarToggleBtnText">Recolher Sidebar</span>
+            </button>
+          </div>
+
+          <!-- Demo Workspace Container with Sidebar -->
+          <div class="flex h-[420px] rounded-xl border border-border bg-card shadow-lg overflow-hidden">
+            <!-- Collapsible Aside -->
+            <aside id="demoCollapsibleSidebar" class="w-60 border-r border-border bg-card flex flex-col justify-between transition-all duration-300 select-none">
+              <!-- Sidebar Header -->
+              <div class="p-3.5 border-b border-border space-y-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="h-8 w-8 rounded-lg bg-[#753399] flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
+                    M
+                  </div>
+                  <div id="sidebarBrandTexts" class="space-y-0.5 overflow-hidden transition-all duration-200">
+                    <h5 class="font-heading text-xs font-bold text-foreground leading-tight truncate">Monta Tech S/A</h5>
+                    <p class="text-[10px] text-muted-foreground truncate">Workspace Financeiro</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sidebar Navigation Links List -->
+              <div class="flex-1 overflow-y-auto p-2 space-y-4">
+                <!-- Group 1: Core -->
+                <div class="space-y-1">
+                  <p id="sidebarGroupLabel1" class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Plataforma</p>
+                  
+                  <button onclick="selectSidebarItemDemo(this, 'Dashboard Geral')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg bg-[#753399]/15 px-2.5 py-2 text-xs font-bold text-[#753399] dark:text-purple-300 transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <i data-lucide="layout-dashboard" class="h-4 w-4 shrink-0"></i>
+                      <span class="sidebar-item-label truncate">Dashboard Geral</span>
+                    </div>
+                  </button>
+
+                  <button onclick="selectSidebarItemDemo(this, 'Vendas & NF-e')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <i data-lucide="shopping-cart" class="h-4 w-4 shrink-0"></i>
+                      <span class="sidebar-item-label truncate">Vendas & NF-e</span>
+                    </div>
+                    <span class="sidebar-item-badge rounded bg-emerald-500/15 px-1.5 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">Novo</span>
+                  </button>
+
+                  <button onclick="selectSidebarItemDemo(this, 'Base de Clientes')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <i data-lucide="users" class="h-4 w-4 shrink-0"></i>
+                      <span class="sidebar-item-label truncate">Base de Clientes</span>
+                    </div>
+                  </button>
+                </div>
+
+                <!-- Group 2: Gestão -->
+                <div class="space-y-1">
+                  <p id="sidebarGroupLabel2" class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Gestão & Finanças</p>
+                  
+                  <button onclick="selectSidebarItemDemo(this, 'Contas a Pagar')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <i data-lucide="credit-card" class="h-4 w-4 shrink-0"></i>
+                      <span class="sidebar-item-label truncate">Contas a Pagar</span>
+                    </div>
+                  </button>
+
+                  <button onclick="selectSidebarItemDemo(this, 'Relatórios DRE')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                      <i data-lucide="bar-chart-2" class="h-4 w-4 shrink-0"></i>
+                      <span class="sidebar-item-label truncate">Relatórios DRE</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sidebar Footer: Profile Card -->
+              <div class="p-2.5 border-t border-border">
+                <div class="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-muted cursor-pointer transition-colors" onclick="showToast('Usuário: Monta UI (Administrador)')">
+                  <div class="h-8 w-8 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow">
+                    MU
+                  </div>
+                  <div id="sidebarUserTexts" class="space-y-0.5 overflow-hidden transition-all duration-200 flex-1">
+                    <p class="text-xs font-bold text-foreground leading-none truncate">Monta UI</p>
+                    <p class="text-[10px] text-muted-foreground leading-none truncate mt-0.5">admin@montaui.com.br</p>
+                  </div>
+                  <i data-lucide="log-out" id="sidebarLogoutIcon" class="h-3.5 w-3.5 text-muted-foreground hover:text-rose-500 transition-colors shrink-0"></i>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Main Content Stage on the Right -->
+            <main class="flex-1 bg-muted/20 p-6 flex flex-col justify-between">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-border pb-3">
+                  <div>
+                    <h4 id="sidebarActivePageTitle" class="font-heading text-sm font-bold text-foreground">Dashboard Geral</h4>
+                    <p class="text-xs text-muted-foreground">Módulo administrativo renderizado ao lado da Sidebar.</p>
+                  </div>
+                  <button onclick="showToast('Exportando dados do painel...')" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-[#753399] px-3 text-xs font-semibold text-white shadow hover:bg-[#622981]">
+                    <i data-lucide="download" class="h-3 w-3"></i> Exportar
+                  </button>
+                </div>
+
+                <!-- KPI Mini Cards -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                    <span class="text-[10px] font-bold text-muted-foreground uppercase">Faturamento Mês</span>
+                    <p class="text-base font-bold text-foreground">R$ 482.900</p>
+                    <span class="text-[10px] font-bold text-emerald-500">+14.2% YoY</span>
+                  </div>
+                  <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
+                    <span class="text-[10px] font-bold text-muted-foreground uppercase">Notas Emitidas</span>
+                    <p class="text-base font-bold text-foreground">1.420 NF-e</p>
+                    <span class="text-[10px] font-bold text-[#753399]">100% Sincronizado</span>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-[11px] text-muted-foreground text-center">Clique nos itens da Sidebar à esquerda ou use o botão de recolher para testar a responsividade.</p>
+            </main>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'field':
+      stage.innerHTML = `
+        <div class="w-full max-w-md mx-auto space-y-5 text-left">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div>
+              <h4 class="font-heading text-xs font-bold text-foreground">Estrutura de Campo (Field)</h4>
+              <p class="text-[11px] text-muted-foreground">Rótulo, indicador obrigatório, dica contextual e validação.</p>
+            </div>
+            <button onclick="toggleFieldErrorDemo()" class="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors">
+              <i data-lucide="alert-circle" class="h-3.5 w-3.5 text-rose-500"></i> Alternar Erro
+            </button>
+          </div>
+
+          <!-- Field 1: Standard with hint -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="demoFieldRazao" class="text-xs font-bold text-foreground flex items-center gap-1">
+                Razão Social <span class="text-rose-500 font-bold">*</span>
+              </label>
+              <span class="text-[10px] text-muted-foreground">Obrigatório</span>
+            </div>
+            <input
+              id="demoFieldRazao"
+              type="text"
+              placeholder="Ex: Monta Soluções Tecnológicas Ltda"
+              value="Monta Tech S/A"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]"
+            />
+            <p class="text-[11px] text-muted-foreground">Nome empresarial oficial registrado no cartão do CNPJ.</p>
+          </div>
+
+          <!-- Field 2: Error state demo -->
+          <div class="space-y-1.5" id="demoFieldErrorContainer">
+            <div class="flex items-center justify-between">
+              <label for="demoFieldCnpj" class="text-xs font-bold text-foreground flex items-center gap-1">
+                CNPJ da Matriz <span class="text-rose-500 font-bold">*</span>
+              </label>
+              <span class="text-[10px] text-rose-500 font-medium" id="demoFieldStatusLabel">Inválido</span>
+            </div>
+            <input
+              id="demoFieldCnpj"
+              type="text"
+              placeholder="00.000.000/0000-00"
+              value="12.345.678/0001-9"
+              class="flex h-9 w-full rounded-md border border-rose-500 bg-rose-500/5 px-3 text-xs text-rose-900 dark:text-rose-200 shadow-sm focus:outline-none focus:ring-1 focus:ring-rose-500 transition-colors"
+            />
+            <p id="demoFieldErrorText" class="text-[11px] font-medium text-rose-600 dark:text-rose-400 flex items-center gap-1">
+              <i data-lucide="alert-circle" class="h-3 w-3"></i> O CNPJ informado contém dígito verificador incorreto.
+            </p>
+          </div>
+
+          <!-- Field 3: Textarea with Counter -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="demoFieldObs" class="text-xs font-bold text-foreground">
+                Observações de Faturamento
+              </label>
+              <span class="text-[10px] text-muted-foreground font-mono" id="demoFieldCharCounter">35 / 200</span>
+            </div>
+            <textarea
+              id="demoFieldObs"
+              rows="3"
+              oninput="updateFieldCharCounter(this)"
+              maxlength="200"
+              placeholder="Instruções para cobrança e nota fiscal..."
+              class="flex w-full rounded-md border border-input bg-background p-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]"
+            >Faturar com vencimento em 30 dias.</textarea>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'form':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-4 text-left">
+          <form onsubmit="handleFormSubmitDemo(event)" class="rounded-xl border border-border bg-card shadow-lg p-5 space-y-5">
+            <!-- Form Header -->
+            <div class="border-b border-border pb-3 flex items-center justify-between">
+              <div>
+                <h4 class="font-heading text-sm font-bold text-foreground">Cadastro de Empresa Fornecedora</h4>
+                <p class="text-xs text-muted-foreground">Preencha os dados cadastrais para emissão de pedidos.</p>
+              </div>
+              <span class="rounded-full bg-[#753399]/15 px-2.5 py-0.5 text-[10px] font-bold text-[#753399] dark:text-purple-300">
+                Formulário Seguro
+              </span>
+            </div>
+
+            <!-- Form Section 1: Dados Gerais -->
+            <div class="space-y-3">
+              <h5 class="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">1. Identificação Fiscal</h5>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-foreground">Razão Social *</label>
+                  <input required id="formRazao" type="text" placeholder="Nome empresarial" value="Alpha Logística Ltda" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-foreground">CNPJ *</label>
+                  <input required id="formCnpj" type="text" placeholder="00.000.000/0000-00" value="84.920.184/0001-45" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs font-mono shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-foreground">E-mail Financeiro *</label>
+                  <input required id="formEmail" type="email" placeholder="financeiro@empresa.com" value="nfe@alphalog.com.br" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-semibold text-foreground">Telefone Contato</label>
+                  <input id="formTel" type="tel" placeholder="(11) 99999-9999" value="(11) 4002-8922" class="flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Divider -->
+            <div class="border-t border-border pt-3 space-y-3">
+              <h5 class="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">2. Regime Tributário</h5>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                  <input type="radio" name="formRegime" checked class="accent-[#753399]" /> Lucro Presumido
+                </label>
+                <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                  <input type="radio" name="formRegime" class="accent-[#753399]" /> Simples Nacional
+                </label>
+                <label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                  <input type="radio" name="formRegime" class="accent-[#753399]" /> Lucro Real
+                </label>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="border-t border-border pt-4 flex items-center justify-between gap-3">
+              <button type="button" onclick="resetFormDemo()" class="rounded-md border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                Limpar Campos
+              </button>
+              <div class="flex items-center gap-2">
+                <button type="submit" id="formSubmitBtn" class="inline-flex items-center gap-2 rounded-md bg-[#753399] px-4 py-2 text-xs font-semibold text-white shadow hover:bg-[#622981] active:scale-95 transition-all">
+                  <i data-lucide="check" class="h-4 w-4"></i> Salvar Cadastro
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      `;
+      break;
+
+    case 'marker':
+      stage.innerHTML = `
+        <div class="w-full max-w-lg mx-auto space-y-4 text-left">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div>
+              <h4 class="font-heading text-xs font-bold text-foreground">Interactive Markers & Hotspots</h4>
+              <p class="text-[11px] text-muted-foreground">Pontos de interesse interativos com radar pulsante e tooltips.</p>
+            </div>
+            <span class="text-[11px] font-mono font-bold text-[#753399]">3 Marcadores Ativos</span>
+          </div>
+
+          <!-- Simulated Map / Floor Plan Stage -->
+          <div class="relative h-64 w-full rounded-2xl border border-border bg-gradient-to-br from-muted/30 to-muted/80 overflow-hidden shadow-inner flex items-center justify-center">
+            <!-- Background Map Grid Pattern -->
+            <div class="absolute inset-0 bg-[radial-gradient(#753399_1px,transparent_1px)] [background-size:16px_16px] opacity-15"></div>
+
+            <!-- Marker 1: Matriz SP -->
+            <div class="absolute top-12 left-16 group cursor-pointer" onclick="showToast('Marcador #1: Matriz São Paulo (Operação 100%)')">
+              <div class="relative flex items-center justify-center">
+                <span class="absolute h-8 w-8 rounded-full bg-[#753399]/30 animate-ping"></span>
+                <div class="relative h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shadow-lg border-2 border-background hover:scale-110 transition-transform">
+                  1
+                </div>
+              </div>
+              <div class="absolute top-8 left-1/2 -translate-x-1/2 mt-1 hidden group-hover:flex flex-col items-center z-20">
+                <div class="rounded-lg border border-border bg-card px-3 py-1.5 shadow-xl text-center whitespace-nowrap">
+                  <p class="text-xs font-bold text-foreground">Matriz São Paulo</p>
+                  <p class="text-[10px] text-emerald-500 font-semibold">● Operação Normal</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Marker 2: CD Rio -->
+            <div class="absolute bottom-16 left-1/2 -translate-x-1/2 group cursor-pointer" onclick="showToast('Marcador #2: CD Logístico Rio (Em trânsito)')">
+              <div class="relative flex items-center justify-center">
+                <span class="absolute h-8 w-8 rounded-full bg-emerald-500/30 animate-ping"></span>
+                <div class="relative h-7 w-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-lg border-2 border-background hover:scale-110 transition-transform">
+                  2
+                </div>
+              </div>
+              <div class="absolute top-8 left-1/2 -translate-x-1/2 mt-1 hidden group-hover:flex flex-col items-center z-20">
+                <div class="rounded-lg border border-border bg-card px-3 py-1.5 shadow-xl text-center whitespace-nowrap">
+                  <p class="text-xs font-bold text-foreground">CD Logístico Rio</p>
+                  <p class="text-[10px] text-emerald-500 font-semibold">● 142 Entregas Hoje</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Marker 3: Filial BH -->
+            <div class="absolute top-16 right-16 group cursor-pointer" onclick="showToast('Marcador #3: Filial Minas Gerais (Aguardando Vistoria)')">
+              <div class="relative flex items-center justify-center">
+                <span class="absolute h-8 w-8 rounded-full bg-amber-500/30 animate-ping"></span>
+                <div class="relative h-7 w-7 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-lg border-2 border-background hover:scale-110 transition-transform">
+                  3
+                </div>
+              </div>
+              <div class="absolute top-8 left-1/2 -translate-x-1/2 mt-1 hidden group-hover:flex flex-col items-center z-20">
+                <div class="rounded-lg border border-border bg-card px-3 py-1.5 shadow-xl text-center whitespace-nowrap">
+                  <p class="text-xs font-bold text-foreground">Filial Belo Horizonte</p>
+                  <p class="text-[10px] text-amber-500 font-semibold">▲ Manutenção Preventiva</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-muted-foreground text-center">Passe o mouse sobre os marcadores para abrir o card de detalhes ou clique para disparar o evento.</p>
+        </div>
+      `;
+      break;
+
+    case 'pagination':
+      stage.innerHTML = `
+        <div class="w-full max-w-xl mx-auto space-y-4 text-left">
+          <div class="flex items-center justify-between border-b border-border pb-2">
+            <div>
+              <h4 class="font-heading text-xs font-bold text-foreground">Paginação de Registros</h4>
+              <p class="text-[11px] text-muted-foreground">Navegação multi-páginas com reticências e seletor de limite.</p>
+            </div>
+            <span id="demoPaginationInfoText" class="text-xs font-mono text-muted-foreground font-semibold">Página 3 de 18</span>
+          </div>
+
+          <!-- Pagination Bar Component -->
+          <div class="rounded-xl border border-border bg-card p-4 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <!-- Info left -->
+              <p id="demoPaginationRangeText" class="text-xs text-muted-foreground">
+                Mostrando <span class="font-bold text-foreground">21 a 30</span> de <span class="font-bold text-foreground">180</span> registros
+              </p>
+
+              <!-- Controls Right -->
+              <nav class="flex items-center gap-1" aria-label="Paginação">
+                <button id="demoPagPrevBtn" onclick="changePaginationDemoPage(-1)" class="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40 transition-colors">
+                  <i data-lucide="chevron-left" class="h-3.5 w-3.5"></i>
+                  <span class="hidden sm:inline">Anterior</span>
+                </button>
+
+                <div class="flex items-center gap-1">
+                  <button onclick="setPaginationDemoPage(1)" class="demo-pag-btn h-8 w-8 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors">1</button>
+                  <button onclick="setPaginationDemoPage(2)" class="demo-pag-btn h-8 w-8 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors">2</button>
+                  <button onclick="setPaginationDemoPage(3)" class="demo-pag-btn h-8 w-8 rounded-md bg-[#753399] text-xs font-bold text-white shadow-sm">3</button>
+                  <button onclick="setPaginationDemoPage(4)" class="demo-pag-btn h-8 w-8 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors">4</button>
+                  <span class="px-1 text-xs text-muted-foreground">...</span>
+                  <button onclick="setPaginationDemoPage(18)" class="demo-pag-btn h-8 w-8 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors">18</button>
+                </div>
+
+                <button id="demoPagNextBtn" onclick="changePaginationDemoPage(1)" class="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                  <span class="hidden sm:inline">Próximo</span>
+                  <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    case 'loading':
+      stage.innerHTML = `
+        <div class="w-full max-w-xl mx-auto space-y-6 text-left">
+          <!-- 1. Variantes de Spinners e Animações -->
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
+            <h4 class="font-heading text-xs font-bold text-foreground">Variantes de Indicadores de Carregamento</h4>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <!-- Circular Spinner -->
+              <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
+                <svg class="h-6 w-6 animate-spin text-[#753399]" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <span class="text-[11px] font-semibold text-foreground">Circular Spinner</span>
+              </div>
+
+              <!-- Pulse Radar -->
+              <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
+                <div class="relative flex h-6 w-6 items-center justify-center">
+                  <span class="absolute h-full w-full animate-ping rounded-full bg-[#753399]/40"></span>
+                  <span class="relative h-3 w-3 rounded-full bg-[#753399]"></span>
+                </div>
+                <span class="text-[11px] font-semibold text-foreground">Radar Pulse</span>
+              </div>
+
+              <!-- Wave Dots -->
+              <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
+                <div class="flex items-center gap-1.5 h-6">
+                  <span class="h-2 w-2 rounded-full bg-[#753399] animate-bounce [animation-delay:-0.3s]"></span>
+                  <span class="h-2 w-2 rounded-full bg-[#753399] animate-bounce [animation-delay:-0.15s]"></span>
+                  <span class="h-2 w-2 rounded-full bg-[#753399] animate-bounce"></span>
+                </div>
+                <span class="text-[11px] font-semibold text-foreground">Wave Dots</span>
+              </div>
+
+              <!-- Equalizer Bars -->
+              <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
+                <div class="flex items-end gap-1 h-6">
+                  <span class="w-1 bg-[#753399] rounded-full animate-pulse h-3"></span>
+                  <span class="w-1 bg-[#753399] rounded-full animate-pulse h-6 [animation-delay:0.2s]"></span>
+                  <span class="w-1 bg-[#753399] rounded-full animate-pulse h-4 [animation-delay:0.4s]"></span>
+                  <span class="w-1 bg-[#753399] rounded-full animate-pulse h-5 [animation-delay:0.1s]"></span>
+                </div>
+                <span class="text-[11px] font-semibold text-foreground">Equalizer Bars</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Overlay Assíncrono com Simulação Interativa -->
+          <div class="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-heading text-xs font-bold text-foreground">Simulação de Loading em Painel</h4>
+                <p class="text-[11px] text-muted-foreground">Bloqueio de interface assíncrono com mensagem contextual.</p>
+              </div>
+              <button onclick="triggerAsyncLoadingDemo()" class="inline-flex items-center gap-2 rounded-md bg-[#753399] px-3.5 py-1.5 text-xs font-semibold text-white shadow hover:bg-[#622981] active:scale-95 transition-all">
+                <i data-lucide="play" class="h-3.5 w-3.5"></i> Simular Carregamento
+              </button>
+            </div>
+
+            <!-- Card Stage with Overlay -->
+            <div class="relative rounded-xl border border-border bg-muted/10 p-5 space-y-3 overflow-hidden min-h-[140px] flex flex-col justify-center">
+              <!-- Content below -->
+              <div class="flex items-center justify-between">
+                <div class="space-y-0.5">
+                  <h5 class="text-xs font-bold text-foreground">Relatório Financeiro Consolidado</h5>
+                  <p class="text-[11px] text-muted-foreground">Última atualização: Hoje às 11:42</p>
+                </div>
+                <span class="font-mono text-xs font-bold text-emerald-500">R$ 1.840.290,00</span>
+              </div>
+              <p class="text-xs text-muted-foreground leading-relaxed">
+                Dados consolidados de faturamento, conciliação de recebíveis via Pix e cartões de crédito.
+              </p>
+
+              <!-- Loading Overlay Element (Hidden by default) -->
+              <div id="demoLoadingOverlay" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-card/85 backdrop-blur-sm animate-in fade-in-0 duration-150">
+                <svg class="h-8 w-8 animate-spin text-[#753399]" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <div class="text-center space-y-0.5">
+                  <p class="text-xs font-bold text-foreground">Sincronizando dados...</p>
+                  <p class="text-[10px] text-muted-foreground">Consultando base de registros da SEFAZ</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      break;
+
+    default:
+      stage.innerHTML = `
+        <div class="rounded-xl border border-border bg-card p-8 text-center space-y-3 max-w-md mx-auto">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand mx-auto">
+            <i data-lucide="layers" class="h-6 w-6"></i>
+          </div>
+          <h3 class="font-heading text-base font-bold text-foreground">${formatTitle(name)}</h3>
+          <p class="text-xs text-muted-foreground">Componente corporativo estilizado com Tailwind CSS e acessibilidade nativa.</p>
+          <button onclick="showToast('Interação com ${formatTitle(name)}')" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-white shadow hover:bg-brand-hover">
+            Testar Componente
+          </button>
+        </div>
+      `;
+      break;
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// Helpers de Menus e Navegação
+function toggleDropdownDemo() {
+  const el = document.getElementById('demoDropdownMenu');
+  el?.classList.toggle('hidden');
+}
+
+function handleContextMenuDemo(e) {
+  e.preventDefault();
+  const el = document.getElementById('demoContextMenu');
+  if (el) {
+    el.classList.remove('hidden');
+    showToast('Menu contextual acionado via botão direito');
+  }
+}
+
+function toggleContextMenuDirect() {
+  const el = document.getElementById('demoContextMenu');
+  el?.classList.toggle('hidden');
+}
+
+function hideContextMenuDemo() {
+  document.getElementById('demoContextMenu')?.classList.add('hidden');
+}
+
+function toggleMenubarMenu(menuId) {
+  const target = document.getElementById(`menubar-menu-${menuId}`);
+  const wasHidden = target?.classList.contains('hidden');
+  closeAllMenubars();
+  if (wasHidden && target) {
+    target.classList.remove('hidden');
+  }
+}
+
+function closeAllMenubars() {
+  document.querySelectorAll('.menubar-dropdown').forEach(m => m.classList.add('hidden'));
+}
+
+function toggleNavMegaMenu(navId) {
+  const target = document.getElementById(`nav-mega-${navId}`);
+  const wasHidden = target?.classList.contains('hidden');
+  closeAllNavMenus();
+  if (wasHidden && target) {
+    target.classList.remove('hidden');
+  }
+}
+
+function closeAllNavMenus() {
+  document.querySelectorAll('.nav-mega-dropdown').forEach(m => m.classList.add('hidden'));
+}
+
+// Helpers de Interação no Preview
+function toggleGroupItem(btn) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.group-btn').forEach(b => {
+    b.className = 'group-btn rounded-md px-4 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-all';
+  });
+  btn.className = 'group-btn rounded-md bg-brand px-4 py-1.5 text-xs font-bold text-white transition-all';
+  showToast(`Período alterado para: ${btn.textContent}`);
+}
+
+function clearDemoInput() {
+  const el = document.getElementById('demoInputClear');
+  if (el) {
+    el.value = '';
+    el.focus();
+    showToast('Campo limpo!');
+  }
+}
+
+function togglePassVisibility() {
+  const inp = document.getElementById('demoPassInput');
+  const icon = document.getElementById('demoPassIcon');
+  if (inp && icon) {
+    const isPass = inp.type === 'password';
+    inp.type = isPass ? 'text' : 'password';
+    icon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
+    if (window.lucide) window.lucide.createIcons();
+  }
+}
+
+function openDemoModal() {
+  document.getElementById('demoModal')?.classList.remove('hidden');
+}
+
+function closeDemoModal() {
+  document.getElementById('demoModal')?.classList.add('hidden');
+}
+
+function toggleAccordionItem(btn) {
+  const content = btn.nextElementSibling;
+  const icon = btn.querySelector('[data-lucide="chevron-down"]');
+  if (content.classList.contains('hidden')) {
+    content.classList.remove('hidden');
+    if (icon) icon.style.transform = 'rotate(180deg)';
+  } else {
+    content.classList.add('hidden');
+    if (icon) icon.style.transform = 'rotate(0deg)';
+  }
+}
+
+function switchTabPane(paneId, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = 'tab-btn inline-flex flex-1 items-center justify-center rounded-md px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground';
+  });
+  btn.className = 'tab-btn inline-flex flex-1 items-center justify-center rounded-md bg-background px-3.5 py-1.5 text-xs font-bold text-brand shadow-sm';
+
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+  document.getElementById(`pane-${paneId}`)?.classList.remove('hidden');
+}
+
+function toggleSwitch(btn) {
+  const circle = btn.querySelector('span');
+  const isChecked = btn.classList.contains('bg-brand');
+  if (isChecked) {
+    btn.classList.remove('bg-brand');
+    btn.classList.add('bg-muted');
+    circle.classList.remove('translate-x-5');
+    circle.classList.add('translate-x-0');
+    showToast('Notificações desativadas.');
+  } else {
+    btn.classList.remove('bg-muted');
+    btn.classList.add('bg-brand');
+    circle.classList.remove('translate-x-0');
+    circle.classList.add('translate-x-5');
+    showToast('Notificações ativadas!');
+  }
+}
+
+function updateProg(delta) {
+  const bar = document.getElementById('demoProgBar');
+  const val = document.getElementById('demoProgVal');
+  if (!bar || !val) return;
+  let current = parseInt(val.textContent) || 50;
+  current = Math.min(100, Math.max(0, current + delta));
+  val.textContent = `${current}%`;
+  bar.style.width = `${current}%`;
+}
+
+// ==================== HELPERS DE FORMULÁRIOS ====================
+// 1. Radio Group Demo
+function selectRadioDemo(plan) {
+  const cards = document.querySelectorAll('.radio-demo-card');
+  cards.forEach(c => {
+    c.className = 'radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border border-border bg-card p-4 shadow-sm hover:border-brand/40 transition-all';
+    const circle = c.querySelector('.rounded-full');
+    if (circle) {
+      circle.className = 'mt-0.5 h-4 w-4 shrink-0 rounded-full border border-input bg-background flex items-center justify-center';
+      circle.innerHTML = '';
+    }
+  });
+
+  const selected = document.getElementById(`radio-card-${plan}`);
+  if (selected) {
+    selected.className = 'radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border-2 border-brand bg-brand/5 dark:bg-brand/10 p-4 shadow-sm transition-all';
+    const circle = selected.querySelector('.rounded-full');
+    if (circle) {
+      circle.className = 'mt-0.5 h-4 w-4 shrink-0 rounded-full border border-brand bg-brand flex items-center justify-center';
+      circle.innerHTML = '<div class="h-1.5 w-1.5 rounded-full bg-white animate-in zoom-in-50 duration-150"></div>';
+    }
+  }
+  showToast(`Plano ${plan.toUpperCase()} selecionado com sucesso!`);
+}
+
+// 2. Slider Demo
+function updateSliderDemo(val) {
+  const num = Number(val);
+  const percent = (num / 100000) * 100;
+  
+  const badge = document.getElementById('sliderBadgeValue');
+  const bar = document.getElementById('sliderFillBar');
+  const thumb = document.getElementById('sliderThumbDot');
+  const interest = document.getElementById('sliderInterestEst');
+
+  if (badge) badge.textContent = `R$ ${num.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+  if (bar) bar.style.width = `${percent}%`;
+  if (thumb) thumb.style.left = `${percent}%`;
+  if (interest) {
+    const est = (num * 0.012).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    interest.textContent = `R$ ${est} / mês`;
+  }
+}
+
+// 3. Date Picker Demo
+let demoSelectedDate = new Date(2026, 7, 31);
+let demoViewingMonth = 7;
+let demoViewingYear = 2026;
+
+function toggleDatePickerDemo() {
+  const popover = document.getElementById('demoDatePickerPopover');
+  popover?.classList.toggle('hidden');
+}
+
+function clearDatePickerDemo(e) {
+  if (e) e.stopPropagation();
+  demoSelectedDate = null;
+  const label = document.getElementById('demoDatePickerLabel');
+  if (label) label.textContent = 'Selecione uma data...';
+  renderCalendarDaysDemo();
+  showToast('Data removida.');
+}
+
+function navDateMonth(delta) {
+  demoViewingMonth += delta;
+  if (demoViewingMonth > 11) {
+    demoViewingMonth = 0;
+    demoViewingYear++;
+  } else if (demoViewingMonth < 0) {
+    demoViewingMonth = 11;
+    demoViewingYear--;
+  }
+  renderCalendarDaysDemo();
+}
+
+function selectDatePreset(daysAhead) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  selectCalendarDate(d.getDate(), d.getMonth(), d.getFullYear());
+}
+
+function selectCalendarDate(day, month = demoViewingMonth, year = demoViewingYear) {
+  demoSelectedDate = new Date(year, month, day);
+  demoViewingMonth = month;
+  demoViewingYear = year;
+  
+  const label = document.getElementById('demoDatePickerLabel');
+  if (label) {
+    const dStr = String(day).padStart(2, '0');
+    const mStr = String(month + 1).padStart(2, '0');
+    label.textContent = `${dStr}/${mStr}/${year}`;
+  }
+  
+  renderCalendarDaysDemo();
+  toggleDatePickerDemo();
+  showToast(`Data selecionada: ${label ? label.textContent : ''}`);
+}
+
+function renderCalendarDaysDemo() {
+  const grid = document.getElementById('datePickerDaysGrid');
+  const title = document.getElementById('datePickerMonthYear');
+  if (!grid || !title) return;
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+  title.textContent = `${monthNames[demoViewingMonth]} ${demoViewingYear}`;
+
+  const firstDay = new Date(demoViewingYear, demoViewingMonth, 1).getDay();
+  const totalDays = new Date(demoViewingYear, demoViewingMonth + 1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div></div>';
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const isSelected = demoSelectedDate &&
+      demoSelectedDate.getDate() === day &&
+      demoSelectedDate.getMonth() === demoViewingMonth &&
+      demoSelectedDate.getFullYear() === demoViewingYear;
+
+    const isToday = new Date().getDate() === day &&
+      new Date().getMonth() === demoViewingMonth &&
+      new Date().getFullYear() === demoViewingYear;
+
+    const cls = isSelected
+      ? 'bg-brand font-bold text-white shadow-sm ring-2 ring-brand/30'
+      : (isToday ? 'border border-brand text-brand font-bold hover:bg-muted' : 'hover:bg-muted text-foreground');
+
+    html += `
+      <button onclick="selectCalendarDate(${day})" class="flex h-7 w-7 items-center justify-center rounded-md text-xs transition-all ${cls}">
+        ${day}
+      </button>
+    `;
+  }
+
+  grid.innerHTML = html;
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// 4. Lookup Demo
+const lookupDataDemo = [
+  { id: '1', code: 'CLI-101', name: 'Petrobras Petróleo Brasileiro S/A', cnpj: '33.000.167/0001-01', location: 'Rio de Janeiro - RJ', tag: 'VIP' },
+  { id: '2', code: 'CLI-102', name: 'Vale S/A Mineração & Logística', cnpj: '33.592.510/0001-54', location: 'Nova Lima - MG', tag: 'Ativo' },
+  { id: '3', code: 'CLI-103', name: 'Ambev Brasil Bebidas S/A', cnpj: '02.808.708/0001-07', location: 'São Paulo - SP', tag: 'Ativo' },
+  { id: '4', code: 'CLI-104', name: 'Embraer Aviação Corporativa S/A', cnpj: '60.701.190/0001-04', location: 'São José dos Campos - SP', tag: 'Especial' },
+  { id: '5', code: 'CLI-105', name: 'Suzano Papel e Celulose S/A', cnpj: '16.404.287/0001-55', location: 'Salvador - BA', tag: 'Ativo' }
+];
+let selectedLookupItem = lookupDataDemo[1];
+
+function openLookupDemo() {
+  document.getElementById('demoLookupModal')?.classList.remove('hidden');
+  renderLookupItemsDemo();
+}
+
+function closeLookupDemo() {
+  document.getElementById('demoLookupModal')?.classList.add('hidden');
+}
+
+function filterLookupDemo(query) {
+  renderLookupItemsDemo(query);
+}
+
+function renderLookupItemsDemo(query = '') {
+  const container = document.getElementById('lookupItemsContainer');
+  if (!container) return;
+
+  const filtered = lookupDataDemo.filter(item => 
+    item.code.toLowerCase().includes(query.toLowerCase()) ||
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    item.cnpj.includes(query) ||
+    item.location.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="p-6 text-center text-xs text-muted-foreground">Nenhum cliente correspondente encontrado.</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const isSelected = selectedLookupItem?.id === item.id;
+    return `
+      <div onclick="selectLookupItem('${item.id}')" class="flex items-center justify-between p-3 text-xs cursor-pointer hover:bg-muted/60 transition-colors ${isSelected ? 'bg-brand/10 font-semibold' : ''}">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[11px] font-bold text-brand">${item.code}</span>
+            <span class="text-foreground">${item.name}</span>
+          </div>
+          <p class="text-[11px] text-muted-foreground font-mono">${item.cnpj} · ${item.location}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">${item.tag}</span>
+          ${isSelected ? '<i data-lucide="check" class="h-4 w-4 text-brand"></i>' : ''}
+        </div>
       </div>
-    `, 'Template: Modal de Recuperação de Senha')
-  };
+    `;
+  }).join('');
 
-  return previews[name] || wrap(`
-    <div class="po-alert success">
-      <i data-lucide="circle-check"></i>
-      <div>
-        <b>${name}</b> está completamente implementado e pronto para uso em HTML, CSS e JavaScript puro.
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function selectLookupItem(id) {
+  const item = lookupDataDemo.find(i => i.id === id);
+  if (item) {
+    selectedLookupItem = item;
+    const display = document.getElementById('lookupSelectedDisplay');
+    if (display) {
+      display.innerHTML = `
+        <span class="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">${item.code}</span>
+        <span>${item.name}</span>
+      `;
+    }
+    closeLookupDemo();
+    showToast(`Cliente selecionado: ${item.name}`);
+  }
+}
+
+// 5. Combobox Demo
+const comboOptionsDemo = [
+  { value: 'ti', label: 'Tecnologia da Informação', hint: 'CC-0101' },
+  { value: 'fin', label: 'Controladoria & Finanças', hint: 'CC-0102' },
+  { value: 'rh', label: 'Recursos Humanos & D.O.', hint: 'CC-0103' },
+  { value: 'jur', label: 'Jurídico & Compliance', hint: 'CC-0104' },
+  { value: 'log', label: 'Logística & Suprimentos', hint: 'CC-0105' },
+  { value: 'mkt', label: 'Marketing & Vendas B2B', hint: 'CC-0106' },
+  { value: 'eng', label: 'Engenharia de Produto', hint: 'CC-0107' }
+];
+let selectedComboValue = 'ti';
+
+function toggleComboDemo() {
+  document.getElementById('demoComboDropdown')?.classList.toggle('hidden');
+  renderComboOptionsDemo();
+}
+
+function filterComboDemo(query) {
+  renderComboOptionsDemo(query);
+}
+
+function renderComboOptionsDemo(query = '') {
+  const list = document.getElementById('comboOptionsList');
+  if (!list) return;
+
+  const filtered = comboOptionsDemo.filter(opt =>
+    opt.label.toLowerCase().includes(query.toLowerCase()) ||
+    opt.hint.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="p-3 text-center text-xs text-muted-foreground">Nenhuma opção encontrada.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(opt => {
+    const isSelected = selectedComboValue === opt.value;
+    return `
+      <div onclick="selectComboOption('${opt.value}')" class="flex items-center justify-between rounded-md px-2.5 py-2 text-xs cursor-pointer select-none transition-colors ${isSelected ? 'bg-brand text-white font-semibold' : 'hover:bg-muted text-foreground'}">
+        <div>
+          <span>${opt.label}</span>
+          <span class="ml-2 font-mono text-[10px] ${isSelected ? 'text-purple-200' : 'text-muted-foreground'}">${opt.hint}</span>
+        </div>
+        ${isSelected ? '<i data-lucide="check" class="h-3.5 w-3.5 shrink-0"></i>' : ''}
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function selectComboOption(val) {
+  selectedComboValue = val;
+  const opt = comboOptionsDemo.find(o => o.value === val);
+  const label = document.getElementById('comboSelectedLabel');
+  if (label && opt) {
+    label.textContent = opt.label;
+  }
+  toggleComboDemo();
+  showToast(`Departamento selecionado: ${opt ? opt.label : val}`);
+}
+
+// 6. MultiSelect Demo
+const multiSelectOptionsDemo = [
+  { value: 'read_nfe', label: 'Consulta NF-e' },
+  { value: 'emit_nfe', label: 'Emissão NF-e' },
+  { value: 'cancel_nfe', label: 'Cancelamento' },
+  { value: 'audit_logs', label: 'Auditoria de Logs' },
+  { value: 'export_csv', label: 'Exportar Relatórios' },
+  { value: 'manage_users', label: 'Gerenciar Usuários' }
+];
+let selectedMultiValues = ['read_nfe', 'emit_nfe', 'export_csv'];
+
+function toggleMultiSelectDemo() {
+  document.getElementById('demoMultiSelectDropdown')?.classList.toggle('hidden');
+  renderMultiSelectDemo();
+}
+
+function filterMultiSelectDemo(query) {
+  renderMultiSelectOptionsList(query);
+}
+
+function removeMultiSelectTag(e, val) {
+  if (e) e.stopPropagation();
+  selectedMultiValues = selectedMultiValues.filter(v => v !== val);
+  renderMultiSelectDemo();
+  showToast('Permissão removida.');
+}
+
+function toggleMultiSelectOption(val) {
+  if (selectedMultiValues.includes(val)) {
+    selectedMultiValues = selectedMultiValues.filter(v => v !== val);
+  } else {
+    selectedMultiValues.push(val);
+  }
+  renderMultiSelectDemo();
+}
+
+function renderMultiSelectDemo() {
+  const container = document.getElementById('multiSelectTagsContainer');
+  if (container) {
+    if (selectedMultiValues.length === 0) {
+      container.innerHTML = `<span class="px-1.5 text-muted-foreground">Selecione permissões...</span>`;
+    } else {
+      container.innerHTML = selectedMultiValues.map(val => {
+        const opt = multiSelectOptionsDemo.find(o => o.value === val);
+        const label = opt ? opt.label : val;
+        return `
+          <span class="inline-flex items-center gap-1 rounded-md bg-brand/15 px-2 py-0.5 text-xs font-semibold text-brand dark:text-purple-300">
+            <span>${label}</span>
+            <span onclick="removeMultiSelectTag(event, '${val}')" class="rounded hover:bg-brand/20 p-0.5 cursor-pointer">
+              <i data-lucide="x" class="h-3 w-3"></i>
+            </span>
+          </span>
+        `;
+      }).join('');
+    }
+  }
+  renderMultiSelectOptionsList();
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function renderMultiSelectOptionsList(query = '') {
+  const list = document.getElementById('multiSelectOptionsList');
+  if (!list) return;
+
+  const filtered = multiSelectOptionsDemo.filter(opt =>
+    opt.label.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="p-3 text-center text-xs text-muted-foreground">Nenhuma permissão encontrada.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(opt => {
+    const isSelected = selectedMultiValues.includes(opt.value);
+    return `
+      <div onclick="toggleMultiSelectOption('${opt.value}')" class="flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs cursor-pointer select-none transition-colors ${isSelected ? 'bg-brand/15 text-brand font-bold dark:text-purple-300' : 'hover:bg-muted text-foreground'}">
+        <span>${opt.label}</span>
+        ${isSelected ? '<i data-lucide="check" class="h-3.5 w-3.5 text-brand"></i>' : ''}
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function togglePopoverDemo() {
+  const el = document.getElementById('demoPopover');
+  el?.classList.toggle('hidden');
+}
+
+function updateCharCount(textarea) {
+  const count = document.getElementById('demoCharCount');
+  if (count) count.textContent = `${textarea.value.length}/250`;
+}
+
+function simulateLoading(btn) {
+  const spinner = btn.querySelector('[data-lucide="loader-2"]');
+  const text = btn.querySelector('span');
+  if (spinner && text) {
+    spinner.classList.remove('hidden');
+    text.textContent = 'Processando...';
+    btn.disabled = true;
+    setTimeout(() => {
+      spinner.classList.add('hidden');
+      text.textContent = 'Clique p/ Loading';
+      btn.disabled = false;
+      showToast('Processamento concluído com sucesso!');
+    }, 1800);
+  }
+}
+
+// Helpers de Feedback (Badge, Toast, Progress, Skeleton, Alert)
+function removeBadgeChipDemo(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.8)';
+    setTimeout(() => el.remove(), 150);
+  }
+}
+
+function resetBadgeChipsDemo() {
+  const container = document.getElementById('demoBadgeChipsContainer');
+  if (!container) return;
+  container.innerHTML = `
+    <span id="chip-1" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+      <span>React 19</span>
+      <button onclick="removeBadgeChipDemo('chip-1')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </span>
+    <span id="chip-2" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+      <span>TypeScript</span>
+      <button onclick="removeBadgeChipDemo('chip-2')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </span>
+    <span id="chip-3" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+      <span>Tailwind CSS</span>
+      <button onclick="removeBadgeChipDemo('chip-3')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </span>
+    <span id="chip-4" class="inline-flex items-center gap-1.5 rounded-md bg-[#753399]/15 px-2.5 py-1 text-xs font-semibold text-[#753399] dark:text-purple-300">
+      <span>Zero Radix</span>
+      <button onclick="removeBadgeChipDemo('chip-4')" class="rounded p-0.5 hover:bg-[#753399]/25 transition-colors"><i data-lucide="x" class="h-3 w-3"></i></button>
+    </span>
+    <button onclick="resetBadgeChipsDemo()" class="text-[11px] font-semibold text-[#753399] hover:underline ml-1">Restaurar tags</button>
+  `;
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function showToastDemo(type) {
+  const configs = {
+    success: { title: "Operação Concluída", msg: "Registro corporativo salvo com sucesso no banco de dados." },
+    danger: { title: "Erro na Requisição", msg: "Falha ao conectar com o serviço SEFAZ. Tente novamente." },
+    warning: { title: "Sessão Expirando", msg: "Sua autenticação expira em 5 minutos por inatividade." },
+    brand: { title: "Monta UI v2.4.0", msg: "Módulo compilado com 37 componentes nativos em TypeScript." }
+  };
+  const config = configs[type] || configs.success;
+  showToast(`${config.title}: ${config.msg}`);
+}
+
+let currentProgressVal = 65;
+function setProgressDemo(val) {
+  currentProgressVal = Math.min(Math.max(val, 0), 100);
+  const bar = document.getElementById('demoProgressBar');
+  const badge = document.getElementById('demoProgressValueBadge');
+  if (bar) bar.style.width = currentProgressVal + '%';
+  if (badge) badge.textContent = currentProgressVal + '%';
+}
+
+function adjustProgressDemo(delta) {
+  setProgressDemo(currentProgressVal + delta);
+}
+
+function simulateProgressDemo() {
+  setProgressDemo(0);
+  let step = 0;
+  const interval = setInterval(() => {
+    step += 5;
+    setProgressDemo(step);
+    if (step >= 100) {
+      clearInterval(interval);
+      showToast('Download concluído com 100% de integridade!');
+    }
+  }, 100);
+}
+
+let isSkeletonLoading = true;
+function toggleSkeletonDemo() {
+  isSkeletonLoading = !isSkeletonLoading;
+  const skeletonBox = document.getElementById('demoSkeletonContainer');
+  const contentBox = document.getElementById('demoRealContentContainer');
+  const btnText = document.getElementById('skeletonBtnText');
+
+  if (isSkeletonLoading) {
+    skeletonBox?.classList.remove('hidden');
+    contentBox?.classList.add('hidden');
+    if (btnText) btnText.textContent = "Simular Loading";
+  } else {
+    skeletonBox?.classList.add('hidden');
+    contentBox?.classList.remove('hidden');
+    if (btnText) btnText.textContent = "Exibir Esqueleto";
+  }
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function dismissAlertDemo(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-10px)';
+    setTimeout(() => el.classList.add('hidden'), 200);
+  }
+}
+
+function restoreAlertsDemo() {
+  ['alert-info', 'alert-success', 'alert-warning', 'alert-danger'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.remove('hidden');
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }
+  });
+  if (window.lucide) window.lucide.createIcons();
+  showToast('Alertas restaurados.');
+}
+
+// Helpers de Gráficos (Chart Switcher)
+function switchChartDemoType(type) {
+  ['bar', 'area', 'donut', 'horizontal'].forEach(t => {
+    const pane = document.getElementById(`chartView-${t}`);
+    const btn = document.getElementById(`chartTabBtn-${t}`);
+    if (pane) {
+      if (t === type) {
+        pane.classList.remove('hidden');
+      } else {
+        pane.classList.add('hidden');
+      }
+    }
+    if (btn) {
+      if (t === type) {
+        btn.className = "chart-tab-btn inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1 text-xs font-bold text-foreground shadow-sm transition-all";
+        btn.querySelector('i')?.classList.add('text-[#753399]');
+      } else {
+        btn.className = "chart-tab-btn inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-all";
+        btn.querySelector('i')?.classList.remove('text-[#753399]');
+      }
+    }
+  });
+  if (window.lucide) window.lucide.createIcons();
+}
+
+// Helpers de Navbar e Sidebar Demo
+function selectNavbarLinkDemo(btn, label) {
+  document.querySelectorAll('.navbar-demo-link').forEach(b => {
+    b.className = 'navbar-demo-link rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors';
+  });
+  btn.className = 'navbar-demo-link rounded-md bg-[#753399]/10 px-2.5 py-1 font-bold text-[#753399] dark:text-purple-300 transition-colors';
+  showToast(`Navegando para: ${label}`);
+}
+
+let isSidebarCollapsed = false;
+function toggleSidebarCollapseDemo() {
+  isSidebarCollapsed = !isSidebarCollapsed;
+  const sidebar = document.getElementById('demoCollapsibleSidebar');
+  const btnText = document.getElementById('sidebarToggleBtnText');
+  const brandTexts = document.getElementById('sidebarBrandTexts');
+  const userTexts = document.getElementById('sidebarUserTexts');
+  const logoutIcon = document.getElementById('sidebarLogoutIcon');
+  const groupLabel1 = document.getElementById('sidebarGroupLabel1');
+  const groupLabel2 = document.getElementById('sidebarGroupLabel2');
+
+  if (isSidebarCollapsed) {
+    if (sidebar) {
+      sidebar.style.width = '64px';
+    }
+    if (btnText) btnText.textContent = "Expandir Sidebar";
+    if (brandTexts) brandTexts.classList.add('hidden');
+    if (userTexts) userTexts.classList.add('hidden');
+    if (logoutIcon) logoutIcon.classList.add('hidden');
+    if (groupLabel1) groupLabel1.classList.add('hidden');
+    if (groupLabel2) groupLabel2.classList.add('hidden');
+    document.querySelectorAll('.sidebar-item-label').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.sidebar-item-badge').forEach(el => el.classList.add('hidden'));
+    showToast('Sidebar recolhida (Modo Mini / Icon-only)');
+  } else {
+    if (sidebar) {
+      sidebar.style.width = '240px';
+    }
+    if (btnText) btnText.textContent = "Recolher Sidebar";
+    if (brandTexts) brandTexts.classList.remove('hidden');
+    if (userTexts) userTexts.classList.remove('hidden');
+    if (logoutIcon) logoutIcon.classList.remove('hidden');
+    if (groupLabel1) groupLabel1.classList.remove('hidden');
+    if (groupLabel2) groupLabel2.classList.remove('hidden');
+    document.querySelectorAll('.sidebar-item-label').forEach(el => el.classList.remove('hidden'));
+    document.querySelectorAll('.sidebar-item-badge').forEach(el => el.classList.remove('hidden'));
+    showToast('Sidebar expandida');
+  }
+}
+
+function selectSidebarItemDemo(btn, pageTitle) {
+  document.querySelectorAll('.sidebar-item-btn').forEach(b => {
+    b.className = 'sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors';
+  });
+  btn.className = 'sidebar-item-btn w-full flex items-center justify-between rounded-lg bg-[#753399]/15 px-2.5 py-2 text-xs font-bold text-[#753399] dark:text-purple-300 transition-colors';
+  const titleEl = document.getElementById('sidebarActivePageTitle');
+  if (titleEl) titleEl.textContent = pageTitle;
+  showToast(`Módulo carregado: ${pageTitle}`);
+}
+
+// Helpers de Field Demo
+let isFieldInError = true;
+function toggleFieldErrorDemo() {
+  isFieldInError = !isFieldInError;
+  const input = document.getElementById('demoFieldCnpj');
+  const label = document.getElementById('demoFieldStatusLabel');
+  const errorText = document.getElementById('demoFieldErrorText');
+
+  if (isFieldInError) {
+    if (input) input.className = 'flex h-9 w-full rounded-md border border-rose-500 bg-rose-500/5 px-3 text-xs text-rose-900 dark:text-rose-200 shadow-sm focus:outline-none focus:ring-1 focus:ring-rose-500 transition-colors';
+    if (label) {
+      label.textContent = 'Inválido';
+      label.className = 'text-[10px] text-rose-500 font-medium';
+    }
+    if (errorText) errorText.classList.remove('hidden');
+    showToast('Estado de erro ativado');
+  } else {
+    if (input) input.className = 'flex h-9 w-full rounded-md border border-input bg-background px-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399] transition-colors';
+    if (label) {
+      label.textContent = 'Válido';
+      label.className = 'text-[10px] text-emerald-500 font-medium';
+    }
+    if (errorText) errorText.classList.add('hidden');
+    showToast('Campo validado com sucesso');
+  }
+}
+
+function updateFieldCharCounter(textarea) {
+  const counter = document.getElementById('demoFieldCharCounter');
+  if (counter) {
+    counter.textContent = `${textarea.value.length} / ${textarea.maxLength}`;
+  }
+}
+
+// Helpers de Form Demo
+function handleFormSubmitDemo(e) {
+  e.preventDefault();
+  const btn = document.getElementById('formSubmitBtn');
+  if (btn) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></span> Salvando...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      showToast('✅ Formulário de Fornecedor salvo com sucesso!');
+    }, 1000);
+  }
+}
+
+function resetFormDemo() {
+  const r = document.getElementById('formRazao');
+  const c = document.getElementById('formCnpj');
+  const em = document.getElementById('formEmail');
+  const t = document.getElementById('formTel');
+  if (r) r.value = '';
+  if (c) c.value = '';
+  if (em) em.value = '';
+  if (t) t.value = '';
+  showToast('Campos do formulário resetados.');
+}
+
+// Helpers de Paginação Demo
+let currentPagPage = 3;
+const totalPagPages = 18;
+
+function setPaginationDemoPage(page) {
+  currentPagPage = page;
+  updatePaginationDemoUI();
+  showToast(`Navegando para a página ${page}`);
+}
+
+function changePaginationDemoPage(delta) {
+  const newPage = currentPagPage + delta;
+  if (newPage >= 1 && newPage <= totalPagPages) {
+    setPaginationDemoPage(newPage);
+  }
+}
+
+function updatePaginationDemoUI() {
+  const infoText = document.getElementById('demoPaginationInfoText');
+  const rangeText = document.getElementById('demoPaginationRangeText');
+  const prevBtn = document.getElementById('demoPagPrevBtn');
+  const nextBtn = document.getElementById('demoPagNextBtn');
+
+  if (infoText) infoText.textContent = `Página ${currentPagPage} de ${totalPagPages}`;
+  if (rangeText) {
+    const start = (currentPagPage - 1) * 10 + 1;
+    const end = Math.min(currentPagPage * 10, 180);
+    rangeText.innerHTML = `Mostrando <span class="font-bold text-foreground">${start} a ${end}</span> de <span class="font-bold text-foreground">180</span> registros`;
+  }
+  if (prevBtn) prevBtn.disabled = currentPagPage === 1;
+  if (nextBtn) nextBtn.disabled = currentPagPage === totalPagPages;
+
+  document.querySelectorAll('.demo-pag-btn').forEach(btn => {
+    const num = parseInt(btn.textContent);
+    if (!isNaN(num)) {
+      if (num === currentPagPage) {
+        btn.className = 'demo-pag-btn h-8 w-8 rounded-md bg-[#753399] text-xs font-bold text-white shadow-sm';
+      } else {
+        btn.className = 'demo-pag-btn h-8 w-8 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors';
+      }
+    }
+  });
+}
+
+// Helpers de Loading Demo
+function triggerAsyncLoadingDemo() {
+  const overlay = document.getElementById('demoLoadingOverlay');
+  if (overlay) {
+    overlay.classList.remove('hidden');
+    showToast('Iniciando carregamento assíncrono...');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      showToast('✅ Dados sincronizados com sucesso!');
+    }, 2000);
+  }
+}
+
+// Helpers de Dados & Visualização
+function filterDemoTable(val) {
+  const q = val.toLowerCase();
+  const rows = document.querySelectorAll('#demoTableBody tr');
+  rows.forEach(r => {
+    const text = r.textContent.toLowerCase();
+    r.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+function toggleSelectAllRows(masterCheckbox) {
+  const checkboxes = document.querySelectorAll('.row-checkbox');
+  checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+  showToast(masterCheckbox.checked ? 'Todos os registros selecionados' : 'Seleção desmarcada');
+}
+
+function selectCalDay(el, day) {
+  document.querySelectorAll('#docPreviewStage .grid-cols-7 div').forEach(d => {
+    if (d.classList.contains('bg-brand')) {
+      d.className = 'p-1.5 rounded hover:bg-muted cursor-pointer';
+    }
+  });
+  el.className = 'p-1.5 rounded bg-brand text-white font-bold cursor-pointer shadow';
+  showToast(`Data selecionada: ${day} de Agosto de 2026`);
+}
+
+function toggleTreeNode(el) {
+  const sub = el.nextElementSibling;
+  const icon = el.querySelector('[data-lucide="chevron-down"]');
+  if (sub) {
+    sub.classList.toggle('hidden');
+    if (icon) {
+      icon.style.transform = sub.classList.contains('hidden') ? 'rotate(-90deg)' : 'rotate(0deg)';
+    }
+  }
+}
+
+function selectTreeFile(el, filename) {
+  document.querySelectorAll('#docPreviewStage .cursor-pointer').forEach(n => {
+    n.classList.remove('bg-accent', 'text-brand', 'font-bold');
+  });
+  el.classList.add('bg-accent', 'text-brand', 'font-bold');
+  showToast(`Arquivo selecionado: ${filename}`);
+}
+
+let currentStepperIndex = 2;
+const stepperData = [
+  { title: "Identificação & CNPJ", desc: "Informe a Razão Social, CNPJ e contato principal do faturamento." },
+  { title: "Endereço & Logística", desc: "Informe os dados para entrega e conferência tributária estadual." },
+  { title: "Condições de Pagamento", desc: "Defina os prazos comerciais e forma de faturamento da conta." },
+  { title: "Revisão & Aprovação", desc: "Revise todos os dados antes de finalizar o cadastro no sistema." }
+];
+
+const stepperForms = [
+  `<div class="space-y-3 text-xs">
+    <div class="space-y-1">
+      <label class="font-semibold text-foreground">Razão Social</label>
+      <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="Monta UI Enterprise Tecnologia S/A">
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="space-y-1">
+        <label class="font-semibold text-foreground">CNPJ</label>
+        <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none font-mono" value="53.113.791/0001-22">
+      </div>
+      <div class="space-y-1">
+        <label class="font-semibold text-foreground">E-mail Financeiro</label>
+        <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="faturamento@empresa.com.br">
       </div>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-top:12px">${descriptions[name] || ''}</p>
-  `, displayName(name));
-}
+  </div>`,
+  `<div class="space-y-3 text-xs">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="space-y-1">
+        <label class="font-semibold text-foreground">CEP</label>
+        <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none font-mono" value="04538-133">
+      </div>
+      <div class="space-y-1">
+        <label class="font-semibold text-foreground">UF / Estado</label>
+        <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="São Paulo - SP">
+      </div>
+    </div>
+    <div class="space-y-1">
+      <label class="font-semibold text-foreground">Logradouro & Número</label>
+      <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none" value="Av. Brigadeiro Faria Lima, 4300 - 10º Andar">
+    </div>
+  </div>`,
+  `<div class="space-y-3 text-xs">
+    <div class="space-y-1">
+      <label class="font-semibold text-foreground">Condição Comercial</label>
+      <select class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs focus:border-brand focus:outline-none">
+        <option>Boleto Bancário Faturado (30/60/90 Dias)</option>
+        <option>PIX Corporativo com 5% de Desconto</option>
+        <option>Cartão de Crédito Corporativo</option>
+      </select>
+    </div>
+    <div class="space-y-1">
+      <label class="font-semibold text-foreground">Limite de Crédito Aprovado</label>
+      <input class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs font-mono font-semibold text-brand" value="R$ 150.000,00" disabled>
+    </div>
+  </div>`,
+  `<div class="rounded-lg border border-border bg-muted/40 p-4 space-y-2 text-xs">
+    <div class="flex items-center justify-between border-b border-border pb-2">
+      <span class="font-bold text-foreground">Resumo da Homologação</span>
+      <span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Pronto p/ Envio</span>
+    </div>
+    <p class="text-muted-foreground">Todos os dados cadastrais, endereço e limites de faturamento foram validados com sucesso.</p>
+    <div class="pt-2 flex justify-between text-muted-foreground font-mono">
+      <span>Status: Homologado</span>
+      <span class="font-bold text-foreground">Taxa 0%</span>
+    </div>
+  </div>`
+];
 
-function componentHTML(name) {
-  const rawPreview = createPreview(name);
-  return `<!-- ==========================================
-     PO UI Vanilla Component: ${name}
-     Design System sem framework
-     ========================================== -->
-${rawPreview.replace(/ style="animation-delay:[^"]*"/g, '')}
+function updateStepperUI() {
+  const title = document.getElementById('stepTitle');
+  const desc = document.getElementById('stepDesc');
+  const formContainer = document.getElementById('stepFormContainer');
+  const pct = document.getElementById('stepperPct');
+  const bar = document.getElementById('stepperBar');
+  const backBtn = document.getElementById('stepperBackBtn');
+  const nextBtn = document.getElementById('stepperNextBtn');
 
-<!-- Carregamento de Ícones Lucide -->
-<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"><\/script>
-<script>
-  lucide.createIcons();
-<\/script>`;
-}
+  const p = Math.round((currentStepperIndex / 4) * 100);
+  if (pct) pct.textContent = `${p}% Concluído`;
+  if (bar) bar.style.width = `${p}%`;
 
-function componentCSS(name) {
-  const cssSnippets = {
-    // 1. AÇÕES & MENUS
-    'po-button': `/* Estilos PO UI: Botão e Variantes */
-.po-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 0 20px;
-  color: var(--ink, #24212a);
-  background: var(--surface, #ffffff);
-  border: 1px solid var(--line-strong, #bcb4c2);
-  border-radius: var(--radius, 6px);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(36, 33, 42, 0.06);
-}
-
-.po-button:hover {
-  color: var(--brand, #753399);
-  background: var(--brand-soft, #f4eaf8);
-  border-color: var(--brand, #753399);
-  transform: translateY(-1px);
-}
-
-.po-button.primary {
-  color: #ffffff;
-  background: linear-gradient(180deg, #753399 0%, #692c8a 100%);
-  border-color: #753399;
-  box-shadow: 0 2px 8px rgba(117, 51, 153, 0.35);
-}
-
-.po-button.primary:hover {
-  background: linear-gradient(180deg, #602580 0%, #562172 100%);
-  box-shadow: 0 5px 16px rgba(117, 51, 153, 0.45);
-}
-
-.po-button.ghost, .po-button.tertiary {
-  color: var(--brand, #753399);
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-.po-button.ghost:hover {
-  background: var(--brand-soft, #f4eaf8);
-}
-
-.po-button.danger {
-  color: #ffffff;
-  background: #c83c4d;
-  border-color: #c83c4d;
-  box-shadow: 0 2px 8px rgba(200, 60, 77, 0.3);
-}
-
-.po-button.danger:hover {
-  background: #ab2c3c;
-}
-
-.po-button.sm { min-height: 34px; padding: 0 14px; font-size: 12px; }
-.po-button.lg { min-height: 50px; padding: 0 28px; font-size: 15px; }
-.po-button.full-width { width: 100%; }
-.po-button:disabled { opacity: 0.5; cursor: not-allowed; }`,
-
-    'po-button-group': `/* Estilos PO UI: Grupo de Botões */
-.po-button-group {
-  display: inline-flex;
-  background: var(--surface, #ffffff);
-  border: 1px solid var(--line-strong, #bcb4c2);
-  border-radius: var(--radius, 6px);
-  padding: 2px;
-  gap: 2px;
-  box-shadow: 0 2px 6px rgba(36, 33, 42, 0.06);
-}
-
-.po-button-group .po-button {
-  margin: 0;
-  border: 0;
-  min-height: 36px;
-  padding: 0 16px;
-  color: var(--ink-secondary, #514b57);
-  background: transparent;
-  border-radius: 4px;
-}
-
-.po-button-group .po-button:hover {
-  color: var(--brand, #753399);
-  background: var(--brand-soft, #f4eaf8);
-}
-
-.po-button-group .po-button.active {
-  color: var(--brand, #753399);
-  background: var(--brand-soft, #f4eaf8);
-  font-weight: 700;
-  box-shadow: 0 1px 3px rgba(117, 51, 153, 0.15);
-}`,
-
-    'po-dropdown': `/* Estilos PO UI: Dropdown e Menu Suspenso */
-.dropdown-wrap { position: relative; display: inline-block; }
-
-.po-dropdown-menu {
-  position: absolute;
-  z-index: 100;
-  top: calc(100% + 8px);
-  left: 0;
-  min-width: 220px;
-  padding: 6px;
-  background: var(--surface, #ffffff);
-  border: 1px solid var(--line, #ddd9e0);
-  border-radius: 8px;
-  box-shadow: 0 12px 36px rgba(25, 18, 32, 0.14);
-  backdrop-filter: blur(12px);
-}
-
-.po-dropdown-header {
-  padding: 8px 12px 4px;
-  color: var(--muted, #6f6a75);
-  font: 700 10px sans-serif;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.po-dropdown-divider { height: 1px; margin: 6px 0; background: var(--line, #ddd9e0); }
-
-.po-dropdown-menu button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  color: var(--ink, #24212a);
-  background: none;
-  border: 0;
-  border-radius: 4px;
-  text-align: left;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.po-dropdown-menu button:hover {
-  color: var(--brand, #753399);
-  background: var(--brand-soft, #f4eaf8);
-}
-
-.po-dropdown-menu button.danger { color: var(--danger, #c83c4d); }
-.po-dropdown-menu button.danger:hover { background: var(--danger-soft, #fdebed); }`,
-
-    'po-table': `/* Estilos PO UI: Tabela de Dados */
-.po-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  background: var(--surface, #ffffff);
-}
-
-.po-table th {
-  padding: 12px 14px;
-  color: var(--muted, #6f6a75);
-  background: var(--surface-2, #f7f6f8);
-  border-bottom: 1px solid var(--line, #ddd9e0);
-  text-align: left;
-  font-weight: 700;
-}
-
-.po-table td {
-  padding: 13px 14px;
-  border-bottom: 1px solid var(--line, #ddd9e0);
-  color: var(--ink, #24212a);
-}
-
-.po-table tbody tr:hover {
-  background: var(--brand-soft, #f4eaf8);
-}
-
-.po-table input[type="checkbox"] {
-  accent-color: var(--brand, #753399);
-}`,
-
-    'po-modal': `/* Estilos PO UI: Janela Modal */
-.modal-backdrop {
-  position: fixed;
-  z-index: 999;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(24, 19, 27, 0.65);
-  backdrop-filter: blur(4px);
-}
-
-.po-modal {
-  width: min(100%, 480px);
-  padding: 24px;
-  background: var(--surface, #ffffff);
-  border-radius: 10px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-}
-
-.modal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.modal-head h2 { margin: 0; font-size: 20px; font-weight: 700; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }`
-  };
-
-  const specific = cssSnippets[name] || `/* Estilos PO UI para ${name} */
-.${name.replace('po-', 'po-')} {
-  /* Inclui tokens oficiais de cores e dimensões */
-  color: var(--ink, #24212a);
-  background: var(--surface, #ffffff);
-  border: 1px solid var(--line, #ddd9e0);
-  border-radius: var(--radius, 6px);
-}`;
-
-  return `/* =========================================================
-   PO UI Vanilla CSS: ${name}
-   Design System · Sem Framework
-   ========================================================= */
-:root {
-  --brand: #753399;
-  --brand-hover: #602580;
-  --brand-soft: #f4eaf8;
-  --ink: #24212a;
-  --muted: #6f6a75;
-  --line: #ddd9e0;
-  --line-strong: #bcb4c2;
-  --surface: #ffffff;
-  --surface-2: #f7f6f8;
-  --success: #168862;
-  --warning: #c86f0a;
-  --danger: #c83c4d;
-  --radius: 6px;
-}
-
-${specific}`;
-}
-
-function componentJavascript(name) {
-  const interactiveScripts = {
-    'po-button': `// PO UI Button: Disparo de Ações
-document.querySelectorAll('.po-button[data-toast]').forEach(button => {
-  button.addEventListener('click', () => {
-    const msg = button.dataset.toast || 'Botão clicado!';
-    PO.toast(msg, button.classList.contains('danger') ? 'danger' : 'success');
-  });
-});`,
-
-    'po-button-group': `// PO UI Button Group: Seleção de Opção Ativa
-document.querySelectorAll('.po-button-group button').forEach(button => {
-  button.addEventListener('click', () => {
-    const parent = button.parentElement;
-    parent.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    console.log('Opção selecionada:', button.textContent.trim());
-  });
-});`,
-
-    'po-dropdown': `// PO UI Dropdown: Abertura e Fechamento Contextual
-document.querySelectorAll('[data-dropdown]').forEach(trigger => {
-  trigger.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const menu = trigger.nextElementSibling;
-    if (menu) menu.hidden = !menu.hidden;
-  });
-});
-
-// Fechar ao clicar fora
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('.dropdown-wrap')) {
-    document.querySelectorAll('.po-dropdown-menu').forEach(menu => menu.hidden = true);
+  if (title && desc) {
+    title.textContent = `Etapa ${currentStepperIndex}: ${stepperData[currentStepperIndex - 1].title}`;
+    desc.textContent = stepperData[currentStepperIndex - 1].desc;
   }
-});`,
 
-    'po-modal': `// PO UI Modal: Abertura e Fechamento
-const modalBackdrop = document.querySelector('#modalBackdrop');
-const openBtn = document.querySelector('[data-open-modal]');
+  if (formContainer) {
+    formContainer.innerHTML = stepperForms[currentStepperIndex - 1];
+  }
 
-openBtn?.addEventListener('click', () => {
-  modalBackdrop.hidden = false;
-});
+  if (backBtn) {
+    backBtn.disabled = currentStepperIndex === 1;
+    backBtn.style.opacity = currentStepperIndex === 1 ? '0.5' : '1';
+  }
 
-modalBackdrop?.querySelectorAll('[data-close-modal]').forEach(btn => {
-  btn.addEventListener('click', () => modalBackdrop.hidden = true);
-});
+  if (nextBtn) {
+    if (currentStepperIndex === 4) {
+      nextBtn.innerHTML = `<span>Finalizar Cadastro</span> <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>`;
+    } else {
+      nextBtn.innerHTML = `<span>Avançar Etapa</span> <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>`;
+    }
+  }
 
-// Fechar com tecla ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modalBackdrop) modalBackdrop.hidden = true;
-});`,
+  for (let i = 1; i <= 4; i++) {
+    const node = document.getElementById(`step-node-${i}`);
+    if (!node) continue;
+    const circle = node.querySelector('.rounded-full');
+    const label = node.querySelector('span');
+    const line = document.getElementById(`step-line-${i}`);
 
-    'po-accordion': `// PO UI Accordion: Expandir e Recolher Seções
-document.querySelectorAll('.accordion-item > button').forEach(button => {
-  button.addEventListener('click', () => {
-    button.parentElement.classList.toggle('open');
-  });
-});`,
+    if (line) {
+      line.className = i < currentStepperIndex ? 'absolute top-4 left-1/2 w-full h-0.5 bg-emerald-600 -z-0' : 'absolute top-4 left-1/2 w-full h-0.5 bg-border -z-0';
+    }
 
-    'po-tabs': `// PO UI Tabs: Alternância de Abas
-document.querySelectorAll('.po-tabs-head button').forEach(button => {
-  button.addEventListener('click', () => {
-    const parent = button.parentElement;
-    parent.querySelectorAll('button').forEach(tab => tab.classList.toggle('active', tab === button));
-    const content = parent.closest('.po-tabs')?.querySelector('.po-tab-content');
-    if (content) content.textContent = 'Visualizando conteúdo de ' + button.textContent;
-  });
-});`,
+    if (circle && label) {
+      if (i < currentStepperIndex) {
+        circle.className = 'relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shadow ring-4 ring-card group-hover:scale-105 transition-all';
+        circle.innerHTML = '<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>';
+        label.className = 'mt-2 text-xs font-bold text-foreground';
+      } else if (i === currentStepperIndex) {
+        circle.className = 'relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white font-bold text-xs shadow ring-4 ring-brand/20 group-hover:scale-105 transition-all';
+        circle.textContent = i;
+        label.className = 'mt-2 text-xs font-bold text-brand';
+      } else {
+        circle.className = 'relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground border border-border font-bold text-xs ring-4 ring-card group-hover:scale-105 transition-all';
+        circle.textContent = i;
+        label.className = 'mt-2 text-xs font-medium text-muted-foreground';
+      }
+    }
+  }
 
-    'po-password': `// PO UI Password: Revelar / Ocultar Senha
-const toggleBtn = document.querySelector('#togglePassword');
-const passInput = document.querySelector('#passwordDemo');
+  if (window.lucide) window.lucide.createIcons();
+}
 
-toggleBtn?.addEventListener('click', () => {
-  const isPass = passInput.type === 'password';
-  passInput.type = isPass ? 'text' : 'password';
-});`,
+function nextStepDemo() {
+  if (currentStepperIndex < 4) {
+    currentStepperIndex++;
+    updateStepperUI();
+    showToast(`Avançado para a Etapa ${currentStepperIndex}`);
+  } else {
+    showToast('Cadastro corporativo homologado com sucesso!');
+  }
+}
 
-    'po-table': `// PO UI Table: Seleção de Linhas e Checkbox Geral
-const selectAll = document.querySelector('.po-table th input[type="checkbox"]');
-selectAll?.addEventListener('change', (e) => {
-  document.querySelectorAll('.po-table tbody input[type="checkbox"]').forEach(chk => {
-    chk.checked = e.target.checked;
-  });
-});`
-  };
+function prevStepDemo() {
+  if (currentStepperIndex > 1) {
+    currentStepperIndex--;
+    updateStepperUI();
+    showToast(`Retornado para a Etapa ${currentStepperIndex}`);
+  }
+}
 
-  const code = interactiveScripts[name] || `// PO UI ${name}: Inicialização e Comportamento
-console.log('Componente ${name} carregado.');
-if (window.lucide) {
-  lucide.createIcons();
+function jumpToStep(step) {
+  currentStepperIndex = step;
+  updateStepperUI();
+  showToast(`Navegado para a Etapa ${step}`);
+}
+
+function resetStepperDemo() {
+  currentStepperIndex = 1;
+  updateStepperUI();
+  showToast('Fluxo de cadastro reiniciado.');
+}
+
+// ==================== 2. GERADORES DE CÓDIGO TSX ====================
+function getComponentTSX(name) {
+  const pascal = formatTitle(name).replace(/\s+/g, '');
+
+  if (name === 'button') {
+    return `import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-[13px] font-semibold transition-all select-none relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#753399] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none active:scale-[0.99] [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-[#753399] text-white shadow-[0_2px_8px_rgba(117,51,153,0.35)] hover:bg-[#632982] hover:shadow-[0_5px_16px_rgba(117,51,153,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:bg-[#52206d] dark:bg-[#8b3fb5] dark:hover:bg-[#753399]",
+        secondary: "bg-background text-foreground border border-input shadow-sm hover:border-[#753399] hover:bg-[#753399]/10 hover:text-[#753399] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(117,51,153,0.12)] active:translate-y-0 active:bg-[#753399]/20",
+        ghost: "text-[#753399] bg-transparent hover:bg-[#753399]/10 active:bg-[#753399]/20 dark:text-[#a855f7] dark:hover:bg-[#a855f7]/10",
+        danger: "bg-[#c83c4d] text-white shadow-[0_2px_8px_rgba(200,60,77,0.3)] hover:bg-[#b52e3e] hover:shadow-[0_5px_16px_rgba(200,60,77,0.4)] hover:-translate-y-0.5 active:translate-y-0 active:bg-[#9e2332]",
+        success: "bg-[#168862] text-white shadow-[0_2px_8px_rgba(22,136,98,0.3)] hover:bg-[#116f4f] hover:shadow-[0_5px_16px_rgba(22,136,98,0.4)] hover:-translate-y-0.5 active:translate-y-0 active:bg-[#0d593f]",
+      },
+      size: {
+        default: "min-h-[42px] px-5 py-2 [&_svg]:size-4",
+        sm: "min-h-[34px] px-3.5 py-1.5 text-xs rounded-sm gap-1.5 [&_svg]:size-3.5",
+        lg: "min-h-[50px] px-7 py-3 text-[15px] font-bold rounded-lg gap-2.5 [&_svg]:size-4.5",
+        icon: "h-[42px] w-[42px] p-0 [&_svg]:size-4",
+      },
+      fullWidth: {
+        true: "w-full",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+      fullWidth: false,
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  isLoading?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, fullWidth, isLoading = false, children, disabled, ...props }, ref) => {
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, fullWidth, className }))}
+        ref={ref}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="animate-spin mr-2 size-4" />
+            <span>Carregando...</span>
+          </>
+        ) : (
+          children
+        )}
+      </button>
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }`;
+  }
+
+  if (name === 'input') {
+    return `import * as React from "react"
+import { Eye, EyeOff, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  clearable?: boolean
+  onClear?: () => void
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = "text", clearable = false, onClear, disabled, value, ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(false)
+    const isPassword = type === "password"
+    const inputType = isPassword ? (showPassword ? "text" : "password") : type
+
+    return (
+      <div className="relative flex w-full items-center">
+        <input
+          type={inputType}
+          className={cn(
+            "flex min-h-[42px] w-full rounded-md border border-input bg-background px-3.5 py-2 text-sm shadow-sm transition-all placeholder:text-muted-foreground focus:border-[#753399] focus:outline-none focus:ring-2 focus:ring-[#753399]/20 disabled:cursor-not-allowed disabled:opacity-50",
+            (isPassword || clearable) && "pr-10",
+            className
+          )}
+          ref={ref}
+          value={value}
+          disabled={disabled}
+          {...props}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            tabIndex={-1}
+            className="absolute right-3 text-muted-foreground hover:text-foreground focus:outline-none"
+          >
+            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </button>
+        )}
+        {clearable && value && !isPassword && (
+          <button
+            type="button"
+            onClick={onClear}
+            tabIndex={-1}
+            className="absolute right-3 text-muted-foreground hover:text-foreground focus:outline-none"
+          >
+            <X className="size-4" />
+          </button>
+        )}
+      </div>
+    )
+  }
+)
+Input.displayName = "Input"
+
+export { Input }`;
+  }
+
+  if (name === 'dialog') {
+    return `import * as React from "react"
+import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+interface DialogContextType {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const DialogContext = React.createContext<DialogContextType | null>(null)
+
+export function Dialog({
+  children,
+  open: controlledOpen,
+  onOpenChange
+}: {
+  children: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : uncontrolledOpen
+
+  const setOpen = React.useCallback(
+    (next: boolean | ((prev: boolean) => boolean)) => {
+      const nextValue = typeof next === "function" ? next(open) : next
+      if (!isControlled) setUncontrolledOpen(nextValue)
+      onOpenChange?.(nextValue)
+    },
+    [isControlled, onOpenChange, open]
+  )
+
+  return <DialogContext.Provider value={{ open, setOpen }}>{children}</DialogContext.Provider>
+}
+
+export function DialogTrigger({ children, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const context = React.useContext(DialogContext)
+  return (
+    <button
+      type="button"
+      onClick={() => context?.setOpen(true)}
+      className={cn("inline-flex items-center justify-center", className)}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function DialogContent({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  const context = React.useContext(DialogContext)
+  if (!context?.open) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200 p-4">
+      <div
+        className={cn(
+          "relative w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200",
+          className
+        )}
+        {...props}
+      >
+        <button
+          type="button"
+          onClick={() => context.setOpen(false)}
+          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Fechar</span>
+        </button>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left mb-4", className)} {...props} />
+}
+
+export function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h3 className={cn("font-heading text-lg font-bold leading-none tracking-tight text-foreground", className)} {...props} />
+}
+
+export function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn("text-xs text-muted-foreground", className)} {...props} />
+}
+
+export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-6", className)} {...props} />
+}
+
+export { Dialog as Modal }`;
+  }
+
+  if (name === 'dropdown-menu') {
+    return `import * as React from "react"
+import { ChevronRight } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+interface DropdownContextType {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const DropdownContext = React.createContext<DropdownContextType | null>(null)
+
+export function DropdownMenu({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  const menuRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  return (
+    <DropdownContext.Provider value={{ open, setOpen }}>
+      <div ref={menuRef} className="relative inline-block text-left">
+        {children}
+      </div>
+    </DropdownContext.Provider>
+  )
+}
+
+export function DropdownMenuTrigger({ children, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const context = React.useContext(DropdownContext)
+  return (
+    <button
+      type="button"
+      onClick={() => context?.setOpen(!context.open)}
+      className={cn("inline-flex items-center justify-center", className)}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function DropdownMenuContent({
+  children,
+  className,
+  align = "start",
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { align?: "start" | "end" | "center" }) {
+  const context = React.useContext(DropdownContext)
+  if (!context?.open) return null
+
+  const alignmentClass =
+    align === "end" ? "right-0" : align === "center" ? "left-1/2 -translate-x-1/2" : "left-0"
+
+  return (
+    <div
+      className={cn(
+        "absolute mt-2 min-w-[12rem] z-50 rounded-xl border border-border bg-card p-1.5 text-foreground shadow-2xl animate-in fade-in zoom-in-95 duration-100",
+        alignmentClass,
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+export function DropdownMenuItem({
+  children,
+  className,
+  onClick,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const context = React.useContext(DropdownContext)
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        context?.setOpen(false)
+        onClick?.(e)
+      }}
+      className={cn(
+        "relative flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium outline-none transition-colors hover:bg-muted text-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function DropdownMenuSeparator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />
+}
+
+export function DropdownMenuShortcut({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return <span className={cn("ml-auto text-[10px] tracking-widest text-muted-foreground font-mono", className)} {...props} />
 }`;
+  }
 
-  return `// =========================================================
-// PO UI Vanilla JavaScript: ${name}
-// Controle Interativo sem Framework
-// =========================================================
-${code}`;
+  if (name === 'context-menu') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export function ContextMenu({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("relative", className)} {...props}>{children}</div>
+}
+
+export function ContextMenuTrigger({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={className} {...props}>{children}</div>
+}
+
+export function ContextMenuContent({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("space-y-0.5", className)} {...props}>{children}</div>
+}
+
+export function ContextMenuItem({ children, className, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "relative flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium outline-none transition-colors hover:bg-muted text-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+        className
+      )}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function ContextMenuSeparator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />
+}`;
+  }
+
+  if (name === 'menubar') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export function Menubar({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("flex h-9 items-center space-x-1 rounded-lg border border-border bg-card p-1 shadow-sm relative", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function MenubarMenu({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  const menuRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  return (
+    <div ref={menuRef} className="relative inline-block">
+      {React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child as React.ReactElement<any>, { open, setOpen })
+        }
+        return child
+      })}
+    </div>
+  )
+}
+
+export function MenubarTrigger({
+  children,
+  className,
+  open,
+  setOpen,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { open?: boolean; setOpen?: React.Dispatch<React.SetStateAction<boolean>> }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setOpen?.(!open)}
+      className={cn(
+        "flex cursor-pointer select-none items-center rounded px-3 py-1 text-xs font-semibold outline-none hover:bg-muted text-foreground transition-colors",
+        open && "bg-muted",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function MenubarContent({
+  children,
+  className,
+  open,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { open?: boolean }) {
+  if (!open) return null
+  return (
+    <div
+      className={cn(
+        "absolute left-0 mt-2 min-w-[12rem] z-50 rounded-xl border border-border bg-card p-1.5 text-foreground shadow-2xl space-y-0.5 text-xs animate-in fade-in zoom-in-95 duration-100",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+export function MenubarItem({ children, className, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "relative flex w-full cursor-pointer select-none items-center justify-between rounded-md px-2.5 py-1.5 text-xs font-medium outline-none hover:bg-muted text-foreground transition-colors",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}`;
+  }
+
+  if (name === 'navigation-menu') {
+    return `import * as React from "react"
+import { ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export function NavigationMenu({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) {
+  return (
+    <nav className={cn("relative z-10 flex max-w-max flex-1 items-center justify-center", className)} {...props}>
+      {children}
+    </nav>
+  )
+}
+
+export function NavigationMenuList({ children, className, ...props }: React.HTMLAttributes<HTMLUListElement>) {
+  return (
+    <ul className={cn("group flex flex-1 list-none items-center justify-center space-x-1", className)} {...props}>
+      {children}
+    </ul>
+  )
+}
+
+export function NavigationMenuItem({ children, className, ...props }: React.HTMLAttributes<HTMLLIElement>) {
+  const [open, setOpen] = React.useState(false)
+  const itemRef = React.useRef<HTMLLIElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (itemRef.current && !itemRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  return (
+    <li ref={itemRef} className={cn("relative", className)} {...props}>
+      {React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child as React.ReactElement<any>, { open, setOpen })
+        }
+        return child
+      })}
+    </li>
+  )
+}
+
+export function NavigationMenuTrigger({
+  children,
+  className,
+  open,
+  setOpen,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { open?: boolean; setOpen?: React.Dispatch<React.SetStateAction<boolean>> }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setOpen?.(!open)}
+      className={cn(
+        "group inline-flex h-9 w-max items-center justify-center gap-1 rounded-md px-3 text-xs font-semibold transition-colors hover:bg-muted hover:text-foreground",
+        open && "bg-muted text-foreground",
+        className
+      )}
+      {...props}
+    >
+      <span>{children}</span>
+      <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", open && "rotate-180")} />
+    </button>
+  )
+}
+
+export function NavigationMenuContent({
+  children,
+  className,
+  open,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { open?: boolean }) {
+  if (!open) return null
+  return (
+    <div
+      className={cn(
+        "absolute left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+export function NavigationMenuLink({ children, className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  return (
+    <a className={cn("block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted", className)} {...props}>
+      {children}
+    </a>
+  )
+}`;
+  }
+
+  if (name === 'table') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+  ({ className, ...props }, ref) => (
+    <div className="relative w-full overflow-auto rounded-lg border border-border bg-card">
+      <table ref={ref} className={cn("w-full caption-bottom text-sm text-left", className)} {...props} />
+    </div>
+  )
+)
+Table.displayName = "Table"
+
+const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+  ({ className, ...props }, ref) => <thead ref={ref} className={cn("[&_tr]:border-b bg-muted/50 font-semibold text-muted-foreground", className)} {...props} />
+)
+TableHeader.displayName = "TableHeader"
+
+const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+  ({ className, ...props }, ref) => <tbody ref={ref} className={cn("[&_tr:last-child]:border-0 divide-y divide-border/50", className)} {...props} />
+)
+TableBody.displayName = "TableBody"
+
+const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
+  ({ className, ...props }, ref) => (
+    <tr ref={ref} className={cn("border-b border-border/50 transition-colors hover:bg-muted/40 data-[state=selected]:bg-muted", className)} {...props} />
+  )
+)
+TableRow.displayName = "TableRow"
+
+const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
+  ({ className, ...props }, ref) => <th ref={ref} className={cn("h-10 px-3 text-left align-middle font-medium text-xs text-muted-foreground", className)} {...props} />
+)
+TableHead.displayName = "TableHead"
+
+const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
+  ({ className, ...props }, ref) => <td ref={ref} className={cn("p-3 align-middle text-xs [&:has([role=checkbox])]:pr-0", className)} {...props} />
+)
+TableCell.displayName = "TableCell"
+
+export { Table, TableHeader, TableBody, TableHead, TableRow, TableCell }`;
+  }
+
+  if (name === 'chart') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export type ChartType = "bar" | "area" | "line" | "donut" | "horizontal-bar"
+
+export interface ChartDataPoint {
+  label: string
+  value: number
+  target?: number
+  color?: string
+  percentage?: number
+}
+
+export interface ChartProps extends React.HTMLAttributes<HTMLDivElement> {
+  type?: ChartType
+  data: ChartDataPoint[]
+  title?: string
+  description?: string
+  color?: string
+  height?: number
+  showLegend?: boolean
+  showGrid?: boolean
+}
+
+export function Chart({
+  type = "bar",
+  data,
+  title,
+  description,
+  color = "#753399",
+  height = 180,
+  showLegend = true,
+  showGrid = true,
+  className,
+  ...props
+}: ChartProps) {
+  const maxValue = Math.max(...data.map(d => Math.max(d.value, d.target || 0)), 1)
+  const totalValue = data.reduce((acc, curr) => acc + curr.value, 0)
+
+  return (
+    <div className={cn("w-full rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm select-none", className)} {...props}>
+      {(title || description) && (
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <div>
+            {title && <h4 className="font-heading text-sm font-bold text-foreground">{title}</h4>}
+            {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          </div>
+          {type === "donut" && (
+            <span className="font-mono text-xs font-bold text-foreground">Total: {totalValue.toLocaleString()}</span>
+          )}
+        </div>
+      )}
+
+      {/* 1. BAR CHART */}
+      {type === "bar" && (
+        <div className="pt-2 flex items-end justify-between gap-3 border-b border-border pb-2 px-1" style={{ height: \`\${height}px\` }}>
+          {data.map((item, idx) => {
+            const heightPct = Math.round((item.value / maxValue) * 100)
+            const targetPct = item.target ? Math.round((item.target / maxValue) * 100) : null
+            return (
+              <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end cursor-pointer">
+                <span className="text-[10px] font-mono text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                  {item.value}
+                </span>
+                <div className="w-full flex items-end justify-center gap-1 h-3/4">
+                  <div
+                    className="w-3/5 rounded-t transition-all group-hover:brightness-110 shadow-sm"
+                    style={{ height: \`\${heightPct}%\`, backgroundColor: item.color || color }}
+                  />
+                  {targetPct && (
+                    <div
+                      className="w-2/5 rounded-t bg-muted-foreground/20"
+                      style={{ height: \`\${targetPct}%\` }}
+                    />
+                  )}
+                </div>
+                <span className="text-[11px] font-semibold text-muted-foreground truncate w-full text-center">
+                  {item.label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* 2. AREA / LINE CHART */}
+      {(type === "area" || type === "line") && (
+        <div className="relative w-full pt-2" style={{ height: \`\${height}px\` }}>
+          <svg viewBox="0 0 500 160" className="w-full h-full overflow-visible" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={color} stopOpacity="0.35"/>
+                <stop offset="100%" stopColor={color} stopOpacity="0.0"/>
+              </linearGradient>
+            </defs>
+            {showGrid && (
+              <>
+                <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="4"/>
+                <line x1="0" y1="80" x2="500" y2="80" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="4"/>
+                <line x1="0" y1="120" x2="500" y2="120" stroke="currentColor" strokeOpacity="0.08" strokeDasharray="4"/>
+              </>
+            )}
+            {type === "area" && (
+              <path
+                d={\`M 0,\${160 - (data[0]?.value / maxValue) * 140} \${data.map((d, i) => \`L \${(i / (data.length - 1)) * 500},\${160 - (d.value / maxValue) * 140}\`).join(' ')} L 500,160 L 0,160 Z\`}
+                fill="url(#chartGradient)"
+              />
+            )}
+            <path
+              d={\`M 0,\${160 - (data[0]?.value / maxValue) * 140} \${data.map((d, i) => \`L \${(i / (data.length - 1)) * 500},\${160 - (d.value / maxValue) * 140}\`).join(' ')}\`}
+              fill="none"
+              stroke={color}
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            {data.map((d, i) => (
+              <circle
+                key={i}
+                cx={(i / (data.length - 1)) * 500}
+                cy={160 - (d.value / maxValue) * 140}
+                r="4"
+                fill={color}
+                stroke="white"
+                strokeWidth="2"
+                className="cursor-pointer hover:r-6 transition-all"
+              />
+            ))}
+          </svg>
+          <div className="flex justify-between text-[10px] text-muted-foreground font-mono px-1 border-t border-border pt-2">
+            {data.map((d, i) => (
+              <span key={i}>{d.label}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3. DONUT / PIE CHART */}
+      {type === "donut" && (
+        <div className="flex flex-col sm:flex-row items-center justify-around gap-6 pt-2">
+          <div className="relative w-36 h-36 flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+              <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth="4.5"/>
+              {(() => {
+                let accumulatedOffset = 0
+                const colors = ["#753399", "#10b981", "#f59e0b", "#3b82f6", "#ec4899", "#8b5cf6"]
+                return data.map((item, idx) => {
+                  const pct = (item.value / totalValue) * 88
+                  const itemColor = item.color || colors[idx % colors.length]
+                  const offset = accumulatedOffset
+                  accumulatedOffset += pct
+                  return (
+                    <circle
+                      key={idx}
+                      cx="18"
+                      cy="18"
+                      r="14"
+                      fill="none"
+                      stroke={itemColor}
+                      strokeWidth="4.5"
+                      strokeDasharray={\`\${pct} 88\`}
+                      strokeDashoffset={-offset}
+                      className="cursor-pointer hover:opacity-80 transition-opacity"
+                    />
+                  )
+                })
+              })()}
+            </svg>
+            <div className="absolute flex flex-col items-center justify-center text-center">
+              <span className="font-heading text-base font-bold text-foreground">100%</span>
+              <span className="text-[9px] text-muted-foreground uppercase font-semibold">Total</span>
+            </div>
+          </div>
+          {showLegend && (
+            <div className="space-y-2 flex-1 w-full max-w-xs">
+              {data.map((item, idx) => {
+                const colors = ["#753399", "#10b981", "#f59e0b", "#3b82f6", "#ec4899", "#8b5cf6"]
+                const itemColor = item.color || colors[idx % colors.length]
+                const pct = Math.round((item.value / totalValue) * 100)
+                return (
+                  <div key={idx} className="flex items-center justify-between text-xs p-1.5 rounded-lg hover:bg-muted transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: itemColor }} />
+                      <span className="font-medium text-foreground">{item.label}</span>
+                    </div>
+                    <span className="font-mono font-bold text-foreground">{pct}% <span className="text-muted-foreground font-normal">({item.value})</span></span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. HORIZONTAL BAR / RANKING */}
+      {type === "horizontal-bar" && (
+        <div className="space-y-3 pt-1">
+          {data.map((item, idx) => {
+            const pct = Math.round((item.value / maxValue) * 100)
+            return (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-xs font-medium">
+                  <span className="text-foreground font-bold">{item.label}</span>
+                  <span className="font-mono font-bold" style={{ color: item.color || color }}>{item.value} ({pct}%)</span>
+                </div>
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: \`\${pct}%\`, backgroundColor: item.color || color }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'stepper') {
+    return `import * as React from "react"
+import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface StepItem {
+  title: string
+  description?: string
+}
+
+export interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
+  steps: StepItem[]
+  currentStep: number
+  onStepChange?: (step: number) => void
+}
+
+export function Stepper({ steps, currentStep, onStepChange, className, ...props }: StepperProps) {
+  return (
+    <div className={cn("w-full space-y-4", className)} {...props}>
+      <div className="flex items-center justify-between relative">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 w-full bg-border -z-0" />
+        {steps.map((step, idx) => {
+          const stepNum = idx + 1
+          const isDone = stepNum < currentStep
+          const isCurrent = stepNum === currentStep
+
+          return (
+            <div
+              key={idx}
+              onClick={() => onStepChange?.(stepNum)}
+              className="relative z-10 flex flex-col items-center gap-1.5 cursor-pointer select-none"
+            >
+              <div
+                className={cn(
+                  "h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm transition-all",
+                  isDone && "bg-emerald-600 text-white",
+                  isCurrent && "bg-[#753399] text-white ring-4 ring-[#753399]/20",
+                  !isDone && !isCurrent && "bg-muted text-muted-foreground border border-border"
+                )}
+              >
+                {isDone ? <Check className="h-4 w-4" /> : stepNum}
+              </div>
+              <span
+                className={cn(
+                  "text-[10px] font-medium transition-colors",
+                  isCurrent && "font-bold text-[#753399]",
+                  isDone && "font-semibold text-foreground",
+                  !isDone && !isCurrent && "text-muted-foreground"
+                )}
+              >
+                {step.title}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'timeline') {
+    return `import * as React from "react"
+import { Check, Clock, AlertTriangle, XCircle, Package } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export type TimelineStatus = "completed" | "in-progress" | "warning" | "error" | "pending"
+
+export interface TimelineItem {
+  id?: string
+  title: string
+  description?: string
+  time?: string
+  status?: TimelineStatus
+  icon?: React.ReactNode
+  badge?: string
+  children?: React.ReactNode
+}
+
+export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
+  items: TimelineItem[]
+}
+
+export function Timeline({ items, className, ...props }: TimelineProps) {
+  const getStatusIcon = (status: TimelineStatus = "completed") => {
+    switch (status) {
+      case "completed":
+        return <Check className="h-3 w-3 text-white" />
+      case "in-progress":
+        return <Package className="h-3 w-3 text-white" />
+      case "warning":
+        return <AlertTriangle className="h-3 w-3 text-white" />
+      case "error":
+        return <XCircle className="h-3 w-3 text-white" />
+      default:
+        return <Clock className="h-3 w-3 text-muted-foreground" />
+    }
+  }
+
+  const getStatusBadgeClass = (status: TimelineStatus = "completed") => {
+    switch (status) {
+      case "completed":
+        return "bg-emerald-600 ring-4 ring-card text-white shadow-sm"
+      case "in-progress":
+        return "bg-[#753399] ring-4 ring-[#753399]/20 text-white shadow-lg animate-pulse"
+      case "warning":
+        return "bg-amber-500 ring-4 ring-card text-white shadow-sm"
+      case "error":
+        return "bg-rose-500 ring-4 ring-card text-white shadow-sm"
+      default:
+        return "bg-muted border border-border ring-4 ring-card text-muted-foreground"
+    }
+  }
+
+  return (
+    <div className={cn("relative pl-7 space-y-5 border-l-2 border-border ml-3", className)} {...props}>
+      {items.map((item, idx) => {
+        const status = item.status || "completed"
+        return (
+          <div key={item.id || idx} className="relative group">
+            <span className={cn("absolute -left-[37px] top-1 flex h-5 w-5 items-center justify-center rounded-full transition-transform group-hover:scale-110", getStatusBadgeClass(status))}>
+              {item.icon || getStatusIcon(status)}
+            </span>
+            <div className={cn("rounded-lg border bg-card p-3.5 space-y-2 transition-all shadow-sm", status === "in-progress" ? "border-[#753399]/50 shadow-md" : "border-border hover:border-[#753399]/30")}>
+              <div className="flex items-center justify-between">
+                <span className={cn("font-heading text-xs font-bold", status === "in-progress" ? "text-[#753399]" : "text-foreground")}>
+                  {item.title}
+                </span>
+                {item.time && <span className="text-[10px] font-mono text-muted-foreground">{item.time}</span>}
+              </div>
+              {item.description && <p className="text-[11px] text-muted-foreground leading-relaxed">{item.description}</p>}
+              {item.badge && <span className="inline-block rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 text-[10px] font-bold">{item.badge}</span>}
+              {item.children}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'statistic') {
+    return `import * as React from "react"
+import { TrendingUp, TrendingDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface StatisticProps extends React.HTMLAttributes<HTMLDivElement> {
+  title: string
+  value: string | number
+  trend?: number
+  trendLabel?: string
+  icon?: React.ReactNode
+}
+
+export function Statistic({ title, value, trend, trendLabel, icon, className, ...props }: StatisticProps) {
+  const isPositive = trend !== undefined && trend >= 0
+
+  return (
+    <div className={cn("rounded-xl border border-border bg-card p-4 space-y-2 shadow-sm", className)} {...props}>
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-muted-foreground">{title}</span>
+        {icon && <div className="p-1 rounded-md bg-muted text-foreground">{icon}</div>}
+      </div>
+      <h3 className="font-heading text-2xl font-extrabold text-foreground">{value}</h3>
+      {trend !== undefined && (
+        <div className={cn("flex items-center gap-1 text-[11px] font-bold", isPositive ? "text-emerald-500" : "text-rose-500")}>
+          {isPositive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+          <span>{isPositive ? "+" : ""}{trend}%</span>
+          {trendLabel && <span className="text-muted-foreground font-normal ml-1">{trendLabel}</span>}
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'radio-group') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+interface RadioGroupContextType {
+  value?: string
+  onChange?: (value: string) => void
+  name?: string
+  disabled?: boolean
+}
+
+const RadioGroupContext = React.createContext<RadioGroupContextType | null>(null)
+
+export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  name?: string
+  disabled?: boolean
+}
+
+export function RadioGroup({
+  className,
+  value: controlledValue,
+  defaultValue,
+  onValueChange,
+  name,
+  disabled,
+  children,
+  ...props
+}: RadioGroupProps) {
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue || "")
+  const isControlled = controlledValue !== undefined
+  const value = isControlled ? controlledValue : uncontrolledValue
+
+  const onChange = React.useCallback(
+    (val: string) => {
+      if (!isControlled) setUncontrolledValue(val)
+      onValueChange?.(val)
+    },
+    [isControlled, onValueChange]
+  )
+
+  return (
+    <RadioGroupContext.Provider value={{ value, onChange, name, disabled }}>
+      <div role="radiogroup" className={cn("grid gap-2.5", className)} {...props}>
+        {children}
+      </div>
+    </RadioGroupContext.Provider>
+  )
+}
+
+export interface RadioGroupItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string
+  id?: string
+  disabled?: boolean
+}
+
+export function RadioGroupItem({
+  className,
+  value,
+  id,
+  disabled: itemDisabled,
+  children,
+  ...props
+}: RadioGroupItemProps) {
+  const context = React.useContext(RadioGroupContext)
+  const isSelected = context?.value === value
+  const isDisabled = itemDisabled || context?.disabled
+
+  return (
+    <div
+      role="radio"
+      aria-checked={isSelected}
+      aria-disabled={isDisabled}
+      id={id}
+      onClick={() => {
+        if (!isDisabled) context?.onChange?.(value)
+      }}
+      className={cn(
+        "flex items-center gap-3 cursor-pointer select-none text-xs font-medium transition-all",
+        isDisabled && "cursor-not-allowed opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <div
+        className={cn(
+          "h-4 w-4 rounded-full border border-input flex items-center justify-center transition-all",
+          isSelected
+            ? "border-[#753399] bg-[#753399] text-white shadow-sm shadow-[#753399]/30"
+            : "bg-background hover:border-[#753399]/70"
+        )}
+      >
+        {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white animate-in zoom-in-50 duration-150" />}
+      </div>
+      {children && <div className="flex-1">{children}</div>}
+    </div>
+  )
+}
+
+export interface RadioGroupCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string
+  title: string
+  description?: string
+  icon?: React.ReactNode
+  badge?: string
+  disabled?: boolean
+}
+
+export function RadioGroupCard({
+  className,
+  value,
+  title,
+  description,
+  icon,
+  badge,
+  disabled,
+  ...props
+}: RadioGroupCardProps) {
+  const context = React.useContext(RadioGroupContext)
+  const isSelected = context?.value === value
+  const isDisabled = disabled || context?.disabled
+
+  return (
+    <div
+      onClick={() => {
+        if (!isDisabled) context?.onChange?.(value)
+      }}
+      className={cn(
+        "relative flex cursor-pointer items-start gap-4 rounded-xl border p-4 shadow-sm transition-all",
+        isSelected
+          ? "border-[#753399] bg-[#753399]/5 ring-1 ring-[#753399] dark:bg-[#753399]/10"
+          : "border-border bg-card hover:border-[#753399]/40 hover:bg-muted/30",
+        isDisabled && "cursor-not-allowed opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <div
+        className={cn(
+          "mt-0.5 h-4 w-4 shrink-0 rounded-full border flex items-center justify-center transition-all",
+          isSelected
+            ? "border-[#753399] bg-[#753399]"
+            : "border-input bg-background"
+        )}
+      >
+        {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+      </div>
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {icon && <span className="text-[#753399]">{icon}</span>}
+            <span className="font-heading text-xs font-bold text-foreground">{title}</span>
+          </div>
+          {badge && (
+            <span className="rounded-full bg-[#753399]/15 px-2 py-0.5 text-[10px] font-bold text-[#753399] dark:text-purple-300">
+              {badge}
+            </span>
+          )}
+        </div>
+        {description && <p className="text-[11px] text-muted-foreground leading-relaxed">{description}</p>}
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'slider') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export interface SliderProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+  value?: number
+  defaultValue?: number
+  min?: number
+  max?: number
+  step?: number
+  showValue?: boolean
+  valuePrefix?: string
+  valueSuffix?: string
+  onValueChange?: (value: number) => void
+}
+
+export function Slider({
+  className,
+  value: controlledValue,
+  defaultValue = 0,
+  min = 0,
+  max = 100,
+  step = 1,
+  showValue = true,
+  valuePrefix = "",
+  valueSuffix = "",
+  onValueChange,
+  disabled,
+  ...props
+}: SliderProps) {
+  const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue)
+  const isControlled = controlledValue !== undefined
+  const value = isControlled ? controlledValue : uncontrolledValue
+  const percentage = Math.min(Math.max(((value - min) / (max - min)) * 100, 0), 100)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value)
+    if (!isControlled) setUncontrolledValue(val)
+    onValueChange?.(val)
+  }
+
+  return (
+    <div className={cn("w-full space-y-2 select-none", className)}>
+      <div className="relative flex items-center">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          disabled={disabled}
+          onChange={handleChange}
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed z-10"
+          {...props}
+        />
+        <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full bg-[#753399] transition-all"
+            style={{ width: percentage + "%" }}
+          />
+        </div>
+        <div
+          className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#753399] bg-background shadow-md transition-all ring-offset-background"
+          style={{ left: percentage + "%" }}
+        />
+      </div>
+      <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+        <span>{valuePrefix}{min}{valueSuffix}</span>
+        {showValue && (
+          <span className="font-bold text-[#753399] bg-[#753399]/10 px-2 py-0.5 rounded">
+            {valuePrefix}{value}{valueSuffix}
+          </span>
+        )}
+        <span>{valuePrefix}{max}{valueSuffix}</span>
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'date-picker') {
+    return `import * as React from "react"
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface DatePickerProps {
+  value?: Date | null
+  defaultValue?: Date | null
+  onValueChange?: (date: Date | null) => void
+  placeholder?: string
+  disabled?: boolean
+  label?: string
+  className?: string
+}
+
+export function DatePicker({
+  value: controlledValue,
+  defaultValue = null,
+  onValueChange,
+  placeholder = "Selecione uma data...",
+  disabled,
+  label,
+  className
+}: DatePickerProps) {
+  const [open, setOpen] = React.useState(false)
+  const [uncontrolledValue, setUncontrolledValue] = React.useState<Date | null>(defaultValue)
+  const isControlled = controlledValue !== undefined
+  const selectedDate = isControlled ? controlledValue : uncontrolledValue
+
+  const [currentMonth, setCurrentMonth] = React.useState<Date>(selectedDate || new Date())
+  const containerRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const handleSelect = (date: Date) => {
+    if (!isControlled) setUncontrolledValue(date)
+    onValueChange?.(date)
+    setOpen(false)
+  }
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isControlled) setUncontrolledValue(null)
+    onValueChange?.(null)
+  }
+
+  const formatDate = (d: Date | null) => {
+    if (!d) return ""
+    const day = String(d.getDate()).padStart(2, '0')
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const year = d.getFullYear()
+    return day + "/" + month + "/" + year
+  }
+
+  const year = currentMonth.getFullYear()
+  const month = currentMonth.getMonth()
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ]
+
+  const firstDay = new Date(year, month, 1).getDay()
+  const totalDays = new Date(year, month + 1, 0).getDate()
+
+  return (
+    <div ref={containerRef} className={cn("relative w-full text-left space-y-1.5", className)}>
+      {label && <label className="block text-xs font-semibold text-foreground">{label}</label>}
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-xs shadow-sm transition-colors hover:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]",
+          disabled && "cursor-not-allowed opacity-50"
+        )}
+      >
+        <span className={cn("flex items-center gap-2", !selectedDate && "text-muted-foreground")}>
+          <CalendarIcon className="h-4 w-4 text-[#753399]" />
+          {selectedDate ? formatDate(selectedDate) : placeholder}
+        </span>
+        {selectedDate && (
+          <span onClick={handleClear} className="rounded p-0.5 hover:bg-muted text-muted-foreground hover:text-foreground">
+            <X className="h-3 w-3" />
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute left-0 z-50 mt-1 w-64 rounded-xl border border-border bg-card p-3 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150">
+          <div className="flex items-center justify-between border-b border-border pb-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
+              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+            <span className="font-heading text-xs font-bold text-foreground">
+              {monthNames[month]} {year}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
+              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-muted-foreground mb-1">
+            <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1">
+            {Array.from({ length: firstDay }).map((_, i) => (
+              <div key={"empty-" + i} />
+            ))}
+            {Array.from({ length: totalDays }).map((_, i) => {
+              const day = i + 1
+              const date = new Date(year, month, day)
+              const isSelected =
+                selectedDate &&
+                date.getDate() === selectedDate.getDate() &&
+                date.getMonth() === selectedDate.getMonth() &&
+                date.getFullYear() === selectedDate.getFullYear()
+              const isToday =
+                new Date().getDate() === day &&
+                new Date().getMonth() === month &&
+                new Date().getFullYear() === year
+
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => handleSelect(date)}
+                  className={cn(
+                    "flex h-7 w-7 items-center justify-center rounded-md text-xs transition-colors",
+                    isSelected
+                      ? "bg-[#753399] font-bold text-white shadow-sm"
+                      : "hover:bg-muted text-foreground",
+                    isToday && !isSelected && "border border-[#753399] text-[#753399] font-bold"
+                  )}
+                >
+                  {day}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'lookup') {
+    return `import * as React from "react"
+import { Search, X, Check, Table as TableIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface LookupItem {
+  id: string | number
+  code: string
+  label: string
+  subtitle?: string
+  tag?: string
+}
+
+export interface LookupProps {
+  label?: string
+  placeholder?: string
+  title?: string
+  value?: LookupItem | null
+  items: LookupItem[]
+  onSelect?: (item: LookupItem | null) => void
+  disabled?: boolean
+  className?: string
+}
+
+export function Lookup({
+  label,
+  placeholder = "Clique para buscar registro...",
+  title = "Buscar Registro Corporativo",
+  value,
+  items = [],
+  onSelect,
+  disabled,
+  className
+}: LookupProps) {
+  const [open, setOpen] = React.useState(false)
+  const [search, setSearch] = React.useState("")
+
+  const filtered = items.filter(
+    (item) =>
+      item.code.toLowerCase().includes(search.toLowerCase()) ||
+      item.label.toLowerCase().includes(search.toLowerCase()) ||
+      (item.subtitle && item.subtitle.toLowerCase().includes(search.toLowerCase()))
+  )
+
+  const handleChoose = (item: LookupItem) => {
+    onSelect?.(item)
+    setOpen(false)
+    setSearch("")
+  }
+
+  return (
+    <div className={cn("w-full space-y-1.5 text-left", className)}>
+      {label && <label className="block text-xs font-semibold text-foreground">{label}</label>}
+      <div className="relative flex items-center">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => setOpen(true)}
+          className={cn(
+            "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-xs shadow-sm transition-colors hover:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]",
+            disabled && "cursor-not-allowed opacity-50"
+          )}
+        >
+          {value ? (
+            <span className="flex items-center gap-2 font-medium text-foreground">
+              <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">{value.code}</span>
+              <span>{value.label}</span>
+            </span>
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
+          <span className="flex items-center gap-1.5 text-[#753399]">
+            <Search className="h-3.5 w-3.5" />
+          </span>
+        </button>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onSelect?.(null)}
+            className="absolute right-8 text-muted-foreground hover:text-foreground p-1"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-150">
+          <div className="relative w-full max-w-xl rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-border bg-muted/40 px-5 py-3.5">
+              <div className="flex items-center gap-2">
+                <TableIcon className="h-4 w-4 text-[#753399]" />
+                <h3 className="font-heading text-sm font-bold text-foreground">{title}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="rounded-sm opacity-70 hover:opacity-100 p-1"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Pesquise por código, razão social ou filial..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-xs shadow-sm focus:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]"
+                />
+              </div>
+
+              <div className="max-h-60 overflow-y-auto rounded-lg border border-border divide-y divide-border/60">
+                {filtered.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-muted-foreground">
+                    Nenhum registro correspondente encontrado.
+                  </div>
+                ) : (
+                  filtered.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleChoose(item)}
+                      className={cn(
+                        "flex items-center justify-between p-3 text-xs cursor-pointer hover:bg-muted/50 transition-colors",
+                        value?.id === item.id && "bg-[#753399]/10 font-semibold"
+                      )}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-[#753399] font-bold">{item.code}</span>
+                          <span className="text-foreground">{item.label}</span>
+                        </div>
+                        {item.subtitle && <p className="text-[11px] text-muted-foreground">{item.subtitle}</p>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {item.tag && (
+                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+                            {item.tag}
+                          </span>
+                        )}
+                        {value?.id === item.id && <Check className="h-4 w-4 text-[#753399]" />}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'combo') {
+    return `import * as React from "react"
+import { Check, ChevronsUpDown, Search } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface ComboboxOption {
+  value: string
+  label: string
+  hint?: string
+}
+
+export interface ComboboxProps {
+  options: ComboboxOption[]
+  value?: string
+  onValueChange?: (value: string) => void
+  placeholder?: string
+  searchPlaceholder?: string
+  label?: string
+  disabled?: boolean
+  className?: string
+}
+
+export function Combobox({
+  options = [],
+  value,
+  onValueChange,
+  placeholder = "Selecione uma opção...",
+  searchPlaceholder = "Buscar na lista...",
+  label,
+  disabled,
+  className
+}: ComboboxProps) {
+  const [open, setOpen] = React.useState(false)
+  const [search, setSearch] = React.useState("")
+  const containerRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const selectedOption = options.find((opt) => opt.value === value)
+  const filtered = options.filter(
+    (opt) =>
+      opt.label.toLowerCase().includes(search.toLowerCase()) ||
+      (opt.hint && opt.hint.toLowerCase().includes(search.toLowerCase()))
+  )
+
+  return (
+    <div ref={containerRef} className={cn("relative w-full text-left space-y-1.5", className)}>
+      {label && <label className="block text-xs font-semibold text-foreground">{label}</label>}
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-xs shadow-sm transition-colors hover:border-[#753399] focus:outline-none focus:ring-1 focus:ring-[#753399]",
+          disabled && "cursor-not-allowed opacity-50"
+        )}
+      >
+        <span className={cn(!selectedOption && "text-muted-foreground")}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 z-50 mt-1 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-100">
+          <div className="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
+            <Search className="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0" />
+            <input
+              type="text"
+              autoFocus
+              placeholder={searchPlaceholder}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+            />
+          </div>
+          <div className="max-h-48 overflow-y-auto space-y-0.5">
+            {filtered.length === 0 ? (
+              <div className="p-3 text-center text-xs text-muted-foreground">Nenhuma opção encontrada.</div>
+            ) : (
+              filtered.map((opt) => (
+                <div
+                  key={opt.value}
+                  onClick={() => {
+                    onValueChange?.(opt.value)
+                    setOpen(false)
+                    setSearch("")
+                  }}
+                  className={cn(
+                    "flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs cursor-pointer select-none transition-colors",
+                    value === opt.value
+                      ? "bg-[#753399] text-white font-semibold"
+                      : "hover:bg-muted text-foreground"
+                  )}
+                >
+                  <div>
+                    <span>{opt.label}</span>
+                    {opt.hint && (
+                      <span className={cn("ml-2 text-[10px]", value === opt.value ? "text-purple-200" : "text-muted-foreground")}>
+                        {opt.hint}
+                      </span>
+                    )}
+                  </div>
+                  {value === opt.value && <Check className="h-3.5 w-3.5 shrink-0" />}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'multiselect') {
+    return `import * as React from "react"
+import { Check, ChevronsUpDown, X, Search } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface MultiSelectOption {
+  value: string
+  label: string
+}
+
+export interface MultiSelectProps {
+  options: MultiSelectOption[]
+  selected?: string[]
+  onSelectedChange?: (values: string[]) => void
+  placeholder?: string
+  label?: string
+  disabled?: boolean
+  className?: string
+}
+
+export function MultiSelect({
+  options = [],
+  selected = [],
+  onSelectedChange,
+  placeholder = "Selecione múltiplos itens...",
+  label,
+  disabled,
+  className
+}: MultiSelectProps) {
+  const [open, setOpen] = React.useState(false)
+  const [search, setSearch] = React.useState("")
+  const containerRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const toggleOption = (val: string) => {
+    if (selected.includes(val)) {
+      onSelectedChange?.(selected.filter((item) => item !== val))
+    } else {
+      onSelectedChange?.([...selected, val])
+    }
+  }
+
+  const removeOption = (e: React.MouseEvent, val: string) => {
+    e.stopPropagation()
+    onSelectedChange?.(selected.filter((item) => item !== val))
+  }
+
+  const filtered = options.filter((opt) =>
+    opt.label.toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <div ref={containerRef} className={cn("relative w-full text-left space-y-1.5", className)}>
+      {label && <label className="block text-xs font-semibold text-foreground">{label}</label>}
+      <div
+        onClick={() => !disabled && setOpen(!open)}
+        className={cn(
+          "flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background p-1.5 text-xs shadow-sm transition-colors hover:border-[#753399] cursor-pointer",
+          disabled && "cursor-not-allowed opacity-50"
+        )}
+      >
+        {selected.length === 0 ? (
+          <span className="px-1.5 text-muted-foreground">{placeholder}</span>
+        ) : (
+          selected.map((val) => {
+            const opt = options.find((o) => o.value === val)
+            return (
+              <span
+                key={val}
+                className="inline-flex items-center gap-1 rounded-md bg-[#753399]/15 px-2 py-0.5 text-xs font-semibold text-[#753399] dark:text-purple-300"
+              >
+                <span>{opt ? opt.label : val}</span>
+                <span
+                  onClick={(e) => removeOption(e, val)}
+                  className="rounded hover:bg-[#753399]/20 p-0.5"
+                >
+                  <X className="h-3 w-3" />
+                </span>
+              </span>
+            )
+          })
+        )}
+        <ChevronsUpDown className="ml-auto h-3.5 w-3.5 opacity-50 pr-1" />
+      </div>
+
+      {open && (
+        <div className="absolute left-0 z-50 mt-1 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-100">
+          <div className="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
+            <Search className="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0" />
+            <input
+              type="text"
+              autoFocus
+              placeholder="Filtrar opções..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+            />
+          </div>
+          <div className="max-h-48 overflow-y-auto space-y-0.5">
+            {filtered.length === 0 ? (
+              <div className="p-3 text-center text-xs text-muted-foreground">Nenhuma opção encontrada.</div>
+            ) : (
+              filtered.map((opt) => {
+                const isSelected = selected.includes(opt.value)
+                return (
+                  <div
+                    key={opt.value}
+                    onClick={() => toggleOption(opt.value)}
+                    className={cn(
+                      "flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs cursor-pointer select-none transition-colors",
+                      isSelected
+                        ? "bg-[#753399]/15 text-[#753399] font-bold dark:text-purple-300"
+                        : "hover:bg-muted text-foreground"
+                    )}
+                  >
+                    <span>{opt.label}</span>
+                    {isSelected && <Check className="h-3.5 w-3.5 text-[#753399]" />}
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'badge') {
+    return `import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors select-none",
+  {
+    variants: {
+      variant: {
+        default: "border-transparent bg-[#753399]/15 text-[#753399] dark:bg-[#753399]/30 dark:text-purple-300",
+        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        success: "border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+        warning: "border-transparent bg-amber-500/15 text-amber-600 dark:text-amber-400",
+        destructive: "border-transparent bg-rose-500/15 text-rose-600 dark:text-rose-400",
+        outline: "text-foreground border border-border bg-card",
+        brand: "bg-[#753399] text-white shadow-sm hover:bg-[#622981]",
+        ghost: "text-muted-foreground hover:bg-muted"
+      },
+      size: {
+        sm: "px-2 py-0.2 text-[10px]",
+        default: "px-2.5 py-0.5 text-xs",
+        lg: "px-3.5 py-1 text-sm font-bold"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default"
+    }
+  }
+)
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {
+  dot?: boolean
+  dotColor?: string
+  removable?: boolean
+  onRemove?: (e: React.MouseEvent) => void
+}
+
+export function Badge({
+  className,
+  variant,
+  size,
+  dot = false,
+  dotColor,
+  removable = false,
+  onRemove,
+  children,
+  ...props
+}: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
+      {dot && (
+        <span
+          className={cn(
+            "h-1.5 w-1.5 rounded-full shrink-0",
+            dotColor || "bg-current"
+          )}
+        />
+      )}
+      <span>{children}</span>
+      {removable && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="rounded-full p-0.5 hover:bg-black/10 dark:hover:bg-white/10 ml-0.5"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+export { badgeVariants }`;
+  }
+
+  if (name === 'toast') {
+    return `import * as React from "react"
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export type ToastVariant = "default" | "success" | "destructive" | "warning" | "info"
+
+export interface ToastItem {
+  id: string
+  title?: string
+  description?: string
+  variant?: ToastVariant
+  duration?: number
+  action?: {
+    label: string
+    onClick: () => void
+  }
+}
+
+interface ToastContextType {
+  toasts: ToastItem[]
+  toast: (options: Omit<ToastItem, "id">) => void
+  dismiss: (id: string) => void
+}
+
+const ToastContext = React.createContext<ToastContextType | null>(null)
+
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const [toasts, setToasts] = React.useState<ToastItem[]>([])
+
+  const toast = React.useCallback((options: Omit<ToastItem, "id">) => {
+    const id = Math.random().toString(36).substring(2, 9)
+    const newToast: ToastItem = { ...options, id }
+    setToasts((prev) => [...prev, newToast])
+  }, [])
+
+  const dismiss = React.useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  return (
+    <ToastContext.Provider value={{ toasts, toast, dismiss }}>
+      {children}
+      <ToastViewport toasts={toasts} onDismiss={dismiss} />
+    </ToastContext.Provider>
+  )
+}
+
+export function useToast() {
+  const context = React.useContext(ToastContext)
+  if (!context) {
+    throw new Error("useToast deve ser utilizado dentro de um <ToastProvider>")
+  }
+  return context
+}
+
+export function ToastViewport({
+  toasts,
+  onDismiss
+}: {
+  toasts: ToastItem[]
+  onDismiss: (id: string) => void
+}) {
+  return (
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+      {toasts.map((t) => (
+        <ToastCard key={t.id} item={t} onDismiss={() => onDismiss(t.id)} />
+      ))}
+    </div>
+  )
+}
+
+const variantIcons = {
+  default: <Info className="h-4 w-4 text-[#753399]" />,
+  success: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+  destructive: <AlertCircle className="h-4 w-4 text-rose-500" />,
+  warning: <AlertTriangle className="h-4 w-4 text-amber-500" />,
+  info: <Info className="h-4 w-4 text-sky-500" />
+}
+
+const variantBorders = {
+  default: "border-[#753399]/30 bg-card text-foreground",
+  success: "border-emerald-500/30 bg-card text-foreground",
+  destructive: "border-rose-500/30 bg-card text-foreground",
+  warning: "border-amber-500/30 bg-card text-foreground",
+  info: "border-sky-500/30 bg-card text-foreground"
+}
+
+export function ToastCard({
+  item,
+  onDismiss
+}: {
+  item: ToastItem
+  onDismiss: () => void
+}) {
+  React.useEffect(() => {
+    const timer = setTimeout(onDismiss, item.duration || 4000)
+    return () => clearTimeout(timer)
+  }, [item.duration, onDismiss])
+
+  const variant = item.variant || "default"
+
+  return (
+    <div
+      className={cn(
+        "pointer-events-auto relative flex w-full items-start justify-between gap-3 overflow-hidden rounded-xl border p-4 shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-200",
+        variantBorders[variant]
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5 shrink-0">{variantIcons[variant]}</span>
+        <div className="space-y-1">
+          {item.title && <h5 className="font-heading text-xs font-bold leading-tight">{item.title}</h5>}
+          {item.description && (
+            <p className="text-[11px] text-muted-foreground leading-relaxed">{item.description}</p>
+          )}
+          {item.action && (
+            <button
+              onClick={item.action.onClick}
+              className="mt-1 text-xs font-bold text-[#753399] hover:underline"
+            >
+              {item.action.label}
+            </button>
+          )}
+        </div>
+      </div>
+      <button
+        onClick={onDismiss}
+        className="rounded p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'progress') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+  value?: number
+  max?: number
+  variant?: "default" | "success" | "warning" | "destructive" | "info"
+  size?: "xs" | "sm" | "default" | "lg" | "xl"
+  indeterminate?: boolean
+  showValue?: boolean
+  label?: string
+  indicatorClassName?: string
+}
+
+const variantColors = {
+  default: "bg-[#753399]",
+  success: "bg-emerald-500",
+  warning: "bg-amber-500",
+  destructive: "bg-rose-500",
+  info: "bg-sky-500"
+}
+
+const sizeHeights = {
+  xs: "h-1",
+  sm: "h-1.5",
+  default: "h-2.5",
+  lg: "h-3.5",
+  xl: "h-4"
+}
+
+export function Progress({
+  className,
+  value = 0,
+  max = 100,
+  variant = "default",
+  size = "default",
+  indeterminate = false,
+  showValue = false,
+  label,
+  indicatorClassName,
+  ...props
+}: ProgressProps) {
+  const percentage = Math.min(Math.max((value / max) * 100, 0), 100)
+
+  return (
+    <div className={cn("w-full space-y-1.5 select-none", className)} {...props}>
+      {(label || showValue) && (
+        <div className="flex items-center justify-between text-xs font-semibold text-foreground">
+          {label && <span>{label}</span>}
+          {showValue && !indeterminate && (
+            <span className="font-mono text-[11px] text-muted-foreground">{Math.round(percentage)}%</span>
+          )}
+        </div>
+      )}
+      <div
+        role="progressbar"
+        aria-valuenow={indeterminate ? undefined : value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        className={cn("relative w-full overflow-hidden rounded-full bg-muted", sizeHeights[size])}
+      >
+        {indeterminate ? (
+          <div
+            className={cn(
+              "absolute h-full w-1/3 rounded-full animate-[indeterminate_1.5s_infinite_ease-in-out]",
+              variantColors[variant],
+              indicatorClassName
+            )}
+          />
+        ) : (
+          <div
+            className={cn("h-full rounded-full transition-all duration-300", variantColors[variant], indicatorClassName)}
+            style={{ width: \`\${percentage}%\` }}
+          />
+        )}
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'skeleton') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  shape?: "rectangle" | "circle" | "rounded"
+}
+
+export function Skeleton({ className, shape = "rounded", ...props }: SkeletonProps) {
+  const shapeClass = {
+    rectangle: "rounded-none",
+    rounded: "rounded-md",
+    circle: "rounded-full"
+  }[shape]
+
+  return (
+    <div
+      className={cn("animate-pulse bg-muted/70", shapeClass, className)}
+      {...props}
+    />
+  )
+}
+
+export function SkeletonText({ lines = 3, className }: { lines?: number; className?: string }) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className={cn("h-3", i === lines - 1 ? "w-2/3" : i === 0 ? "w-full" : "w-5/6")}
+        />
+      ))}
+    </div>
+  )
+}
+
+export function SkeletonAvatar({ size = "default", className }: { size?: "sm" | "default" | "lg"; className?: string }) {
+  const sizeClass = {
+    sm: "h-8 w-8",
+    default: "h-10 w-10",
+    lg: "h-14 w-14"
+  }[size]
+
+  return <Skeleton shape="circle" className={cn(sizeClass, "shrink-0", className)} />
+}
+
+export function SkeletonCard({ className }: { className?: string }) {
+  return (
+    <div className={cn("rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm", className)}>
+      <div className="flex items-center gap-3">
+        <SkeletonAvatar />
+        <div className="space-y-2 flex-1">
+          <Skeleton className="h-3.5 w-1/3" />
+          <Skeleton className="h-2.5 w-1/2" />
+        </div>
+      </div>
+      <SkeletonText lines={3} />
+      <div className="flex items-center justify-between pt-2 border-t border-border/50">
+        <Skeleton className="h-7 w-20 rounded-md" />
+        <Skeleton className="h-7 w-28 rounded-md" />
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'alert') {
+    return `import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { CheckCircle2, AlertTriangle, AlertCircle, Info, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const alertVariants = cva(
+  "relative w-full rounded-xl border p-4 shadow-sm transition-all flex items-start gap-3",
+  {
+    variants: {
+      variant: {
+        default: "border-border bg-card text-foreground",
+        brand: "border-[#753399]/40 bg-[#753399]/10 text-[#753399] dark:text-purple-300",
+        success: "border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300",
+        warning: "border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-300",
+        destructive: "border-rose-500/40 bg-rose-500/10 text-rose-800 dark:text-rose-300",
+        info: "border-sky-500/40 bg-sky-500/10 text-sky-800 dark:text-sky-300"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+)
+
+const alertIcons = {
+  default: <Info className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />,
+  brand: <Info className="h-5 w-5 shrink-0 text-[#753399] dark:text-purple-300 mt-0.5" />,
+  success: <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />,
+  warning: <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />,
+  destructive: <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />,
+  info: <Info className="h-5 w-5 shrink-0 text-sky-600 dark:text-sky-400 mt-0.5" />
+}
+
+export interface AlertProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof alertVariants> {
+  icon?: React.ReactNode
+  dismissable?: boolean
+  onClose?: () => void
+}
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant = "default", icon, dismissable = false, onClose, children, ...props }, ref) => {
+    return (
+      <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props}>
+        {icon !== undefined ? icon : alertIcons[variant || "default"]}
+        <div className="flex-1 space-y-1">{children}</div>
+        {dismissable && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    )
+  }
+)
+Alert.displayName = "Alert"
+
+const AlertTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5 ref={ref} className={cn("font-heading font-bold text-xs leading-none tracking-tight text-foreground", className)} {...props} />
+  )
+)
+AlertTitle.displayName = "AlertTitle"
+
+const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("text-xs leading-relaxed text-muted-foreground", className)} {...props} />
+  )
+)
+AlertDescription.displayName = "AlertDescription"
+
+export { Alert, AlertTitle, AlertDescription, alertVariants }`;
+  }
+
+  if (name === 'navbar') {
+    return `import * as React from "react"
+import { Search, Bell, Menu, X, ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
+  brand?: React.ReactNode
+  links?: Array<{ label: string; href?: string; active?: boolean; onClick?: () => void }>
+  actions?: React.ReactNode
+  user?: {
+    name: string
+    role?: string
+    avatar?: string
+    fallback?: string
+    onProfileClick?: () => void
+  }
+  searchPlaceholder?: string
+  onSearchClick?: () => void
+}
+
+export function Navbar({
+  brand,
+  links = [],
+  actions,
+  user,
+  searchPlaceholder = "Buscar no sistema...",
+  onSearchClick,
+  className,
+  children,
+  ...props
+}: NavbarProps) {
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  return (
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 transition-all",
+        className
+      )}
+      {...props}
+    >
+      <div className="flex h-14 items-center justify-between px-4 md:px-6 gap-4">
+        {/* Brand */}
+        <div className="flex items-center gap-6">
+          {brand || (
+            <div className="flex items-center gap-2 font-heading text-sm font-bold text-foreground cursor-pointer">
+              <div className="h-7 w-7 rounded-lg bg-[#753399] text-white flex items-center justify-center font-black text-xs shadow-sm">
+                M
+              </div>
+              <span>Monta<span className="text-[#753399]">UI</span></span>
+            </div>
+          )}
+
+          {/* Desktop Nav Links */}
+          {links.length > 0 && (
+            <nav className="hidden md:flex items-center gap-1 text-xs font-medium">
+              {links.map((link, idx) => (
+                <button
+                  key={idx}
+                  onClick={link.onClick}
+                  className={cn(
+                    "rounded-md px-3 py-1.5 transition-colors",
+                    link.active
+                      ? "bg-[#753399]/10 text-[#753399] font-bold dark:text-purple-300"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </nav>
+          )}
+        </div>
+
+        {/* Right Actions & User */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {onSearchClick && (
+            <button
+              onClick={onSearchClick}
+              className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1 text-xs text-muted-foreground hover:border-input hover:text-foreground transition-colors"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span>{searchPlaceholder}</span>
+              <kbd className="rounded border border-border bg-background px-1 py-0.2 text-[9px] font-mono">⌘K</kbd>
+            </button>
+          )}
+
+          {actions}
+
+          {user && (
+            <div
+              onClick={user.onProfileClick}
+              className="flex items-center gap-2 pl-2 border-l border-border cursor-pointer group"
+            >
+              <div className="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">
+                {user.fallback || user.name.slice(0, 2).toUpperCase()}
+              </div>
+              <div className="hidden lg:block text-left">
+                <p className="text-xs font-semibold text-foreground leading-none">{user.name}</p>
+                {user.role && <p className="text-[10px] text-muted-foreground leading-none mt-0.5">{user.role}</p>}
+              </div>
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors hidden sm:block" />
+            </div>
+          )}
+
+          {/* Mobile Menu Toggle */}
+          {links.length > 0 && (
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden rounded-lg p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Drawer Navigation */}
+      {mobileOpen && links.length > 0 && (
+        <div className="md:hidden border-t border-border bg-card p-4 space-y-2 animate-in slide-in-from-top-2 duration-150">
+          {links.map((link, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                link.onClick?.()
+                setMobileOpen(false)
+              }}
+              className={cn(
+                "w-full text-left rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                link.active
+                  ? "bg-[#753399]/15 text-[#753399] font-bold dark:text-purple-300"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </header>
+  )
+}`;
+  }
+
+  if (name === 'sidebar') {
+    return `import * as React from "react"
+import { PanelLeftClose, PanelLeft, ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+interface SidebarContextType {
+  collapsed: boolean
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>
+  toggle: () => void
+}
+
+const SidebarContext = React.createContext<SidebarContextType | null>(null)
+
+export function useSidebar() {
+  const context = React.useContext(SidebarContext)
+  if (!context) {
+    throw new Error("useSidebar deve ser utilizado dentro de um <SidebarProvider>")
+  }
+  return context
+}
+
+export function SidebarProvider({
+  defaultCollapsed = false,
+  children
+}: {
+  defaultCollapsed?: boolean
+  children: React.ReactNode
+}) {
+  const [collapsed, setCollapsed] = React.useState(defaultCollapsed)
+  const toggle = React.useCallback(() => setCollapsed(prev => !prev), [])
+
+  return (
+    <SidebarContext.Provider value={{ collapsed, setCollapsed, toggle }}>
+      {children}
+    </SidebarContext.Provider>
+  )
+}
+
+export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
+  collapsible?: boolean
+}
+
+export function Sidebar({ className, children, ...props }: SidebarProps) {
+  const { collapsed } = useSidebar()
+
+  return (
+    <aside
+      className={cn(
+        "flex flex-col justify-between border-r border-border bg-card transition-all duration-300 select-none h-screen",
+        collapsed ? "w-16" : "w-64",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </aside>
+  )
+}
+
+export function SidebarHeader({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("p-3.5 border-b border-border flex items-center justify-between", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function SidebarContent({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("flex-1 overflow-y-auto p-2 space-y-4", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function SidebarGroup({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("space-y-1", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function SidebarGroupLabel({ className, children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  const { collapsed } = useSidebar()
+  if (collapsed) return null
+
+  return (
+    <p className={cn("px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80", className)} {...props}>
+      {children}
+    </p>
+  )
+}
+
+export interface SidebarItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon?: React.ReactNode
+  active?: boolean
+  badge?: React.ReactNode
+}
+
+export function SidebarItem({
+  icon,
+  active = false,
+  badge,
+  children,
+  className,
+  ...props
+}: SidebarItemProps) {
+  const { collapsed } = useSidebar()
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs transition-colors",
+        active
+          ? "bg-[#753399]/15 text-[#753399] font-bold dark:text-purple-300"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground font-medium",
+        collapsed && "justify-center px-0",
+        className
+      )}
+      title={collapsed && typeof children === "string" ? children : undefined}
+      {...props}
+    >
+      {icon && <span className="shrink-0">{icon}</span>}
+      {!collapsed && (
+        <>
+          <span className="truncate flex-1 text-left">{children}</span>
+          {badge && <span className="shrink-0">{badge}</span>}
+        </>
+      )}
+    </button>
+  )
+}
+
+export function SidebarFooter({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("p-2.5 border-t border-border", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function SidebarTrigger({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const { collapsed, toggle } = useSidebar()
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className={cn("rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors", className)}
+      {...props}
+    >
+      {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+    </button>
+  )
+}`;
+  }
+
+  if (name === 'field') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export interface FieldProps extends React.HTMLAttributes<HTMLDivElement> {
+  error?: boolean
+  disabled?: boolean
+}
+
+export function Field({ className, error, disabled, children, ...props }: FieldProps) {
+  return (
+    <div
+      className={cn("space-y-1.5 w-full", disabled && "opacity-60 pointer-events-none", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+export interface FieldLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  required?: boolean
+}
+
+export function FieldLabel({ className, required, children, ...props }: FieldLabelProps) {
+  return (
+    <label
+      className={cn(
+        "text-xs font-semibold text-foreground flex items-center gap-1 select-none",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      {required && <span className="text-rose-500 font-bold">*</span>}
+    </label>
+  )
+}
+
+export function FieldDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p className={cn("text-[11px] text-muted-foreground leading-relaxed", className)} {...props} />
+  )
+}
+
+export function FieldError({ className, children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  if (!children) return null
+  return (
+    <p
+      role="alert"
+      className={cn("text-[11px] font-medium text-rose-600 dark:text-rose-400 flex items-center gap-1 animate-in fade-in-0 duration-150", className)}
+      {...props}
+    >
+      {children}
+    </p>
+  )
+}`;
+  }
+
+  if (name === 'form') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {}
+
+export function Form({ className, children, ...props }: FormProps) {
+  return (
+    <form className={cn("space-y-6 w-full", className)} {...props}>
+      {children}
+    </form>
+  )
+}
+
+export function FormHeader({
+  title,
+  description,
+  badge,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  title?: string
+  description?: string
+  badge?: React.ReactNode
+}) {
+  return (
+    <div className={cn("border-b border-border pb-4 flex items-center justify-between gap-4", className)} {...props}>
+      <div className="space-y-1">
+        {title && <h3 className="font-heading text-base font-bold text-foreground">{title}</h3>}
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      </div>
+      {badge}
+    </div>
+  )
+}
+
+export function FormSection({
+  title,
+  description,
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  title?: string
+  description?: string
+}) {
+  return (
+    <div className={cn("space-y-4", className)} {...props}>
+      {(title || description) && (
+        <div className="space-y-0.5">
+          {title && <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{title}</h4>}
+          {description && <p className="text-[11px] text-muted-foreground">{description}</p>}
+        </div>
+      )}
+      {children}
+    </div>
+  )
+}
+
+export function FormRow({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4", className)} {...props}>
+      {children}
+    </div>
+  )
+}
+
+export function FormDivider({ className, ...props }: React.HTMLAttributes<HTMLHRElement>) {
+  return <hr className={cn("border-border my-6", className)} {...props} />
+}
+
+export function FormActions({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("flex items-center justify-end gap-3 pt-4 border-t border-border", className)} {...props}>
+      {children}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'marker') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export type MarkerVariant = "brand" | "success" | "warning" | "destructive" | "info"
+
+export interface MarkerProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: MarkerVariant
+  label?: React.ReactNode
+  tooltip?: React.ReactNode
+  pulse?: boolean
+  size?: "sm" | "default" | "lg"
+}
+
+const markerColors: Record<MarkerVariant, { bg: string; pulse: string }> = {
+  brand: { bg: "bg-[#753399]", pulse: "bg-[#753399]/30" },
+  success: { bg: "bg-emerald-600", pulse: "bg-emerald-500/30" },
+  warning: { bg: "bg-amber-500", pulse: "bg-amber-500/30" },
+  destructive: { bg: "bg-rose-600", pulse: "bg-rose-500/30" },
+  info: { bg: "bg-sky-600", pulse: "bg-sky-500/30" }
+}
+
+const markerSizes = {
+  sm: "h-5 w-5 text-[10px]",
+  default: "h-7 w-7 text-xs",
+  lg: "h-9 w-9 text-sm"
+}
+
+export function Marker({
+  variant = "brand",
+  label,
+  tooltip,
+  pulse = true,
+  size = "default",
+  className,
+  ...props
+}: MarkerProps) {
+  const [open, setOpen] = React.useState(false)
+  const color = markerColors[variant]
+
+  return (
+    <div
+      className={cn("relative inline-flex flex-col items-center group cursor-pointer select-none", className)}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      {...props}
+    >
+      <div className="relative flex items-center justify-center">
+        {pulse && <span className={cn("absolute h-full w-full rounded-full animate-ping scale-150", color.pulse)} />}
+        <div
+          className={cn(
+            "relative rounded-full text-white flex items-center justify-center font-bold shadow-lg border-2 border-background transition-transform group-hover:scale-110",
+            color.bg,
+            markerSizes[size]
+          )}
+        >
+          {label}
+        </div>
+      </div>
+
+      {tooltip && (open || undefined) && (
+        <div className="absolute top-full mt-1 z-30 animate-in fade-in-0 zoom-in-95 duration-150">
+          <div className="rounded-lg border border-border bg-card p-2 shadow-xl text-center whitespace-nowrap text-xs">
+            {tooltip}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'pagination') {
+    return `import * as React from "react"
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {}
+
+export function Pagination({ className, ...props }: PaginationProps) {
+  return (
+    <nav
+      role="navigation"
+      aria-label="pagination"
+      className={cn("mx-auto flex w-full justify-center", className)}
+      {...props}
+    >
+      {children}
+    </nav>
+  )
+}
+
+export function PaginationContent({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) {
+  return (
+    <ul className={cn("flex flex-row items-center gap-1", className)} {...props} />
+  )
+}
+
+export function PaginationItem({ className, ...props }: React.LiHTMLAttributes<HTMLLIElement>) {
+  return <li className={cn("", className)} {...props} />
+}
+
+export interface PaginationLinkProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  isActive?: boolean
+  size?: "default" | "sm"
+}
+
+export function PaginationLink({
+  className,
+  isActive,
+  size = "default",
+  ...props
+}: PaginationLinkProps) {
+  return (
+    <button
+      type="button"
+      aria-current={isActive ? "page" : undefined}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#753399]",
+        size === "default" ? "h-8 min-w-8 px-3" : "h-7 min-w-7 px-2 text-[11px]",
+        isActive
+          ? "bg-[#753399] font-bold text-white shadow-sm"
+          : "border border-border bg-card text-foreground hover:bg-muted",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export function PaginationPrevious({
+  className,
+  children = "Anterior",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "inline-flex h-8 items-center gap-1 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40",
+        className
+      )}
+      {...props}
+    >
+      <ChevronLeft className="h-3.5 w-3.5" />
+      <span>{children}</span>
+    </button>
+  )
+}
+
+export function PaginationNext({
+  className,
+  children = "Próximo",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "inline-flex h-8 items-center gap-1 rounded-md border border-border bg-card px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40",
+        className
+      )}
+      {...props}
+    >
+      <span>{children}</span>
+      <ChevronRight className="h-3.5 w-3.5" />
+    </button>
+  )
+}
+
+export function PaginationEllipsis({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span
+      aria-hidden
+      className={cn("flex h-8 w-8 items-center justify-center text-muted-foreground", className)}
+      {...props}
+    >
+      <MoreHorizontal className="h-4 w-4" />
+      <span className="sr-only">Mais páginas</span>
+    </span>
+  )
+}`;
+  }
+
+  if (name === 'loading') {
+    return `import * as React from "react"
+import { cn } from "@/lib/utils"
+
+export type LoadingVariant = "spinner" | "dots" | "pulse" | "bars" | "overlay"
+export type LoadingSize = "xs" | "sm" | "default" | "lg" | "xl"
+
+export interface LoadingProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: LoadingVariant
+  size?: LoadingSize
+  text?: string
+  fullscreen?: boolean
+}
+
+const spinnerSizes: Record<LoadingSize, string> = {
+  xs: "h-3.5 w-3.5",
+  sm: "h-4 w-4",
+  default: "h-6 w-6",
+  lg: "h-8 w-8",
+  xl: "h-12 w-12"
+}
+
+export function Spinner({ className, size = "default", ...props }: React.SVGAttributes<SVGSVGElement> & { size?: LoadingSize }) {
+  return (
+    <svg
+      className={cn("animate-spin text-[#753399]", spinnerSizes[size], className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      {...props}
+    >
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3.5" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  )
+}
+
+export function LoadingDots({ className }: { className?: string }) {
+  return (
+    <div className={cn("inline-flex items-center gap-1.5", className)}>
+      <span className="h-2 w-2 rounded-full bg-[#753399] animate-bounce [animation-delay:-0.3s]" />
+      <span className="h-2 w-2 rounded-full bg-[#753399] animate-bounce [animation-delay:-0.15s]" />
+      <span className="h-2 w-2 rounded-full bg-[#753399] animate-bounce" />
+    </div>
+  )
+}
+
+export function LoadingBars({ className }: { className?: string }) {
+  return (
+    <div className={cn("inline-flex items-end gap-1 h-6", className)}>
+      <span className="w-1 bg-[#753399] rounded-full animate-pulse h-3" />
+      <span className="w-1 bg-[#753399] rounded-full animate-pulse h-6 [animation-delay:0.2s]" />
+      <span className="w-1 bg-[#753399] rounded-full animate-pulse h-4 [animation-delay:0.4s]" />
+      <span className="w-1 bg-[#753399] rounded-full animate-pulse h-5 [animation-delay:0.1s]" />
+    </div>
+  )
+}
+
+export function LoadingPulse({ className }: { className?: string }) {
+  return (
+    <div className={cn("relative inline-flex h-6 w-6 items-center justify-center", className)}>
+      <span className="absolute h-full w-full animate-ping rounded-full bg-[#753399]/40" />
+      <span className="relative h-3 w-3 rounded-full bg-[#753399]" />
+    </div>
+  )
+}
+
+export function LoadingOverlay({
+  text = "Carregando dados...",
+  subtext,
+  className
+}: {
+  text?: string
+  subtext?: string
+  className?: string
+}) {
+  return (
+    <div className={cn("absolute inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-card/85 backdrop-blur-sm animate-in fade-in-0 duration-150 select-none", className)}>
+      <Spinner size="lg" />
+      <div className="text-center space-y-0.5">
+        <p className="text-xs font-bold text-foreground">{text}</p>
+        {subtext && <p className="text-[10px] text-muted-foreground">{subtext}</p>}
+      </div>
+    </div>
+  )
+}
+
+export function Loading({
+  variant = "spinner",
+  size = "default",
+  text,
+  fullscreen = false,
+  className,
+  children,
+  ...props
+}: LoadingProps) {
+  const content = (
+    <div className={cn("inline-flex flex-col items-center justify-center gap-2", className)} {...props}>
+      {variant === "spinner" && <Spinner size={size} />}
+      {variant === "dots" && <LoadingDots />}
+      {variant === "bars" && <LoadingBars />}
+      {variant === "pulse" && <LoadingPulse />}
+      {variant === "overlay" && <LoadingOverlay text={text} />}
+      {text && variant !== "overlay" && (
+        <span className="text-xs font-medium text-muted-foreground">{text}</span>
+      )}
+      {children}
+    </div>
+  )
+
+  if (fullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in-0">
+        {content}
+      </div>
+    )
+  }
+
+  return content
+}`;
+  }
+
+  return `import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+
+const ${name.replace(/-/g, '')}Variants = cva(
+  "relative w-full rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm transition-all",
+  {
+    variants: {
+      variant: {
+        default: "border-border bg-card",
+        brand: "border-[#753399]/30 bg-[#753399]/5 text-[#753399]",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+export interface ${pascal}Props
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof ${name.replace(/-/g, '')}Variants> {}
+
+const ${pascal} = React.forwardRef<HTMLDivElement, ${pascal}Props>(
+  ({ className, variant, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(${name.replace(/-/g, '')}Variants({ variant }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+)
+${pascal}.displayName = "${pascal}"
+
+export { ${pascal}, ${name.replace(/-/g, '')}Variants }`;
+}
+
+// ==================== 3. EXEMPLO DE USO EM REACT ====================
+function getComponentUsage(name) {
+  const pascal = formatTitle(name).replace(/\s+/g, '');
+
+  if (name === 'button') {
+    return `import { Button } from "@/components/monta-ui/button"
+import { Check, Trash2 } from "lucide-react"
+
+export default function ExemploPagina() {
+  return (
+    <div className="flex flex-wrap gap-3 p-4">
+      {/* Botão Primário Monta UI */}
+      <Button variant="default" onClick={() => console.log("Salvo!")}>
+        <Check className="h-4 w-4" />
+        Salvar Registro
+      </Button>
+
+      {/* Botão Secundário */}
+      <Button variant="secondary">
+        Cancelar
+      </Button>
+
+      {/* Botão Danger */}
+      <Button variant="danger">
+        <Trash2 className="h-4 w-4" />
+        Excluir
+      </Button>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'input') {
+    return `import { Input } from "@/components/monta-ui/input"
+import { useState } from "react"
+
+export default function Formulario() {
+  const [nome, setNome] = useState("")
+
+  return (
+    <div className="space-y-4 max-w-sm">
+      <Input
+        placeholder="Razão Social..."
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+        clearable
+        onClear={() => setNome("")}
+      />
+      <Input
+        type="password"
+        placeholder="Senha de Acesso"
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'dialog') {
+    return `import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/monta-ui/dialog"
+import { Button } from "@/components/monta-ui/button"
+
+export default function ModalExemplo() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Abrir Modal</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmar Operação</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">
+          Deseja realmente confirmar esta ação no sistema?
+        </p>
+      </DialogContent>
+    </Dialog>
+  )
+}`;
+  }
+
+  if (name === 'table') {
+    return `import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/monta-ui/table"
+
+export default function TabelaClientes() {
+  const dados = [
+    { id: "CLI-1024", nome: "Hospital das Clínicas", status: "Ativo", valor: "R$ 24.500,00" },
+    { id: "CLI-1025", nome: "Logística Express S/A", status: "Pendente", valor: "R$ 8.900,00" },
+  ]
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Código</TableHead>
+          <TableHead>Cliente</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead className="text-right">Valor</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {dados.map((c) => (
+          <TableRow key={c.id}>
+            <TableCell className="font-mono">{c.id}</TableCell>
+            <TableCell className="font-semibold">{c.nome}</TableCell>
+            <TableCell>{c.status}</TableCell>
+            <TableCell className="text-right font-mono">{c.valor}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  )
+}`;
+  }
+
+  if (name === 'chart') {
+    return `import { Chart } from "@/components/monta-ui/chart"
+
+// 1. Dados de Faturamento (Barras & Linha/Área)
+const dadosVendas = [
+  { label: "Jan", value: 85, target: 70 },
+  { label: "Fev", value: 92, target: 75 },
+  { label: "Mar", value: 110, target: 80 },
+  { label: "Abr", value: 98, target: 85 },
+  { label: "Mai", value: 130, target: 90 },
+  { label: "Jun", value: 145, target: 95 },
+]
+
+// 2. Distribuição por Canal (Donut / Rosca)
+const canaisVendas = [
+  { label: "E-commerce Web", value: 576, color: "#753399" },
+  { label: "Lojas Físicas", value: 384, color: "#10b981" },
+  { label: "Marketplace", value: 192, color: "#f59e0b" },
+  { label: "API B2B", value: 128, color: "#3b82f6" },
+]
+
+// 3. Desempenho Regional (Ranking Horizontal)
+const rankingFiliais = [
+  { label: "1. São Paulo (Matriz)", value: 450, color: "#753399" },
+  { label: "2. Rio de Janeiro", value: 380, color: "#10b981" },
+  { label: "3. Minas Gerais", value: 290, color: "#f59e0b" },
+  { label: "4. Paraná", value: 240, color: "#3b82f6" },
+]
+
+export default function DashboardAnalitico() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      {/* 1. Gráfico de Colunas / Barras */}
+      <Chart
+        type="bar"
+        title="Faturamento Semestral vs Meta"
+        description="Valores em R$ mil"
+        data={dadosVendas}
+        color="#753399"
+      />
+
+      {/* 2. Gráfico de Área / Linha SVG */}
+      <Chart
+        type="area"
+        title="Evolução de Requisições / Tráfego"
+        description="Chamadas por hora em milhares"
+        data={dadosVendas}
+        color="#753399"
+      />
+
+      {/* 3. Gráfico de Rosca / Donut */}
+      <Chart
+        type="donut"
+        title="Canais de Venda"
+        description="Participação no faturamento total"
+        data={canaisVendas}
+      />
+
+      {/* 4. Gráfico de Barras Horizontais / Ranking */}
+      <Chart
+        type="horizontal-bar"
+        title="Ranking por Filial"
+        description="Metas orçamentárias atingidas no Q3"
+        data={rankingFiliais}
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'stepper') {
+    return `import { Stepper } from "@/components/monta-ui/stepper"
+import { useState } from "react"
+
+const etapas = [
+  { title: "Cadastro" },
+  { title: "Endereço" },
+  { title: "Pagamento" },
+  { title: "Revisão" },
+]
+
+export default function WizardFluxo() {
+  const [etapaAtual, setEtapaAtual] = useState(2)
+
+  return (
+    <Stepper
+      steps={etapas}
+      currentStep={etapaAtual}
+      onStepChange={(novaEtapa) => setEtapaAtual(novaEtapa)}
+    />
+  )
+}`;
+  }
+
+  if (name === 'statistic') {
+    return `import { Statistic } from "@/components/monta-ui/statistic"
+
+export default function MetricasGerais() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-3">
+      <Statistic
+        title="MRR Total"
+        value="R$ 482.900"
+        trend={14.8}
+        trendLabel="vs mês anterior"
+      />
+      <Statistic
+        title="NPS Corporativo"
+        value="89 / 100"
+      />
+      <Statistic
+        title="SLA Atendimento"
+        value="99.4%"
+        trend={2.1}
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'timeline') {
+    return `import { Timeline } from "@/components/monta-ui/timeline"
+
+const auditoriaEventos = [
+  {
+    title: "Pedido Criado via API",
+    description: "Payload JSON recebido de ERP Monta UI. 42 itens incluídos.",
+    time: "09:15 · 31/08",
+    status: "completed"
+  },
+  {
+    title: "Pagamento R$ 38.450 Confirmado",
+    description: "Conciliação automática via PIX Banco Itaú.",
+    time: "10:42 · 31/08",
+    badge: "NF-e #48910 Aprovada",
+    status: "completed"
+  },
+  {
+    title: "Separação em Andamento no CD-01",
+    description: "Operador realizando leitura de código de barras das caixas.",
+    time: "14:00 (Agora)",
+    status: "in-progress"
+  },
+  {
+    title: "Coleta pela Transportadora",
+    description: "Caminhão de rota agendado para entrega expressa.",
+    time: "Previsão 17:30",
+    status: "pending"
+  }
+]
+
+export default function RastreamentoPedido() {
+  return (
+    <div className="p-6 max-w-lg">
+      <Timeline items={auditoriaEventos} />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'dropdown-menu') {
+    return `import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+} from "@/components/monta-ui/dropdown-menu"
+import { Button } from "@/components/monta-ui/button"
+
+export default function MenuUsuario() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="secondary">Opções da Conta</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem>
+          Perfil Corporativo
+          <DropdownMenuShortcut>Ctrl+P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          Faturamento
+          <DropdownMenuShortcut>Ctrl+B</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-rose-500">
+          Encerrar Sessão
+          <DropdownMenuShortcut>Ctrl+Q</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}`;
+  }
+
+  if (name === 'context-menu') {
+    return `import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+} from "@/components/monta-ui/context-menu"
+
+export default function DocumentoItem() {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-32 w-full items-center justify-center rounded-xl border border-dashed text-xs text-muted-foreground">
+        Clique com o Botão Direito Aqui
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-48">
+        <ContextMenuItem>Copiar Link</ContextMenuItem>
+        <ContextMenuItem>Duplicar Arquivo</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem className="text-rose-500">Excluir</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}`;
+  }
+
+  if (name === 'menubar') {
+    return `import {
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+} from "@/components/monta-ui/menubar"
+
+export default function BarraSuperior() {
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>Arquivo</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Novo Arquivo</MenubarItem>
+          <MenubarItem>Abrir...</MenubarItem>
+          <MenubarItem>Salvar</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Editar</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Desfazer</MenubarItem>
+          <MenubarItem>Refazer</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  )
+}`;
+  }
+
+  if (name === 'navigation-menu') {
+    return `import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+} from "@/components/monta-ui/navigation-menu"
+
+export default function TopbarHeader() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Soluções</NavigationMenuTrigger>
+          <NavigationMenuContent className="p-4 md:w-[400px]">
+            <div className="grid gap-3">
+              <NavigationMenuLink href="/core" className="block select-none space-y-1 rounded-md p-3 hover:bg-muted">
+                <div className="text-sm font-bold">Monta UI Core</div>
+                <p className="text-xs text-muted-foreground">27 componentes corporativos prontos para uso.</p>
+              </NavigationMenuLink>
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  )
+}`;
+  }
+
+  if (name === 'radio-group') {
+    return `import React, { useState } from "react"
+import { RadioGroup, RadioGroupCard } from "@/components/monta-ui/radio-group"
+
+export default function PlanSelection() {
+  const [plan, setPlan] = useState("enterprise")
+
+  return (
+    <div className="max-w-md mx-auto p-4 space-y-4">
+      <h3 className="font-heading font-bold text-sm">Selecione seu Plano</h3>
+      <RadioGroup value={plan} onValueChange={setPlan}>
+        <RadioGroupCard
+          value="enterprise"
+          title="Enterprise Dedicado"
+          description="SLA 99.9%, instâncias dedicadas e suporte 24/7."
+          badge="Recomendado"
+        />
+        <RadioGroupCard
+          value="business"
+          title="Business Cloud"
+          description="Até 50 usuários simultâneos com backups automáticos."
+        />
+      </RadioGroup>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'slider') {
+    return `import React, { useState } from "react"
+import { Slider } from "@/components/monta-ui/slider"
+
+export default function CreditForm() {
+  const [credit, setCredit] = useState(45000)
+
+  return (
+    <div className="max-w-md mx-auto p-6 rounded-xl border bg-card space-y-4">
+      <h4 className="font-heading font-bold text-sm">Limite de Crédito Aprovado</h4>
+      <Slider
+        min={0}
+        max={100000}
+        step={1000}
+        value={credit}
+        onValueChange={setCredit}
+        valuePrefix="R$ "
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'date-picker') {
+    return `import React, { useState } from "react"
+import { DatePicker } from "@/components/monta-ui/date-picker"
+
+export default function InvoiceForm() {
+  const [dueDate, setDueDate] = useState<Date | null>(new Date())
+
+  return (
+    <div className="max-w-sm mx-auto p-4 space-y-3">
+      <DatePicker
+        label="Data de Vencimento da NF-e"
+        value={dueDate}
+        onValueChange={setDueDate}
+        placeholder="Selecione a data..."
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'lookup') {
+    return `import React, { useState } from "react"
+import { Lookup, type LookupItem } from "@/components/monta-ui/lookup"
+
+const clients: LookupItem[] = [
+  { id: "1", code: "CLI-101", label: "Petrobras Petróleo Brasileiro S/A", subtitle: "Rio de Janeiro - RJ", tag: "VIP" },
+  { id: "2", code: "CLI-102", label: "Vale S/A Mineração & Logística", subtitle: "Nova Lima - MG", tag: "Ativo" },
+  { id: "3", code: "CLI-103", label: "Ambev Brasil Bebidas S/A", subtitle: "São Paulo - SP", tag: "Ativo" },
+]
+
+export default function ClientSelector() {
+  const [selected, setSelected] = useState<LookupItem | null>(clients[1])
+
+  return (
+    <div className="max-w-md mx-auto p-4 space-y-3">
+      <Lookup
+        label="Cliente / Parceiro Comercial"
+        title="Consulta de Clientes"
+        items={clients}
+        value={selected}
+        onSelect={setSelected}
+        placeholder="Buscar cliente..."
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'combo') {
+    return `import React, { useState } from "react"
+import { Combobox, type ComboboxOption } from "@/components/monta-ui/combo"
+
+const departments: ComboboxOption[] = [
+  { value: "ti", label: "Tecnologia da Informação", hint: "CC-0101" },
+  { value: "fin", label: "Controladoria & Finanças", hint: "CC-0102" },
+  { value: "rh", label: "Recursos Humanos & D.O.", hint: "CC-0103" },
+]
+
+export default function DeptSelector() {
+  const [dept, setDept] = useState("ti")
+
+  return (
+    <div className="max-w-sm mx-auto p-4 space-y-3">
+      <Combobox
+        label="Centro de Custo / Departamento"
+        options={departments}
+        value={dept}
+        onValueChange={setDept}
+        placeholder="Selecione o departamento..."
+        searchPlaceholder="Buscar departamento..."
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'multiselect') {
+    return `import React, { useState } from "react"
+import { MultiSelect, type MultiSelectOption } from "@/components/monta-ui/multiselect"
+
+const permissions: MultiSelectOption[] = [
+  { value: "read_nfe", label: "Consulta NF-e" },
+  { value: "emit_nfe", label: "Emissão NF-e" },
+  { value: "cancel_nfe", label: "Cancelamento" },
+  { value: "audit_logs", label: "Auditoria de Logs" },
+]
+
+export default function UserPermissions() {
+  const [roles, setRoles] = useState<string[]>(["read_nfe", "emit_nfe"])
+
+  return (
+    <div className="max-w-md mx-auto p-4 space-y-3">
+      <MultiSelect
+        label="Permissões de Acesso"
+        options={permissions}
+        selected={roles}
+        onSelectedChange={setRoles}
+        placeholder="Selecione as permissões..."
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'badge') {
+    return `import { Badge } from "@/components/monta-ui/badge"
+
+export default function StatusBadges() {
+  return (
+    <div className="flex flex-wrap gap-2 p-4">
+      {/* Variantes Semânticas */}
+      <Badge variant="default">Primary</Badge>
+      <Badge variant="success">Homologado</Badge>
+      <Badge variant="warning">Em Análise</Badge>
+      <Badge variant="destructive">Reprovado</Badge>
+      <Badge variant="outline">Neutro</Badge>
+
+      {/* Com Ponto de Status Pulsante */}
+      <Badge variant="outline" dot dotColor="bg-emerald-500">
+        Servidor Online
+      </Badge>
+
+      {/* Tag Removível */}
+      <Badge variant="default" removable onRemove={() => console.log("Removido!")}>
+        Filtro: São Paulo
+      </Badge>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'toast') {
+    return `import { useToast } from "@/components/monta-ui/toast"
+import { Button } from "@/components/monta-ui/button"
+
+export default function SalvarCliente() {
+  const { toast } = useToast()
+
+  const handleSalvar = () => {
+    toast({
+      title: "Alterações Salvas",
+      description: "O cadastro do cliente foi atualizado no banco de dados.",
+      variant: "success",
+      duration: 5000,
+      action: {
+        label: "Desfazer",
+        onClick: () => console.log("Desfeito!")
+      }
+    })
+  }
+
+  return (
+    <div className="p-4">
+      <Button onClick={handleSalvar}>Salvar Dados</Button>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'progress') {
+    return `import React, { useState } from "react"
+import { Progress } from "@/components/monta-ui/progress"
+import { Button } from "@/components/monta-ui/button"
+
+export default function FileUpload() {
+  const [progress, setProgress] = useState(65)
+
+  return (
+    <div className="max-w-md mx-auto p-6 rounded-xl border bg-card space-y-4">
+      {/* Barra com Label e % */}
+      <Progress
+        label="Processamento de Remessa CNAB"
+        value={progress}
+        max={100}
+        showValue
+        variant="default"
+        size="default"
+      />
+
+      {/* Barra de Sucesso */}
+      <Progress value={100} variant="success" size="sm" />
+
+      {/* Barra Indeterminate (Loading Infinito) */}
+      <Progress indeterminate variant="default" size="xs" />
+
+      <div className="flex gap-2 pt-2">
+        <Button size="sm" onClick={() => setProgress(p => Math.min(p + 10, 100))}>+10%</Button>
+        <Button size="sm" variant="secondary" onClick={() => setProgress(0)}>Resetar</Button>
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'skeleton') {
+    return `import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard } from "@/components/monta-ui/skeleton"
+
+export default function LoadingDashboard({ isLoading }: { isLoading: boolean }) {
+  if (isLoading) {
+    return (
+      <div className="space-y-4 max-w-md p-4">
+        {/* Card Completo Pré-estruturado */}
+        <SkeletonCard />
+
+        {/* Blocos Individuais */}
+        <div className="flex items-center gap-3">
+          <SkeletonAvatar size="default" />
+          <div className="space-y-1.5 flex-1">
+            <Skeleton className="h-3.5 w-1/3" />
+            <Skeleton className="h-2.5 w-1/2" />
+          </div>
+        </div>
+        <SkeletonText lines={4} />
+      </div>
+    )
+  }
+
+  return <div>Conteúdo carregado!</div>
+}`;
+  }
+
+  if (name === 'alert') {
+    return `import { Alert, AlertTitle, AlertDescription } from "@/components/monta-ui/alert"
+
+export default function NotificacoesPainel() {
+  return (
+    <div className="space-y-3 max-w-lg p-4">
+      {/* Alerta de Sucesso */}
+      <Alert variant="success" dismissable onClose={() => console.log("Fechado")}>
+        <AlertTitle>Nota Fiscal Emitida</AlertTitle>
+        <AlertDescription>O lote 4920 foi processado e autorizado com sucesso pela SEFAZ.</AlertDescription>
+      </Alert>
+
+      {/* Alerta de Atenção */}
+      <Alert variant="warning">
+        <AlertTitle>Certificado A1</AlertTitle>
+        <AlertDescription>Expira em 5 dias. Renove para evitar interrupções no faturamento.</AlertDescription>
+      </Alert>
+
+      {/* Alerta de Erro */}
+      <Alert variant="destructive">
+        <AlertTitle>Falha de Conexão</AlertTitle>
+        <AlertDescription>Não foi possível sincronizar o inventário com a filial Rio de Janeiro.</AlertDescription>
+      </Alert>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'navbar') {
+    return `import { Navbar } from "@/components/monta-ui/navbar"
+import { Button } from "@/components/monta-ui/button"
+
+const navLinks = [
+  { label: "Dashboard", href: "/dashboard", active: true },
+  { label: "Clientes", href: "/clientes" },
+  { label: "Faturamento", href: "/faturamento" },
+  { label: "Relatórios", href: "/relatorios" },
+]
+
+export default function TopHeader() {
+  return (
+    <Navbar
+      links={navLinks}
+      searchPlaceholder="Buscar no sistema (⌘K)..."
+      onSearchClick={() => console.log("Abrir busca...")}
+      user={{
+        name: "Monta UI",
+        role: "Administrador",
+        fallback: "MU",
+        onProfileClick: () => console.log("Abrir perfil...")
+      }}
+      actions={
+        <Button size="sm" onClick={() => console.log("Novo Registro")}>
+          + Novo Registro
+        </Button>
+      }
+    />
+  )
+}`;
+  }
+
+  if (name === 'sidebar') {
+    return `import {
+  SidebarProvider,
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarItem,
+  SidebarFooter,
+  SidebarTrigger,
+  useSidebar
+} from "@/components/monta-ui/sidebar"
+import { LayoutDashboard, ShoppingCart, Users, CreditCard, BarChart2 } from "lucide-react"
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider defaultCollapsed={false}>
+      <div className="flex h-screen w-full">
+        <Sidebar>
+          {/* Cabeçalho */}
+          <SidebarHeader>
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-[#753399] text-white flex items-center justify-center font-bold text-xs">M</div>
+              <span className="font-bold text-sm">Monta Tech</span>
+            </div>
+            <SidebarTrigger />
+          </SidebarHeader>
+
+          {/* Links e Grupos */}
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
+              <SidebarItem icon={<LayoutDashboard className="h-4 w-4" />} active>
+                Dashboard
+              </SidebarItem>
+              <SidebarItem
+                icon={<ShoppingCart className="h-4 w-4" />}
+                badge={<span className="rounded bg-emerald-500/15 px-1.5 py-0.2 text-[9px] font-bold text-emerald-600">Novo</span>}
+              >
+                Vendas & NF-e
+              </SidebarItem>
+              <SidebarItem icon={<Users className="h-4 w-4" />}>
+                Clientes
+              </SidebarItem>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel>Finanças</SidebarGroupLabel>
+              <SidebarItem icon={<CreditCard className="h-4 w-4" />}>
+                Contas a Pagar
+              </SidebarItem>
+              <SidebarItem icon={<BarChart2 className="h-4 w-4" />}>
+                Relatórios DRE
+              </SidebarItem>
+            </SidebarGroup>
+          </SidebarContent>
+
+          {/* Rodapé com Usuário */}
+          <SidebarFooter>
+            <div className="flex items-center gap-2.5 p-1">
+              <div className="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs">MU</div>
+              <div className="space-y-0.5 text-left">
+                <p className="text-xs font-bold leading-none">Monta UI</p>
+                <p className="text-[10px] text-muted-foreground leading-none">admin@montaui.com.br</p>
+              </div>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+
+        {/* Conteúdo Principal */}
+        <main className="flex-1 overflow-y-auto p-6 bg-muted/20">
+          {children}
+        </main>
+      </div>
+    </SidebarProvider>
+  )
+}`;
+  }
+
+  if (name === 'field') {
+    return `import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/monta-ui/field"
+import { Input } from "@/components/monta-ui/input"
+import { useState } from "react"
+
+export default function CadastroCliente() {
+  const [cnpj, setCnpj] = useState("")
+  const [error, setError] = useState("CNPJ inválido ou não cadastrado.")
+
+  return (
+    <div className="space-y-4 max-w-sm p-4">
+      {/* Campo Padrão com Dica */}
+      <Field>
+        <FieldLabel required>Razão Social</FieldLabel>
+        <Input placeholder="Monta Tech S/A" />
+        <FieldDescription>Nome empresarial oficial conforme cartão CNPJ.</FieldDescription>
+      </Field>
+
+      {/* Campo com Estado de Erro */}
+      <Field error={!!error}>
+        <FieldLabel required>CNPJ da Empresa</FieldLabel>
+        <Input
+          placeholder="00.000.000/0000-00"
+          value={cnpj}
+          onChange={(e) => setCnpj(e.target.value)}
+        />
+        <FieldError>{error}</FieldError>
+      </Field>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'form') {
+    return `import {
+  Form,
+  FormHeader,
+  FormSection,
+  FormRow,
+  FormDivider,
+  FormActions
+} from "@/components/monta-ui/form"
+import { Field, FieldLabel } from "@/components/monta-ui/field"
+import { Input } from "@/components/monta-ui/input"
+import { Button } from "@/components/monta-ui/button"
+
+export default function CadastroFornecedor() {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("Formulário enviado com sucesso!")
+  }
+
+  return (
+    <Form onSubmit={handleSubmit} className="max-w-lg p-6 border rounded-xl bg-card shadow-sm">
+      <FormHeader
+        title="Cadastro de Fornecedor"
+        description="Preencha os dados cadastrais da empresa."
+      />
+
+      <FormSection title="1. Identificação Fiscal">
+        <FormRow>
+          <Field>
+            <FieldLabel required>Razão Social</FieldLabel>
+            <Input required placeholder="Alpha Logística Ltda" />
+          </Field>
+          <Field>
+            <FieldLabel required>CNPJ</FieldLabel>
+            <Input required placeholder="00.000.000/0000-00" />
+          </Field>
+        </FormRow>
+
+        <FormRow>
+          <Field>
+            <FieldLabel required>E-mail Financeiro</FieldLabel>
+            <Input required type="email" placeholder="financeiro@empresa.com" />
+          </Field>
+          <Field>
+            <FieldLabel>Telefone</FieldLabel>
+            <Input placeholder="(11) 99999-9999" />
+          </Field>
+        </FormRow>
+      </FormSection>
+
+      <FormActions>
+        <Button variant="secondary" type="button">Cancelar</Button>
+        <Button type="submit">Salvar Cadastro</Button>
+      </FormActions>
+    </Form>
+  )
+}`;
+  }
+
+  if (name === 'marker') {
+    return `import { Marker } from "@/components/monta-ui/marker"
+
+export default function MapaOperacoes() {
+  return (
+    <div className="relative h-64 w-full rounded-xl border bg-muted/30 flex items-center justify-around p-6">
+      {/* Marcador Primário */}
+      <Marker
+        variant="brand"
+        label="1"
+        pulse
+        tooltip={
+          <div>
+            <p className="font-bold">Matriz São Paulo</p>
+            <p className="text-emerald-500 font-semibold">● Operação Normal</p>
+          </div>
+        }
+      />
+
+      {/* Marcador Sucesso */}
+      <Marker
+        variant="success"
+        label="2"
+        pulse
+        tooltip={
+          <div>
+            <p className="font-bold">CD Rio de Janeiro</p>
+            <p className="text-emerald-500 font-semibold">● 142 Entregas</p>
+          </div>
+        }
+      />
+
+      {/* Marcador Atenção */}
+      <Marker
+        variant="warning"
+        label="3"
+        pulse
+        tooltip={
+          <div>
+            <p className="font-bold">Filial Belo Horizonte</p>
+            <p className="text-amber-500 font-semibold">▲ Manutenção</p>
+          </div>
+        }
+      />
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'pagination') {
+    return `import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis
+} from "@/components/monta-ui/pagination"
+import { useState } from "react"
+
+export default function GridPaginada() {
+  const [currentPage, setCurrentPage] = useState(3)
+
+  return (
+    <div className="space-y-4 p-4">
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          
+          <PaginationItem>
+            <PaginationLink isActive={currentPage === 1} onClick={() => setCurrentPage(1)}>1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink isActive={currentPage === 2} onClick={() => setCurrentPage(2)}>2</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink isActive={currentPage === 3} onClick={() => setCurrentPage(3)}>3</PaginationLink>
+          </PaginationItem>
+          
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          
+          <PaginationItem>
+            <PaginationLink isActive={currentPage === 18} onClick={() => setCurrentPage(18)}>18</PaginationLink>
+          </PaginationItem>
+          
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setCurrentPage(p => Math.min(18, p + 1))}
+              disabled={currentPage === 18}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
+  )
+}`;
+  }
+
+  if (name === 'loading') {
+    return `import { Loading, Spinner, LoadingOverlay, LoadingDots, LoadingBars } from "@/components/monta-ui/loading"
+import { useState } from "react"
+import { Button } from "@/components/monta-ui/button"
+
+export default function PainelSincronizacao() {
+  const [loading, setLoading] = useState(false)
+
+  const handleSync = () => {
+    setLoading(true)
+    setTimeout(() => setLoading(false), 2500)
+  }
+
+  return (
+    <div className="space-y-6 max-w-lg p-6 border rounded-xl bg-card shadow-sm">
+      {/* 1. Spinners Inline e com Texto */}
+      <div className="flex items-center gap-4">
+        <Loading variant="spinner" size="default" text="Carregando..." />
+        <Loading variant="dots" text="Processando..." />
+        <Loading variant="bars" text="Otimizando..." />
+      </div>
+
+      {/* 2. Botão com Spinner */}
+      <Button onClick={handleSync} disabled={loading} className="gap-2">
+        {loading && <Spinner size="sm" className="text-white" />}
+        <span>{loading ? "Sincronizando..." : "Iniciar Sincronização"}</span>
+      </Button>
+
+      {/* 3. Card com Overlay Assíncrono */}
+      <div className="relative p-4 border rounded-lg bg-muted/20 min-h-[120px]">
+        <h5 className="font-bold text-xs">Dados Financeiros Consolidados</h5>
+        <p className="text-xs text-muted-foreground mt-1">Saldo Atual: R$ 420.900,00</p>
+        
+        {loading && (
+          <LoadingOverlay
+            text="Consultando SEFAZ..."
+            subtext="Aguarde a resposta do servidor"
+          />
+        )}
+      </div>
+    </div>
+  )
+}`;
+  }
+
+  return `import { ${pascal} } from "@/components/monta-ui/${name}"
+
+export default function MinhaPagina() {
+  return (
+    <div className="p-4">
+      <${pascal}>
+        Conteúdo do componente ${pascal}
+      </${pascal}>
+    </div>
+  )
+}`;
+}
+
+// ==================== REGISTRY JSON ====================
+function getComponentJSON(name) {
+  const tsx = getComponentTSX(name);
+  const data = {
+    name: name,
+    type: "registry:ui",
+    dependencies: [
+      "class-variance-authority",
+      "clsx",
+      "tailwind-merge",
+      "lucide-react"
+    ],
+    devDependencies: [],
+    registryDependencies: [],
+    files: [
+      {
+        path: `ui/${name}.tsx`,
+        content: tsx,
+        type: "registry:ui",
+        target: `components/monta-ui/${name}.tsx`
+      }
+    ]
+  };
+  return JSON.stringify(data, null, 2);
+}
+
+// ==================== UTILITÁRIOS ====================
+function formatTitle(name) {
+  return name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function getCategoryForComponent(name) {
+  for (const [category, items] of Object.entries(groups)) {
+    if (items.includes(name)) return category;
+  }
+  return 'Componentes';
+}
+
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#039;',
+    '"': '&quot;'
+  })[c]);
 }
 
 function highlightCode(code, lang) {
   let safe = escapeHTML(code);
-  if (lang === 'html') {
-    safe = safe.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="tok-comm">$1</span>');
-    safe = safe.replace(/(&lt;\/?)([a-zA-Z0-9\-]+)/g, '$1<span class="tok-tag">$2</span>');
-    safe = safe.replace(/([a-zA-Z0-9\-:]+)=(&quot;.*?&quot;|&#039;.*?&#039;)/g, '<span class="tok-attr">$1</span>=<span class="tok-str">$2</span>');
-  } else if (lang === 'css') {
-    safe = safe.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="tok-comm">$1</span>');
-    safe = safe.replace(/(^|[\n\}])([^{]+)({)/g, function(m, p1, p2, p3) {
-      return p1 + '<span class="tok-tag">' + p2 + '</span>' + p3;
-    });
-    safe = safe.replace(/([a-zA-Z\-]+)\s*:\s*([^;]+);/g, '<span class="tok-prop">$1</span>: <span class="tok-val">$2</span>;');
-  } else if (lang === 'js') {
+  if (lang === 'json') {
+    safe = safe.replace(/(&quot;.*?&quot;)(\s*:)/g, '<span class="tok-prop">$1</span>$2');
+    safe = safe.replace(/:\s*(&quot;.*?&quot;)/g, ': <span class="tok-str">$1</span>');
+    safe = safe.replace(/:\s*(\b\d+\b|true|false|null)/g, ': <span class="tok-num">$1</span>');
+  } else {
+    // Comentários
     safe = safe.replace(/(\/\/.*$)/gm, '<span class="tok-comm">$1</span>');
-    safe = safe.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="tok-comm">$1</span>');
-    safe = safe.replace(/(&quot;.*?&quot;|&#039;.*?&#039;|`.*?`)/g, '<span class="tok-str">$1</span>');
-    const kws = ['const', 'let', 'var', 'function', 'return', 'if', 'else', 'for', 'while', 'new', 'async', 'await', 'import', 'export', 'class', 'extends'];
+    
+    // Strings
+    safe = safe.replace(/(&quot;.*?&quot;|&#039;.*?&#039;|`[\s\S]*?`)/g, '<span class="tok-str">$1</span>');
+    
+    // Palavras-chave JavaScript / TypeScript
+    const kws = ['import', 'export', 'from', 'const', 'let', 'var', 'function', 'return', 'if', 'else', 'new', 'interface', 'type', 'default', 'as', 'typeof', 'extends'];
     kws.forEach(kw => {
       safe = safe.replace(new RegExp('\\b(' + kw + ')\\b', 'g'), '<span class="tok-kw">$1</span>');
     });
-    const builtins = ['document', 'window', 'console', 'localStorage', 'sessionStorage', 'Math', 'JSON', 'Array', 'Object', 'lucide', 'PO'];
+
+    // Tipos TypeScript
+    const types = ['boolean', 'string', 'number', 'void', 'any', 'HTMLButtonElement', 'HTMLInputElement', 'HTMLDivElement', 'ClassValue', 'VariantProps', 'ButtonProps', 'InputProps', 'DialogProps'];
+    types.forEach(t => {
+      safe = safe.replace(new RegExp('\\b(' + t + ')\\b', 'g'), '<span class="tok-type">$1</span>');
+    });
+
+    // Funções e React Hooks
+    const builtins = ['React', 'useState', 'useEffect', 'useRef', 'forwardRef', 'Slot', 'cva', 'cn', 'displayName', 'createElement', 'createRef'];
     builtins.forEach(b => {
-      safe = safe.replace(new RegExp('\\b(' + b + ')\\b', 'g'), '<span class="tok-fn" style="color:#79c0ff">$1</span>');
+      safe = safe.replace(new RegExp('\\b(' + b + ')\\b', 'g'), '<span class="tok-fn">$1</span>');
+    });
+
+    // Tags JSX (ex: <Button>, <Dialog>, <Input>, <div/>)
+    safe = safe.replace(/(&lt;\/?)([A-Z][a-zA-Z0-9\.]*)/g, '$1<span class="tok-tag">$2</span>');
+
+    // Props comuns
+    const props = ['className', 'variant', 'size', 'children', 'disabled', 'asChild', 'isLoading', 'fullWidth', 'placeholder', 'onClick', 'onChange', 'value'];
+    props.forEach(p => {
+      safe = safe.replace(new RegExp('\\b(' + p + ')=', 'g'), '<span class="tok-attr">$1</span>=');
     });
   }
   return safe;
 }
 
-function createCode(name, language = state.codeLanguage) {
-  if (language === 'css') return componentCSS(name);
-  if (language === 'js') return componentJavascript(name);
-  return componentHTML(name);
+function copyText(text, msg = 'Copiado para a área de transferência!') {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(msg);
+  }).catch(() => {
+    showToast('Falha ao copiar.');
+  });
 }
 
-function updateCodeView() {
-  if (!state.current) return;
-  const rawCode = createCode(state.current.name, state.codeLanguage);
-  const codeBlock = $('#codeBlock');
-  if (codeBlock) {
-    codeBlock.innerHTML = highlightCode(rawCode, state.codeLanguage);
-    codeBlock.dataset.raw = rawCode;
+function copyInstallCmd() {
+  const cmd = `pnpm dlx monta-ui add button`;
+  copyText(cmd, 'Comando Monta UI copiado!');
+  const el = document.getElementById('heroInstallText');
+  if (el) {
+    const orig = el.textContent;
+    el.textContent = 'Copiado!';
+    setTimeout(() => el.textContent = orig, 1500);
   }
-  
-  const ext = state.codeLanguage === 'js' ? 'js' : state.codeLanguage === 'css' ? 'css' : 'html';
-  const linesCount = rawCode.split('\n').length;
-  const badge = $('#codeFileBadge');
-  if (badge) badge.textContent = `${state.current.name}.${ext} · ${linesCount} linhas`;
+}
 
-  const copyBtnText = $('#copyCode span');
-  if (copyBtnText) copyBtnText.textContent = `Copiar ${state.codeLanguage === 'js' ? 'JavaScript' : state.codeLanguage.toUpperCase()}`;
+function copyCliCommand() {
+  const cmd = document.getElementById('docCliCommand')?.textContent || '';
+  copyText(cmd, 'Comando CLI copiado!');
+  const text = document.getElementById('copyCliText');
+  if (text) {
+    text.textContent = 'Copiado!';
+    setTimeout(() => text.textContent = 'Copiar', 1500);
+  }
+}
+
+function copyUsageCode() {
+  const code = document.querySelector('#usageSection pre code')?.textContent || '';
+  copyText(code, 'Exemplo de uso copiado!');
+}
+
+function copyTailwindConfig() {
+  const code = document.querySelector('#tailwindDocsView pre:nth-of-type(1) code')?.textContent || '';
+  copyText(code, 'Configuração do Tailwind CSS copiada!');
+}
+
+function copyGlobalsCSS() {
+  const code = document.querySelector('#tailwindDocsView pre:nth-of-type(2) code')?.textContent || '';
+  copyText(code, 'Arquivo globals.css copiado!');
 }
 
 function downloadFile(filename, content) {
-  const mime = filename.endsWith('.html') ? 'text/html' : filename.endsWith('.css') ? 'text/css' : 'text/javascript';
-  const blob = new Blob([content], { type: `${mime};charset=utf-8` });
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -3214,1571 +10028,170 @@ function downloadFile(filename, content) {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-  toast(`Download de ${filename} concluído!`);
+  showToast(`Download de ${filename} concluído!`);
 }
 
-async function copyText(text) {
-  try {
-    if (!navigator.clipboard?.writeText) throw new Error('Clipboard indisponível');
-    await navigator.clipboard.writeText(text);
-  } catch (_) {
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    helper.style.position = 'fixed';
-    helper.style.opacity = '0';
-    document.body.append(helper);
-    helper.select();
-    document.execCommand('copy');
-    helper.remove();
-  }
-}
-
-function toast(message) {
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
   const item = document.createElement('div');
-  item.className = 'toast';
-  item.innerHTML = `${icon('circle-check')}<span>${escapeHTML(message)}</span>`;
-  $('#toastRegion').append(item);
-  refreshIcons();
-  setTimeout(() => item.remove(), 3200);
+  item.className = 'pointer-events-auto flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-3 text-xs font-semibold text-foreground shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200';
+  item.innerHTML = `<span class="flex h-2 w-2 rounded-full bg-brand"></span><span>${escapeHTML(msg)}</span>`;
+  container.appendChild(item);
+  setTimeout(() => {
+    item.remove();
+  }, 2400);
 }
 
-function bindPreviewEvents(name) {
-  const root = $('#componentPreview');
+// ==================== COMMAND PALETTE / BUSCA GLOBAL ====================
+let searchResultsData = [];
+let selectedSearchIndex = 0;
 
-  // Toasts
-  root.querySelectorAll('[data-toast]').forEach(btn => {
-    btn.addEventListener('click', () => toast(btn.dataset.toast));
-  });
+function openSearchModal() {
+  const modal = document.getElementById('searchModal');
+  const input = document.getElementById('searchInputModal');
+  if (!modal || !input) return;
 
-  // Accordion
-  root.querySelectorAll('.accordion-item > button').forEach(btn => {
-    btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
-  });
+  modal.classList.remove('hidden');
+  input.value = '';
+  renderSearchResults('');
+  setTimeout(() => input.focus(), 50);
+}
 
-  // Tabs
-  root.querySelectorAll('.po-tabs-head button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const parent = btn.parentElement;
-      parent.querySelectorAll('button').forEach(tab => tab.classList.toggle('active', tab === btn));
-      const content = btn.closest('.po-tabs')?.querySelector('.po-tab-content');
-      if (content) content.textContent = `Visualizando conteúdo de "${btn.textContent}".`;
-    });
-  });
+function closeSearchModal() {
+  const modal = document.getElementById('searchModal');
+  if (modal) modal.classList.add('hidden');
+}
 
-  // Dropdowns & Popovers
-  root.querySelectorAll('[data-dropdown], [data-popover]').forEach(btn => {
-    btn.addEventListener('click', event => {
-      event.stopPropagation();
-      const content = btn.nextElementSibling;
-      if (content) content.hidden = !content.hidden;
-    });
-  });
-
-  root.querySelectorAll('[data-popover-close]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const popover = btn.closest('.po-popover');
-      if (popover) popover.hidden = true;
-    });
-  });
-
-  // Button Group selection toggle
-  root.querySelectorAll('.po-button-group button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const parent = btn.parentElement;
-      parent.querySelectorAll('button').forEach(item => item.classList.remove('active'));
-      btn.classList.add('active');
-      toast(`Opção selecionada: ${btn.textContent.trim()}`);
-    });
-  });
-
-  // Breadcrumb Favorite button toggle
-  root.querySelectorAll('[data-favorite-btn]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const active = btn.classList.toggle('active');
-      btn.title = active ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos';
-      toast(active ? '⭐ Página favoritada com sucesso!' : 'Página removida dos favoritos.', active ? 'success' : 'warning');
-    });
-  });
-
-  // 1. PO Breadcrumb Basic: Navegação Bidirecional com botão >
-  const basicList = root.querySelector('#basicBreadcrumbList');
-  const basicSteps = ['PO Portal', 'PO Breadcrumb'];
-  let currentBasicIndex = 1;
-
-  function renderBasicBreadcrumb(idx) {
-    if (!basicList) return;
-    currentBasicIndex = idx;
-    let html = '';
-    
-    if (currentBasicIndex === 0) {
-      html = `
-        <li class="po-breadcrumb-item">
-          <span class="po-breadcrumb-item-activate" aria-current="page">PO Portal</span>
-          <button class="po-breadcrumb-expand-btn" data-step="1" title="Clique no > para avançar para PO Breadcrumb" aria-label="Avançar para PO Breadcrumb">
-            <i data-lucide="chevron-right"></i>
-          </button>
-        </li>
-      `;
-    } else {
-      html = `
-        <li class="po-breadcrumb-item">
-          <a href="#" class="po-breadcrumb-link" data-step="0">PO Portal</a>
-          <i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i>
-        </li>
-        <li class="po-breadcrumb-item">
-          <span class="po-breadcrumb-item-activate" aria-current="page">PO Breadcrumb</span>
-        </li>
-      `;
-    }
-
-    basicList.innerHTML = html;
-    refreshIcons();
-  }
-
-  basicList?.addEventListener('click', e => {
-    const link = e.target.closest('[data-step]');
-    if (!link) return;
-    e.preventDefault();
-    const idx = parseInt(link.dataset.step);
-    renderBasicBreadcrumb(idx);
-    toast(`Navegando para: ${basicSteps[idx]}!`, 'success');
-  });
-
-  // 2. PO Breadcrumb Favorito: Navegação Livre Bidirecional com botão >
-  const favList = root.querySelector('#favBreadcrumbList');
-  const favSteps = ['Início', 'Comercial', 'Clientes', 'Clínica Aurora Saúde'];
-  let currentFavIndex = 3;
-
-  function renderFavBreadcrumb(idx) {
-    if (!favList) return;
-    currentFavIndex = idx;
-    let html = '';
-    favSteps.forEach((step, i) => {
-      if (i < currentFavIndex) {
-        html += `<li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link" data-fav-step="${i}">${step}</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>`;
-      } else if (i === currentFavIndex) {
-        if (currentFavIndex < favSteps.length - 1) {
-          html += `
-            <li class="po-breadcrumb-item">
-              <span class="po-breadcrumb-item-activate" aria-current="page">${step}</span>
-              <button class="po-breadcrumb-expand-btn" data-fav-step="${currentFavIndex + 1}" title="Clique no > para avançar para ${favSteps[currentFavIndex + 1]}" aria-label="Avançar para ${favSteps[currentFavIndex + 1]}">
-                <i data-lucide="chevron-right"></i>
-              </button>
-            </li>
-          `;
-        } else {
-          html += `<li class="po-breadcrumb-item"><span class="po-breadcrumb-item-activate" aria-current="page">${step}</span></li>`;
-        }
-      }
-    });
-    favList.innerHTML = html;
-    refreshIcons();
-  }
-
-  favList?.addEventListener('click', e => {
-    const link = e.target.closest('[data-fav-step]');
-    if (!link) return;
-    e.preventDefault();
-    const idx = parseInt(link.dataset.favStep);
-    renderFavBreadcrumb(idx);
-    toast(`Navegando para: ${favSteps[idx]}!`, 'success');
-  });
-
-  // 3. Breadcrumb Collapsed: Cliques nos itens do menu
-  root.querySelectorAll('.po-dropdown-menu button[data-toast]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const parentMenu = btn.closest('.po-dropdown-menu');
-      if (parentMenu) parentMenu.hidden = true;
-    });
-  });
-
-  // 4. Breadcrumb Labs Interactive com suporte ao botão >
-  const addBreadcrumbBtn = root.querySelector('#labsAddBreadcrumbBtn');
-  const breadcrumbInput = root.querySelector('#labsBreadcrumbLabel');
-  const breadcrumbList = root.querySelector('#labsBreadcrumbList');
-  const resetBreadcrumbBtn = root.querySelector('#labsResetBreadcrumbBtn');
-  let labsSteps = ['Início', 'Painel Geral'];
-  let currentLabsIndex = 1;
-
-  function renderLabsBreadcrumb() {
-    if (!breadcrumbList) return;
-    let html = '';
-    labsSteps.forEach((step, i) => {
-      if (i < currentLabsIndex) {
-        html += `<li class="po-breadcrumb-item"><a href="#" class="po-breadcrumb-link" data-labs-step="${i}">${step}</a><i class="po-breadcrumb-icon-arrow" data-lucide="chevron-right"></i></li>`;
-      } else if (i === currentLabsIndex) {
-        if (currentLabsIndex < labsSteps.length - 1) {
-          html += `
-            <li class="po-breadcrumb-item">
-              <span class="po-breadcrumb-item-activate" aria-current="page">${step}</span>
-              <button class="po-breadcrumb-expand-btn" data-labs-step="${currentLabsIndex + 1}" title="Clique no > para avançar para ${labsSteps[currentLabsIndex + 1]}" aria-label="Avançar para ${labsSteps[currentLabsIndex + 1]}">
-                <i data-lucide="chevron-right"></i>
-              </button>
-            </li>
-          `;
-        } else {
-          html += `<li class="po-breadcrumb-item"><span class="po-breadcrumb-item-activate" aria-current="page">${step}</span></li>`;
-        }
-      }
-    });
-    breadcrumbList.innerHTML = html;
-    refreshIcons();
-  }
-
-  breadcrumbList?.addEventListener('click', e => {
-    const link = e.target.closest('[data-labs-step]');
-    if (!link) return;
-    e.preventDefault();
-    const idx = parseInt(link.dataset.labsStep);
-    currentLabsIndex = idx;
-    renderLabsBreadcrumb();
-    toast(`Navegando para: ${labsSteps[idx]}!`, 'success');
-  });
-
-  if (addBreadcrumbBtn && breadcrumbInput) {
-    addBreadcrumbBtn.addEventListener('click', () => {
-      const label = breadcrumbInput.value.trim();
-      if (!label) {
-        toast('Digite um título para o breadcrumb!', 'warning');
-        breadcrumbInput.focus();
-        return;
-      }
-      labsSteps.splice(currentLabsIndex + 1);
-      labsSteps.push(label);
-      currentLabsIndex = labsSteps.length - 1;
-      renderLabsBreadcrumb();
-      breadcrumbInput.value = '';
-      breadcrumbInput.focus();
-      toast(`Nível "${label}" adicionado ao breadcrumb!`);
-    });
-
-    resetBreadcrumbBtn?.addEventListener('click', () => {
-      labsSteps = ['Início', 'Painel Geral'];
-      currentLabsIndex = 1;
-      renderLabsBreadcrumb();
-      toast('Breadcrumb restaurado.');
-    });
-  }
-
-  // Button Labs Interactive
-  const labsBtn = root.querySelector('#labsButtonTarget');
-  const labsLabel = root.querySelector('#labsButtonLabel');
-  const labsIcon = root.querySelector('#labsButtonIcon');
-  const labsInput = root.querySelector('#labsInputLabel');
-  const labsIconSelect = root.querySelector('#labsSelectIcon');
-  const labsPropDanger = root.querySelector('#labsPropDanger');
-  const labsPropLoading = root.querySelector('#labsPropLoading');
-  const labsPropDisabled = root.querySelector('#labsPropDisabled');
-  const labsRestoreBtn = root.querySelector('#labsRestoreBtn');
-
-  function updateLabsButton() {
-    if (!labsBtn) return;
-    
-    // Label
-    if (labsLabel && labsInput) {
-      labsLabel.textContent = labsInput.value || 'Botão PO UI';
-    }
-
-    // Kind
-    const kind = root.querySelector('input[name="labsKind"]:checked')?.value || 'primary';
-    labsBtn.classList.remove('primary', 'ghost');
-    if (kind === 'primary') labsBtn.classList.add('primary');
-    if (kind === 'tertiary') labsBtn.classList.add('ghost');
-
-    // Size
-    const size = root.querySelector('input[name="labsSize"]:checked')?.value || 'md';
-    labsBtn.classList.remove('sm', 'lg');
-    if (size === 'sm') labsBtn.classList.add('sm');
-    if (size === 'lg') labsBtn.classList.add('lg');
-
-    // Props
-    labsBtn.classList.toggle('danger', !!labsPropDanger?.checked);
-    labsBtn.classList.toggle('is-loading', !!labsPropLoading?.checked);
-    labsBtn.disabled = !!labsPropDisabled?.checked;
-
-    // Icon
-    const iconName = labsIconSelect?.value || 'check';
-    if (labsIcon) {
-      if (iconName === 'none') {
-        labsIcon.hidden = true;
-      } else {
-        labsIcon.hidden = false;
-        labsIcon.setAttribute('data-lucide', iconName);
-      }
-    }
-    refreshIcons();
-  }
-
-  if (labsBtn) {
-    labsInput?.addEventListener('input', updateLabsButton);
-    root.querySelectorAll('input[name="labsKind"], input[name="labsSize"]').forEach(r => r.addEventListener('change', updateLabsButton));
-    labsPropDanger?.addEventListener('change', updateLabsButton);
-    labsPropLoading?.addEventListener('change', updateLabsButton);
-    labsPropDisabled?.addEventListener('change', updateLabsButton);
-    labsIconSelect?.addEventListener('change', updateLabsButton);
-
-    labsRestoreBtn?.addEventListener('click', () => {
-      if (labsInput) labsInput.value = 'PO Button Labs';
-      const kindPrimary = root.querySelector('input[name="labsKind"][value="primary"]');
-      if (kindPrimary) kindPrimary.checked = true;
-      const sizeMd = root.querySelector('input[name="labsSize"][value="md"]');
-      if (sizeMd) sizeMd.checked = true;
-      if (labsPropDanger) labsPropDanger.checked = false;
-      if (labsPropLoading) labsPropLoading.checked = false;
-      if (labsPropDisabled) labsPropDisabled.checked = false;
-      if (labsIconSelect) labsIconSelect.value = 'check';
-      updateLabsButton();
-      toast('Configurações de laboratório restauradas!');
-    });
-  }
-
-  // Password toggle
-  root.querySelector('#togglePassword')?.addEventListener('click', () => {
-    const pass = root.querySelector('#passwordDemo');
-    if (pass) {
-      pass.type = pass.type === 'password' ? 'text' : 'password';
-      toast(`Senha ${pass.type === 'password' ? 'ocultada' : 'visível'}`);
-    }
-  });
-
-  // Clean button
-  root.querySelector('#cleanDemoBtn')?.addEventListener('click', () => {
-    const input = root.querySelector('#cleanDemoInput');
-    if (input) {
-      input.value = '';
-      input.focus();
-      toast('Campo limpo!');
-    }
-  });
-
-  // Tree view
-  root.querySelectorAll('[data-tree]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const list = btn.parentElement.querySelector('ul');
-      if (!list) return;
-      list.classList.toggle('collapsed');
-      btn.textContent = list.classList.contains('collapsed') ? '+' : '−';
-    });
-  });
-
-  // Listbox
-  root.querySelectorAll('.po-listbox button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.parentElement.querySelectorAll('button').forEach(item => item.classList.remove('selected'));
-      btn.classList.add('selected');
-      toast(`Item selecionado: ${btn.textContent.trim().split('\n')[0]}`);
-    });
-  });
-
-  // Modais
-  root.querySelector('[data-open-modal]')?.addEventListener('click', () => {
-    $('#modalBackdrop').hidden = false;
-  });
-
-  root.querySelector('#openLookupBtn')?.addEventListener('click', () => {
-    $('#lookupModalBackdrop').hidden = false;
-  });
-
-  // Stepper Interactive
-  const stepper = root.querySelector('#stepperDemo');
-  const stepperStepContent = root.querySelector('#stepperStepContent');
-  let currentStep = 2;
-  const stepTitles = [
-    'Identificação e Dados Cadastrais',
-    'Preenchimento do Endereço e Localização de Faturamento',
-    'Condições de Pagamento e Faturamento Fiscal',
-    'Revisão Final e Confirmação do Pedido'
+function getSearchCatalog() {
+  const catalog = [
+    { title: "Guia de Instalação", category: "Documentação", type: "doc", hash: "#/docs/instalacao", icon: "book-open", desc: "Configuração do Monta UI em 5 passos" },
+    { title: "Storybook 8", category: "Documentação", type: "doc", hash: "#/docs/storybook", icon: "book-marked", desc: "Ambiente isolado de testes e histórias" },
+    { title: "Tailwind CSS Config", category: "Documentação", type: "doc", hash: "#/docs/tailwind", icon: "palette", desc: "Cores HSL, variáveis CSS e tokens" },
   ];
 
-  function updateStepper() {
-    if (!stepper) return;
-    stepper.querySelectorAll('.po-step').forEach((st, idx) => {
-      const stepNum = idx + 1;
-      st.classList.remove('done', 'active');
-      if (stepNum < currentStep) {
-        st.classList.add('done');
-        st.querySelector('i').innerHTML = `<i data-lucide="check"></i>`;
-      } else if (stepNum === currentStep) {
-        st.classList.add('active');
-        st.querySelector('i').textContent = `${stepNum}`;
-      } else {
-        st.querySelector('i').textContent = `${stepNum}`;
-      }
-    });
-    if (stepperStepContent) {
-      stepperStepContent.innerHTML = `Etapa Atual (${currentStep}/4): <b>${stepTitles[currentStep - 1]}</b>.`;
+  for (const [category, items] of Object.entries(groups)) {
+    for (const comp of items) {
+      catalog.push({
+        title: formatTitle(comp),
+        id: comp,
+        category: category,
+        type: "component",
+        hash: `#/componente/${comp}`,
+        icon: "box",
+        desc: descriptions[comp] || "Componente corporativo de alto desempenho."
+      });
     }
-    refreshIcons();
   }
 
-  root.querySelector('#stepperNextBtn')?.addEventListener('click', () => {
-    if (currentStep < 4) {
-      currentStep++;
-      updateStepper();
-      toast(`Avançando para: ${stepTitles[currentStep - 1]}`);
-    } else {
-      toast('🎉 Processo concluído com sucesso!', 'success');
-    }
-  });
+  return catalog;
+}
 
-  root.querySelector('#stepperPrevBtn')?.addEventListener('click', () => {
-    if (currentStep > 1) {
-      currentStep--;
-      updateStepper();
-      toast(`Retornando para: ${stepTitles[currentStep - 1]}`);
-    }
-  });
+function renderSearchResults(query = '') {
+  const container = document.getElementById('searchResultsList');
+  if (!container) return;
 
-  // Switch Text Toggle
-  root.querySelector('#switchDemo1')?.addEventListener('change', e => {
-    const txt = root.querySelector('#switchStatusText1');
-    if (txt) txt.innerHTML = `Notificações em tempo real: <b>${e.target.checked ? 'Ativadas' : 'Desativadas'}</b>`;
-    toast(`Notificações ${e.target.checked ? 'ativadas' : 'desativadas'}.`);
-  });
+  const catalog = getSearchCatalog();
+  const q = query.toLowerCase().trim();
 
-  root.querySelector('#switchDemo2')?.addEventListener('change', e => {
-    const txt = root.querySelector('#switchStatusText2');
-    if (txt) txt.innerHTML = `Sincronização em nuvem: <b>${e.target.checked ? 'Ativada' : 'Desativada'}</b>`;
-    toast(`Sincronização ${e.target.checked ? 'ativada' : 'desativada'}.`);
-  });
-
-  // Input Basic clean
-  root.querySelector('#cleanInputBasicBtn')?.addEventListener('click', () => {
-    const input = root.querySelector('#inputBasicDemo');
-    if (input) {
-      input.value = '';
-      input.focus();
-      toast('Campo de texto limpo.');
-    }
-  });
-
-  // Multiselect tag remove
-  root.querySelectorAll('.multiselect-remove').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tag = btn.closest('.po-tag');
-      if (tag) {
-        tag.remove();
-        toast('Módulo removido da seleção.');
-      }
+  if (!q) {
+    searchResultsData = catalog.slice(0, 10);
+  } else {
+    searchResultsData = catalog.filter(item => {
+      const matchTitle = item.title.toLowerCase().includes(q);
+      const matchId = (item.id || '').toLowerCase().includes(q);
+      const matchCat = item.category.toLowerCase().includes(q);
+      const matchDesc = item.desc.toLowerCase().includes(q);
+      return matchTitle || matchId || matchCat || matchDesc;
     });
-  });
+  }
 
-  // Table Select All
-  root.querySelector('#selectAllDemo')?.addEventListener('change', e => {
-    root.querySelectorAll('#tableDemoBody input[type="checkbox"]').forEach(chk => {
-      chk.checked = e.target.checked;
-    });
-    toast(e.target.checked ? 'Todos os 3 pedidos selecionados.' : 'Seleção desmarcada.');
-  });
+  selectedSearchIndex = 0;
 
-  // Login Password Toggle
-  root.querySelector('#toggleLoginPass')?.addEventListener('click', () => {
-    const pass = root.querySelector('#loginPassInput');
-    if (pass) {
-      pass.type = pass.type === 'password' ? 'text' : 'password';
-    }
-  });
-
-  // Progress Bar
-  const progressText = root.querySelector('#progressText');
-  const progressBar = root.querySelector('#progressBar');
-  root.querySelector('#advanceProgressBtn')?.addEventListener('click', () => {
-    if (!progressBar) return;
-    const cur = parseInt(progressBar.style.width) || 0;
-    const next = Math.min(100, cur + 15);
-    progressBar.style.width = `${next}%`;
-    if (progressText) progressText.textContent = `${next}%`;
-    if (next === 100) toast('🎉 Sincronização 100% concluída!', 'success');
-  });
-  root.querySelector('#resetProgressBtn')?.addEventListener('click', () => {
-    if (!progressBar) return;
-    progressBar.style.width = '0%';
-    if (progressText) progressText.textContent = '0%';
-    toast('Progresso reiniciado.');
-  });
-
-  // Overlay
-  root.querySelector('[data-overlay]')?.addEventListener('click', e => {
-    const card = e.currentTarget.closest('.po-widget');
-    if (!card) return;
-    const original = card.innerHTML;
-    card.innerHTML = `
-      <div style="text-align:center;padding:30px">
-        <div class="po-loading"></div>
-        <p style="margin-top:10px;font-weight:700">Bloqueio Overlay Ativo...</p>
+  if (searchResultsData.length === 0) {
+    container.innerHTML = `
+      <div class="p-6 text-center text-muted-foreground space-y-1">
+        <p class="text-xs font-semibold text-foreground">Nenhum resultado encontrado</p>
+        <p class="text-[11px]">Tente buscar por termos como <code>button</code>, <code>chart</code>, <code>modal</code> ou <code>instalação</code>.</p>
       </div>
     `;
-    setTimeout(() => {
-      card.innerHTML = original;
-      bindPreviewEvents(name);
-      toast('Operação concluída com sucesso!');
-    }, 1600);
-  });
+    return;
+  }
 
-  // Upload status
-  root.querySelector('#uploadFileDemo')?.addEventListener('change', e => {
-    const files = e.target.files;
-    const label = root.querySelector('#uploadStatusText');
-    if (label) label.textContent = `${files.length} arquivo(s) selecionado(s): ${Array.from(files).map(f => f.name).join(', ')}`;
-    toast(`${files.length} arquivo(s) prontos para envio.`);
-  });
+  container.innerHTML = searchResultsData.map((item, idx) => `
+    <div onclick="selectSearchResult(${idx})" onmouseenter="highlightSearchResult(${idx})" id="searchItem-${idx}" class="search-result-item flex items-center justify-between rounded-xl px-3 py-2 cursor-pointer transition-all ${idx === 0 ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+          <i data-lucide="${item.icon}" class="h-4 w-4"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="font-heading font-bold text-xs text-foreground truncate">${escapeHTML(item.title)}</span>
+            <span class="rounded bg-muted px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground uppercase tracking-wide shrink-0">${escapeHTML(item.category)}</span>
+          </div>
+          <p class="text-[11px] text-muted-foreground truncate leading-tight">${escapeHTML(item.desc)}</p>
+        </div>
+      </div>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-muted-foreground opacity-50 shrink-0"></i>
+    </div>
+  `).join('');
 
-  // Rich text commands
-  root.querySelectorAll('[data-cmd]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.execCommand(btn.dataset.cmd, false, null);
-    });
-  });
+  if (window.lucide) window.lucide.createIcons();
+}
 
-  // Avatar Labs Interactive
-  const labsAvatar = root.querySelector('#labsAvatarTarget');
-  const labsAvatarSize = root.querySelector('#labsAvatarSizeSelect');
-  const labsAvatarStatusSelect = root.querySelector('#labsAvatarStatusSelect');
-  const labsAvatarType = root.querySelector('#labsAvatarTypeSelect');
-  const labsAvatarRestore = root.querySelector('#labsAvatarRestoreBtn');
-
-  function updateLabsAvatar() {
-    if (!labsAvatar) return;
-    
-    // Size
-    labsAvatar.className = `po-avatar ${labsAvatarSize?.value || 'lg'} po-clickable`;
-
-    // Type
-    const type = labsAvatarType?.value || 'image';
-    if (type === 'image') {
-      labsAvatar.innerHTML = `
-        <img class="po-avatar-image" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Avatar">
-        <span class="po-avatar-status" id="labsAvatarStatus"></span>
-      `;
-    } else if (type === 'initials') {
-      labsAvatar.innerHTML = `
-        <span>MA</span>
-        <span class="po-avatar-status" id="labsAvatarStatus"></span>
-      `;
+function highlightSearchResult(index) {
+  selectedSearchIndex = index;
+  document.querySelectorAll('.search-result-item').forEach((el, idx) => {
+    if (idx === index) {
+      el.classList.add('bg-muted', 'text-foreground');
+      el.classList.remove('text-muted-foreground');
     } else {
-      labsAvatar.innerHTML = `
-        <i data-lucide="user"></i>
-        <span class="po-avatar-status" id="labsAvatarStatus"></span>
-      `;
-    }
-
-    // Status
-    const newStatus = labsAvatar.querySelector('#labsAvatarStatus');
-    if (newStatus) {
-      const st = labsAvatarStatusSelect?.value || 'online';
-      if (st === 'none') {
-        newStatus.hidden = true;
-      } else {
-        newStatus.hidden = false;
-        newStatus.className = `po-avatar-status ${st === 'online' ? '' : st}`;
-      }
-    }
-    refreshIcons();
-  }
-
-  labsAvatarSize?.addEventListener('change', () => {
-    updateLabsAvatar();
-    toast(`Tamanho alterado para: ${labsAvatarSize.value.toUpperCase()}`);
-  });
-
-  labsAvatarStatusSelect?.addEventListener('change', () => {
-    updateLabsAvatar();
-    toast(`Status alterado para: ${labsAvatarStatusSelect.options[labsAvatarStatusSelect.selectedIndex].text}`);
-  });
-
-  labsAvatarType?.addEventListener('change', () => {
-    updateLabsAvatar();
-    toast(`Tipo alterado para: ${labsAvatarType.options[labsAvatarType.selectedIndex].text}`);
-  });
-
-  labsAvatar?.addEventListener('click', () => {
-    toast('Avatar clicado! Evento (p-click) disparado com sucesso.');
-  });
-
-  root.querySelector('#businessCardAvatar')?.addEventListener('click', () => {
-    toast('📸 Abrindo imagem de perfil ampliada de Marina Almeida...');
-  });
-
-  labsAvatarRestore?.addEventListener('click', () => {
-    if (labsAvatarSize) labsAvatarSize.value = 'lg';
-    if (labsAvatarStatusSelect) labsAvatarStatusSelect.value = 'online';
-    if (labsAvatarType) labsAvatarType.value = 'image';
-    updateLabsAvatar();
-    toast('Laboratório de Avatar restaurado.');
-  });
-
-  // Calendar Basic interactive
-  root.querySelectorAll('#calendarBasic .calendar-day:not(.other-month)').forEach(btn => {
-    btn.addEventListener('click', () => {
-      root.querySelectorAll('#calendarBasic .calendar-day').forEach(d => d.classList.remove('selected'));
-      btn.classList.add('selected');
-      const day = btn.textContent.trim().padStart(2, '0');
-      toast(`Data selecionada: ${day}/08/2026`);
-    });
-  });
-
-  // Calendar Range and Presets
-  const presetsGroup = root.querySelector('#calendarPresetsGroup');
-  const calRange = root.querySelector('#calendarRange');
-  if (presetsGroup && calRange) {
-    presetsGroup.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        presetsGroup.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const p = btn.dataset.preset;
-        
-        calRange.querySelectorAll('.calendar-day').forEach(d => {
-          d.classList.remove('range-start', 'in-range', 'range-end', 'selected');
-        });
-
-        const days = calRange.querySelectorAll('.calendar-day:not(.other-month)');
-        if (p === 'week') {
-          days[9]?.classList.add('range-start');
-          for (let i = 10; i <= 13; i++) days[i]?.classList.add('in-range');
-          days[14]?.classList.add('range-end');
-          toast('Filtro aplicado: Esta Semana (10/08 a 15/08)');
-        } else if (p === 'month') {
-          days[0]?.classList.add('range-start');
-          for (let i = 1; i <= 29; i++) days[i]?.classList.add('in-range');
-          days[30]?.classList.add('range-end');
-          toast('Filtro aplicado: Este Mês (01/08 a 31/08)');
-        } else if (p === 'last7') {
-          days[23]?.classList.add('range-start');
-          for (let i = 24; i <= 28; i++) days[i]?.classList.add('in-range');
-          days[29]?.classList.add('range-end');
-          toast('Filtro aplicado: Últimos 7 dias (24/08 a 30/08)');
-        } else if (p === 'last30') {
-          days[0]?.classList.add('range-start');
-          for (let i = 1; i <= 28; i++) days[i]?.classList.add('in-range');
-          days[29]?.classList.add('range-end');
-          toast('Filtro aplicado: Últimos 30 dias (01/08 a 30/08)');
-        } else {
-          toast('Selecione uma data inicial e final no calendário.');
-        }
-      });
-    });
-  }
-
-  // Calendar Labs
-  const labsCalModel = root.querySelector('#labsCalModel');
-  const labsCalEvent = root.querySelector('#labsCalEvent');
-  const labsCalMode = root.querySelector('#labsCalMode');
-  const labsCalLocale = root.querySelector('#labsCalLocale');
-  const labsCalMonthYear = root.querySelector('#labsCalMonthYear');
-  let labsRangeStart = null;
-
-  root.querySelectorAll('#labsCalGrid .calendar-day:not(.other-month)').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const dayNum = parseInt(btn.textContent.trim());
-      const dayStr = dayNum.toString().padStart(2, '0');
-      const isRange = labsCalMode?.value === 'range';
-
-      if (!isRange) {
-        root.querySelectorAll('#labsCalGrid .calendar-day').forEach(d => d.classList.remove('selected', 'range-start', 'in-range', 'range-end'));
-        btn.classList.add('selected');
-        const dt = `2026-08-${dayStr}`;
-        if (labsCalModel) labsCalModel.textContent = `"${dt}"`;
-        if (labsCalEvent) labsCalEvent.textContent = `p-change: "${dt}"`;
-        toast(`Data selecionada: ${dayStr}/08/2026`);
-      } else {
-        if (!labsRangeStart || labsRangeStart > dayNum) {
-          labsRangeStart = dayNum;
-          root.querySelectorAll('#labsCalGrid .calendar-day').forEach(d => d.classList.remove('selected', 'range-start', 'in-range', 'range-end'));
-          btn.classList.add('range-start');
-          if (labsCalModel) labsCalModel.textContent = `{"start": "2026-08-${dayStr}", "end": null}`;
-          if (labsCalEvent) labsCalEvent.textContent = `p-change: "2026-08-${dayStr}"`;
-          toast(`Início do intervalo: ${dayStr}/08/2026`);
-        } else {
-          const days = root.querySelectorAll('#labsCalGrid .calendar-day:not(.other-month)');
-          days.forEach(d => {
-            const cur = parseInt(d.textContent.trim());
-            if (cur === labsRangeStart) d.classList.add('range-start');
-            else if (cur > labsRangeStart && cur < dayNum) d.classList.add('in-range');
-            else if (cur === dayNum) d.classList.add('range-end');
-          });
-          const startStr = labsRangeStart.toString().padStart(2, '0');
-          if (labsCalModel) labsCalModel.textContent = `{"start": "2026-08-${startStr}", "end": "2026-08-${dayStr}"}`;
-          if (labsCalEvent) labsCalEvent.textContent = `p-change: "${startStr}/08/2026 a ${dayStr}/08/2026"`;
-          toast(`Intervalo selecionado: ${startStr}/08 a ${dayStr}/08/2026`);
-          labsRangeStart = null;
-        }
-      }
-    });
-  });
-
-  labsCalMode?.addEventListener('change', () => {
-    labsRangeStart = null;
-    root.querySelectorAll('#labsCalGrid .calendar-day').forEach(d => d.classList.remove('selected', 'range-start', 'in-range', 'range-end'));
-    const def = root.querySelectorAll('#labsCalGrid .calendar-day:not(.other-month)')[29];
-    if (def) def.classList.add('selected');
-    if (labsCalModel) labsCalModel.textContent = `"2026-08-30"`;
-    toast(`Modo de seleção alterado para: ${labsCalMode.value.toUpperCase()}`);
-  });
-
-  labsCalLocale?.addEventListener('change', () => {
-    const loc = labsCalLocale.value;
-    const dayNames = root.querySelectorAll('#labsCalGrid .day-name');
-    if (loc === 'en') {
-      const enDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      dayNames.forEach((el, i) => { if (enDays[i]) el.textContent = enDays[i]; });
-      if (labsCalMonthYear) labsCalMonthYear.textContent = 'August 2026';
-    } else if (loc === 'es') {
-      const esDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      dayNames.forEach((el, i) => { if (esDays[i]) el.textContent = esDays[i]; });
-      if (labsCalMonthYear) labsCalMonthYear.textContent = 'Agosto 2026';
-    } else {
-      const ptDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-      dayNames.forEach((el, i) => { if (ptDays[i]) el.textContent = ptDays[i]; });
-      if (labsCalMonthYear) labsCalMonthYear.textContent = 'Agosto 2026';
-    }
-    toast(`Idioma alterado para: ${labsCalLocale.options[labsCalLocale.selectedIndex].text}`);
-  });
-
-  root.querySelector('#labsCalRestoreBtn')?.addEventListener('click', () => {
-    if (labsCalMode) labsCalMode.value = 'single';
-    if (labsCalLocale) {
-      labsCalLocale.value = 'pt';
-      labsCalLocale.dispatchEvent(new Event('change'));
-    }
-    toast('Laboratório de Calendário restaurado.');
-  });
-
-  // Ticket Sales Calculation
-  const ticketAdults = root.querySelector('#ticketAdults');
-  const ticketKids = root.querySelector('#ticketKids');
-  const ticketTotal = root.querySelector('#ticketTotalAmount');
-  let selectedTicketDay = 30;
-
-  function updateTicketPrice() {
-    if (!ticketTotal) return;
-    const adults = parseInt(ticketAdults?.value) || 1;
-    const kids = parseInt(ticketKids?.value) || 0;
-    
-    const weekendDays = [1, 2, 8, 9, 15, 16, 22, 23, 29, 30];
-    const isWeekend = weekendDays.includes(selectedTicketDay);
-    const priceAdult = isWeekend ? 20 : 10;
-    const priceKid = isWeekend ? 10 : 5;
-
-    const total = (adults * priceAdult) + (kids * priceKid);
-    ticketTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-  }
-
-  ticketAdults?.addEventListener('change', updateTicketPrice);
-  ticketKids?.addEventListener('change', updateTicketPrice);
-
-  root.querySelectorAll('#ticketCalendar .calendar-day:not(.other-month)').forEach(btn => {
-    btn.addEventListener('click', () => {
-      root.querySelectorAll('#ticketCalendar .calendar-day').forEach(d => d.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedTicketDay = parseInt(btn.textContent.trim());
-      updateTicketPrice();
-      toast(`Data do evento selecionada: ${selectedTicketDay.toString().padStart(2, '0')}/08/2026`);
-    });
-  });
-
-  root.querySelector('#ticketBuyBtn')?.addEventListener('click', () => {
-    const total = ticketTotal?.textContent || 'R$ 20,00';
-    toast(`🎟️ Compra realizada com sucesso no valor de ${total} para o dia ${selectedTicketDay.toString().padStart(2, '0')}/08/2026!`, 'success');
-  });
-
-  // Search hint
-  root.querySelector('#localSearchDemo')?.addEventListener('input', e => {
-    const val = e.target.value;
-    const hint = root.querySelector('#localSearchHint');
-    if (hint) hint.textContent = val ? `Buscando por “${val}”...` : 'Aguardando termo de pesquisa...';
-  });
-
-  // Timer
-  const timerStart = root.querySelector('#timerStartBtn');
-  const timerReset = root.querySelector('#timerResetBtn');
-  if (timerStart) {
-    timerStart.addEventListener('click', () => {
-      if (state.timerId) {
-        clearInterval(state.timerId);
-        state.timerId = null;
-        timerStart.innerHTML = `<i data-lucide="play"></i> Continuar`;
-        refreshIcons();
-        return;
-      }
-      timerStart.innerHTML = `<i data-lucide="pause"></i> Pausar`;
-      refreshIcons();
-      state.timerId = setInterval(() => {
-        state.timerSeconds++;
-        const disp = root.querySelector('#timerDisplay');
-        if (disp) {
-          const m = String(Math.floor(state.timerSeconds / 60)).padStart(2, '0');
-          const s = String(state.timerSeconds % 60).padStart(2, '0');
-          disp.textContent = `${m}:${s}`;
-        }
-      }, 1000);
-    });
-  }
-  if (timerReset) {
-    timerReset.addEventListener('click', () => {
-      clearInterval(state.timerId);
-      state.timerId = null;
-      state.timerSeconds = 0;
-      const disp = root.querySelector('#timerDisplay');
-      if (disp) disp.textContent = '00:00';
-      if (timerStart) {
-        timerStart.innerHTML = `<i data-lucide="play"></i> Iniciar`;
-        refreshIcons();
-      }
-    });
-  }
-
-  // Page Templates Interactivity
-  // 1. Login Show/Hide Password Toggle
-  const loginPassInput = root.querySelector('#loginPassword');
-  const loginTogglePass = root.querySelector('#loginTogglePass');
-  if (loginTogglePass && loginPassInput) {
-    loginTogglePass.addEventListener('click', () => {
-      const isPass = loginPassInput.type === 'password';
-      loginPassInput.type = isPass ? 'text' : 'password';
-      loginTogglePass.innerHTML = isPass ? '<i data-lucide="eye-off" style="width:16px;height:16px"></i>' : '<i data-lucide="eye" style="width:16px;height:16px"></i>';
-      refreshIcons();
-    });
-  }
-
-  // 2. Login Submit Button with simulated loading
-  const loginSubmitBtn = root.querySelector('#loginSubmitBtn');
-  if (loginSubmitBtn) {
-    loginSubmitBtn.addEventListener('click', () => {
-      loginSubmitBtn.disabled = true;
-      loginSubmitBtn.innerHTML = `<span class="po-loading-spinner" style="width:16px;height:16px;border-width:2px"></span> Autenticando...`;
-      setTimeout(() => {
-        loginSubmitBtn.disabled = false;
-        loginSubmitBtn.innerHTML = `<i data-lucide="check"></i> Acesso Permitido!`;
-        refreshIcons();
-        toast('Autenticação corporativa realizada com sucesso!', 'success');
-        setTimeout(() => {
-          loginSubmitBtn.innerHTML = `<i data-lucide="log-in"></i> Acessar Sistema`;
-          refreshIcons();
-        }, 2000);
-      }, 1000);
-    });
-  }
-
-  // 3. Password Strength Realtime Calculator
-  const changePassInput = root.querySelector('#changePassInput');
-  const strengthBar = root.querySelector('#changePassStrengthBar');
-  const strengthLabel = root.querySelector('#changePassStrengthLabel');
-  if (changePassInput && strengthBar && strengthLabel) {
-    changePassInput.addEventListener('input', () => {
-      const val = changePassInput.value;
-      let score = 0;
-      if (val.length >= 8) score++;
-      if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
-      if (/[0-9]/.test(val)) score++;
-      if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val)) score++;
-
-      if (score <= 1) {
-        strengthLabel.textContent = 'Fraca';
-        strengthLabel.style.color = 'var(--danger)';
-        strengthBar.style.width = '25%';
-        strengthBar.style.background = 'var(--danger)';
-      } else if (score === 2 || score === 3) {
-        strengthLabel.textContent = 'Média';
-        strengthLabel.style.color = 'var(--warning)';
-        strengthBar.style.width = '65%';
-        strengthBar.style.background = 'var(--warning)';
-      } else {
-        strengthLabel.textContent = 'Forte';
-        strengthLabel.style.color = 'var(--success)';
-        strengthBar.style.width = '100%';
-        strengthBar.style.background = 'var(--success)';
-      }
-    });
-  }
-
-  // 4. Blocked User Countdown Timer
-  const blockedCountdown = root.querySelector('#blockedTimerCountdown');
-  if (blockedCountdown) {
-    let remainingSec = 899; // 14:59
-    const timerInterval = setInterval(() => {
-      if (!document.body.contains(blockedCountdown)) {
-        clearInterval(timerInterval);
-        return;
-      }
-      if (remainingSec > 0) {
-        remainingSec--;
-        const m = String(Math.floor(remainingSec / 60)).padStart(2, '0');
-        const s = String(remainingSec % 60).padStart(2, '0');
-        blockedCountdown.textContent = `${m}:${s} min`;
-      }
-    }, 1000);
-  }
-
-  // 5. Password Recovery Feedback
-  const recoverySubmit = root.querySelector('#recoverySubmitBtn');
-  const recoveryForm = root.querySelector('#recoveryPassForm');
-  if (recoverySubmit && recoveryForm) {
-    recoverySubmit.addEventListener('click', () => {
-      const email = root.querySelector('#recoveryEmailInput')?.value || 'seu e-mail';
-      recoveryForm.innerHTML = `
-        <div style="text-align:center;padding:16px 0">
-          <div style="width:48px;height:48px;margin:0 auto 12px;display:grid;place-items:center;background:var(--success-soft);color:var(--success);border-radius:50%">
-            <i data-lucide="check" style="width:24px;height:24px"></i>
-          </div>
-          <h4 style="margin:0 0 6px;font:700 16px 'Manrope',sans-serif;color:var(--ink)">E-mail de Redefinição Enviado!</h4>
-          <p style="margin:0;font-size:12px;color:var(--muted)">As orientações para recuperação de senha foram enviadas para <b>${escapeHTML(email)}</b>.</p>
-        </div>
-      `;
-      refreshIcons();
-      toast(`Link de recuperação enviado para ${email}!`, 'success');
-    });
-  }
-
-  // 6. PO Page Detail Tabs Navigation
-  const detailTabsContainer = root.querySelector('#detailTabsContainer');
-  if (detailTabsContainer) {
-    detailTabsContainer.querySelectorAll('[data-detail-tab]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetTab = btn.dataset.detailTab;
-        detailTabsContainer.querySelectorAll('[data-detail-tab]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        root.querySelectorAll('[id^="detailTabContent-"]').forEach(content => {
-          content.hidden = true;
-        });
-        const activeContent = root.querySelector(`#detailTabContent-${targetTab}`);
-        if (activeContent) activeContent.hidden = false;
-        refreshIcons();
-        toast(`Visualizando aba: ${btn.textContent.trim()}`);
-      });
-    });
-  }
-
-  // 7. PO Page Detail Labs Status & Limit Changer
-  const detailLabApplyBtn = root.querySelector('#detailLabApplyBtn');
-  const detailLabStatus = root.querySelector('#detailLabStatusSelect');
-  const detailLabCredit = root.querySelector('#detailLabCreditInput');
-  const detailStatusBadge = root.querySelector('#detailStatusBadge');
-  const detailCreditVal = root.querySelector('#detailCreditVal');
-  if (detailLabApplyBtn) {
-    detailLabApplyBtn.addEventListener('click', () => {
-      if (detailStatusBadge && detailLabStatus) {
-        detailStatusBadge.className = `po-tag ${detailLabStatus.value}`;
-        detailStatusBadge.textContent = detailLabStatus.options[detailLabStatus.selectedIndex].text.split(' ')[0];
-      }
-      if (detailCreditVal && detailLabCredit) {
-        detailCreditVal.textContent = `R$ ${detailLabCredit.value}`;
-      }
-      toast('Ficha cadastral 360° atualizada com sucesso!', 'success');
-    });
-  }
-
-  // 8. PO Page Login Language Switcher
-  const loginLocaleSelect = root.querySelector('#loginLocaleSelect');
-  const loginFormHeaderTitle = root.querySelector('#loginFormHeaderTitle');
-  if (loginLocaleSelect && loginFormHeaderTitle) {
-    loginLocaleSelect.addEventListener('change', () => {
-      const loc = loginLocaleSelect.value;
-      if (loc === 'en') {
-        loginFormHeaderTitle.textContent = 'Sign in to your Account';
-        toast('Language switched to English (US)');
-      } else if (loc === 'es') {
-        loginFormHeaderTitle.textContent = 'Acceder a su Cuenta';
-        toast('Idioma cambiado a Español (ES)');
-      } else {
-        loginFormHeaderTitle.textContent = 'Acessar sua Conta';
-        toast('Idioma alterado para Português (BR)');
-      }
-    });
-  }
-
-  // 9. PO Page Login Flow Switcher
-  const splitLoginForm = root.querySelector('#splitLoginForm');
-  root.querySelector('#labFlowLoginBtn')?.addEventListener('click', () => {
-    if (loginFormHeaderTitle) loginFormHeaderTitle.textContent = 'Acessar sua Conta';
-    if (splitLoginForm) {
-      splitLoginForm.innerHTML = `
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">E-mail ou Usuário</label>
-          <div style="position:relative">
-            <input class="po-control" id="loginUsername" placeholder="usuario@empresa.com" value="diretoria@empresa.com" style="padding-left:36px;width:100%">
-            <i data-lucide="mail" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-          </div>
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Senha de Acesso</label>
-          <div style="position:relative">
-            <input class="po-control" id="loginPassword" type="password" value="SenhaForte@2026" placeholder="••••••••" style="padding-left:36px;padding-right:36px;width:100%">
-            <i data-lucide="lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)"></i>
-            <button type="button" id="loginTogglePass" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;padding:4px;color:var(--muted);cursor:pointer">
-              <i data-lucide="eye" style="width:16px;height:16px"></i>
-            </button>
-          </div>
-        </div>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Ambiente</label>
-          <select class="po-control">
-            <option value="prd" selected>Produção - Servidor Principal (PRD)</option>
-            <option value="hml">Homologação / Testes (HML)</option>
-          </select>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:2px">
-          <label class="po-checkbox" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" checked> Lembrar meu usuário</label>
-          <a href="#" id="loginForgotPassLink" style="color:var(--brand);font-weight:600">Esqueceu a senha?</a>
-        </div>
-        <button class="po-button primary" id="loginSubmitBtn" style="width:100%;margin-top:8px;font-size:14px;min-height:44px"><i data-lucide="log-in"></i> Acessar Sistema</button>
-      `;
-      refreshIcons();
-      toast('Exibindo fluxo 1: Login Corporativo Padrão.');
+      el.classList.remove('bg-muted', 'text-foreground');
+      el.classList.add('text-muted-foreground');
     }
   });
+}
 
-  root.querySelector('#labFlowRecoveryBtn')?.addEventListener('click', () => {
-    if (loginFormHeaderTitle) loginFormHeaderTitle.textContent = 'Recuperar Senha de Acesso';
-    if (splitLoginForm) {
-      splitLoginForm.innerHTML = `
-        <p style="margin:0 0 12px;font-size:13px;color:var(--muted)">Informe seu e-mail corporativo cadastrado para receber as instruções de recuperação.</p>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">E-mail Cadastrado</label>
-          <input class="po-control" type="email" value="diretoria@empresa.com" style="width:100%">
-        </div>
-        <button class="po-button primary" style="width:100%;margin-top:8px" data-toast="Link de recuperação de senha enviado com sucesso!"><i data-lucide="send"></i> Enviar Link de Recuperação</button>
-      `;
-      refreshIcons();
-      toast('Exibindo fluxo 2: Recuperação de Senha.');
-    }
-  });
+function selectSearchResult(index) {
+  const item = searchResultsData[index];
+  if (!item) return;
 
-  root.querySelector('#labFlow2FABtn')?.addEventListener('click', () => {
-    if (loginFormHeaderTitle) loginFormHeaderTitle.textContent = 'Autenticação em 2 Etapas (2FA)';
-    if (splitLoginForm) {
-      splitLoginForm.innerHTML = `
-        <p style="margin:0 0 12px;font-size:13px;color:var(--muted)">Insira o código de 6 dígitos gerado pelo seu app autenticador corporativo.</p>
-        <div>
-          <label style="display:block;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px">Código de Verificação (6 Dígitos)</label>
-          <input class="po-control" style="font-size:18px;letter-spacing:6px;text-align:center;font-weight:700" maxlength="6" value="794102">
-        </div>
-        <button class="po-button primary" style="width:100%;margin-top:8px" data-toast="Código 2FA validado com sucesso! Acesso concedido."><i data-lucide="shield-check"></i> Validar e Acessar</button>
-      `;
-      refreshIcons();
-      toast('Exibindo fluxo 3: Validação em 2 Etapas (2FA).');
-    }
-  });
-
-  // 10. PO Page Dynamic Detail JSON Toggle & Labs Schema Switcher
-  const toggleJsonBtn = root.querySelector('#dynamicDetailToggleJsonBtn');
-  const renderedView = root.querySelector('#dynamicDetailRenderedView');
-  const jsonView = root.querySelector('#dynamicDetailJsonView');
-  if (toggleJsonBtn && renderedView && jsonView) {
-    toggleJsonBtn.addEventListener('click', () => {
-      const isJsonVisible = !jsonView.hidden;
-      jsonView.hidden = isJsonVisible;
-      renderedView.hidden = !isJsonVisible;
-      toggleJsonBtn.innerHTML = isJsonVisible ? `<i data-lucide="code"></i> Ver Schema JSON` : `<i data-lucide="layout"></i> Ver Renderizado`;
-      refreshIcons();
-      toast(isJsonVisible ? 'Exibindo visualização renderizada dos metadados.' : 'Exibindo código fonte do Schema JSON.');
-    });
-  }
-
-  const labApplySchemaBtn = root.querySelector('#dynamicLabApplySchemaBtn');
-  const labSchemaSelect = root.querySelector('#dynamicLabSchemaSelect');
-  if (labApplySchemaBtn && labSchemaSelect) {
-    labApplySchemaBtn.addEventListener('click', () => {
-      const schemaKey = labSchemaSelect.value;
-      const titleEl = root.querySelector('#dynamicDetailTitle');
-      const subEl = root.querySelector('#dynamicDetailSubtitle');
-      const avatarEl = root.querySelector('#dynamicDetailAvatar');
-      const tagEl = root.querySelector('#dynamicDetailStatusTag');
-      const catEl = root.querySelector('#dynamicDetailCategoryBreadcrumb');
-      const kpi1 = root.querySelector('#dynamicKpiProtocol');
-      const kpi2 = root.querySelector('#dynamicKpiUptime');
-      const kpi3 = root.querySelector('#dynamicKpiReqs');
-      const kpi4 = root.querySelector('#dynamicKpiSync');
-      const sec1 = root.querySelector('#dynamicFieldsSection1');
-      const sec2 = root.querySelector('#dynamicFieldsSection2');
-      const jsonCode = root.querySelector('#dynamicJsonCodeBlock');
-
-      if (schemaKey === 'cliente') {
-        if (titleEl) titleEl.textContent = 'Clínica Aurora Saúde S/A';
-        if (subEl) subEl.textContent = 'Schema: SCH-CUSTOMER-V1 · ID: #CLI-2026-994';
-        if (avatarEl) { avatarEl.textContent = 'CA'; avatarEl.style.background = 'var(--brand)'; }
-        if (tagEl) { tagEl.className = 'po-tag success'; tagEl.textContent = 'Homologado'; }
-        if (catEl) catEl.textContent = 'Cadastros / Clientes Corporativos';
-        if (kpi1) kpi1.textContent = 'R$ 150.000,00';
-        if (kpi2) kpi2.textContent = '980 / 1000 (AAA)';
-        if (kpi3) kpi3.textContent = '18 Pedidos Ativos';
-        if (kpi4) kpi4.textContent = 'Hoje, 11:20:00';
-        if (sec1) {
-          sec1.innerHTML = `
-            <div class="po-detail-info-card"><span>Razão Social</span><b>Clínica Aurora Saúde S/A</b></div>
-            <div class="po-detail-info-card"><span>Nome Fantasia</span><b>Aurora Saúde</b></div>
-            <div class="po-detail-info-card"><span>CNPJ</span><b>12.345.678/0001-90</b></div>
-            <div class="po-detail-info-card"><span>Inscrição Estadual</span><b>06.123.456-7</b></div>
-            <div class="po-detail-info-card"><span>CNAE Principal</span><b>8630-5/03 - Ambulatorial</b></div>
-            <div class="po-detail-info-card"><span>Regime</span><b>Lucro Presumido</b></div>
-          `;
-        }
-        if (sec2) {
-          sec2.innerHTML = `
-            <div class="po-detail-info-card"><span>E-mail</span><b style="color:var(--brand)">contato@aurora.com.br</b></div>
-            <div class="po-detail-info-card"><span>Telefone</span><b>(85) 3456-7890</b></div>
-            <div class="po-detail-info-card"><span>Cidade / UF</span><b>Fortaleza / CE</b></div>
-            <div class="po-detail-info-card"><span>CEP</span><b>60150-160</b></div>
-          `;
-        }
-        if (jsonCode) {
-          jsonCode.textContent = JSON.stringify({
-            title: "Clínica Aurora Saúde S/A",
-            schemaId: "SCH-CUSTOMER-V1",
-            status: "Homologado",
-            cnpj: "12.345.678/0001-90",
-            email: "contato@aurora.com.br",
-            creditLimit: 150000
-          }, null, 2);
-        }
-        toast('Schema de "Cliente Corporativo" carregado e renderizado com sucesso!', 'success');
-      } else if (schemaKey === 'nfe') {
-        if (titleEl) titleEl.textContent = 'Nota Fiscal Eletrônica #NF-82941-SE';
-        if (subEl) subEl.textContent = 'Schema: SCH-NFE-V4 · Chave: 3526 0812 3456 7800 0190 5500 1000 0829 4110';
-        if (avatarEl) { avatarEl.textContent = 'NFe'; avatarEl.style.background = '#0d593f'; }
-        if (tagEl) { tagEl.className = 'po-tag success'; tagEl.textContent = 'Autorizada SEFAZ'; }
-        if (catEl) catEl.textContent = 'Fiscal / Documentos Eletrônicos';
-        if (kpi1) kpi1.textContent = 'R$ 48.950,00';
-        if (kpi2) kpi2.textContent = 'ICMS: R$ 8.811,00';
-        if (kpi3) kpi3.textContent = '14 Itens / Produtos';
-        if (kpi4) kpi4.textContent = '30/08/2026 10:14';
-        if (sec1) {
-          sec1.innerHTML = `
-            <div class="po-detail-info-card"><span>Número da Nota</span><b>82.941 (Série 1)</b></div>
-            <div class="po-detail-info-card"><span>Natureza da Operação</span><b>Venda de Mercadoria Produzida (CFOP 5.101)</b></div>
-            <div class="po-detail-info-card"><span>Destinatário</span><b>Hospital Santa Clara S/A</b></div>
-            <div class="po-detail-info-card"><span>CNPJ Destinatário</span><b>45.987.123/0001-44</b></div>
-            <div class="po-detail-info-card"><span>Data de Emissão</span><b>30/08/2026 às 10:14:22</b></div>
-            <div class="po-detail-info-card"><span>Protocolo de Autorização</span><b>135260984102941</b></div>
-          `;
-        }
-        if (sec2) {
-          sec2.innerHTML = `
-            <div class="po-detail-info-card"><span>Base de Cálculo ICMS</span><b>R$ 48.950,00</b></div>
-            <div class="po-detail-info-card"><span>Valor do IPI</span><b>R$ 2.447,50</b></div>
-            <div class="po-detail-info-card"><span>Valor do Frete</span><b>R$ 450,00 (FOB)</b></div>
-            <div class="po-detail-info-card"><span>Valor Total da NF-e</span><b style="color:var(--success)">R$ 51.847,50</b></div>
-          `;
-        }
-        if (jsonCode) {
-          jsonCode.textContent = JSON.stringify({
-            title: "Nota Fiscal Eletrônica #NF-82941-SE",
-            schemaId: "SCH-NFE-V4",
-            status: "Autorizada SEFAZ",
-            nfeNumber: 82941,
-            totalAmount: 51847.50,
-            protocol: "135260984102941"
-          }, null, 2);
-        }
-        toast('Schema de "Nota Fiscal Eletrônica (NF-e)" carregado e renderizado!', 'success');
-      } else {
-        if (titleEl) titleEl.textContent = 'Integração TOTVS Protheus REST API';
-        if (subEl) subEl.textContent = 'Schema: SCH-PROTHEUS-V2 · ID do Registro: #INT-2026-9081';
-        if (avatarEl) { avatarEl.textContent = 'ERP'; avatarEl.style.background = 'var(--brand)'; }
-        if (tagEl) { tagEl.className = 'po-tag success'; tagEl.textContent = 'Operacional'; }
-        if (catEl) catEl.textContent = 'Serviços / Integrações ERP';
-        if (kpi1) kpi1.textContent = 'REST API (JSON)';
-        if (kpi2) kpi2.textContent = '99.98% (SLA AAA)';
-        if (kpi3) kpi3.textContent = '148.920 reqs';
-        if (kpi4) kpi4.textContent = 'Hoje, 14:32:05';
-        if (sec1) {
-          sec1.innerHTML = `
-            <div class="po-detail-info-card"><span>Nome do Serviço</span><b>Integração TOTVS Protheus</b></div>
-            <div class="po-detail-info-card"><span>URL Base do Endpoint</span><b style="color:var(--brand);font-family:monospace">https://api.erp.totvs.com.br/v2</b></div>
-            <div class="po-detail-info-card"><span>Método HTTP Padrão</span><b>POST / GET (OAuth 2.0)</b></div>
-            <div class="po-detail-info-card"><span>Tempo Limite (Timeout)</span><b>30 segundos</b></div>
-            <div class="po-detail-info-card"><span>Tentativas em Falha</span><b>3 tentativas automáticas</b></div>
-            <div class="po-detail-info-card"><span>Ambiente Conectado</span><b>Produção (PRD-CLUSTER-01)</b></div>
-          `;
-        }
-        if (sec2) {
-          sec2.innerHTML = `
-            <div class="po-detail-info-card"><span>Tipo de Credencial</span><b>Client ID + Secret Key (Bearer Token)</b></div>
-            <div class="po-detail-info-card"><span>Filial Autorizada</span><b>Filial 01 - Matriz São Paulo/SP</b></div>
-            <div class="po-detail-info-card"><span>Validação de Esquema</span><b style="color:var(--success)">JSON-Schema Draft-07 (Válido)</b></div>
-            <div class="po-detail-info-card"><span>Notificação de Erro</span><b>webhook-ops@empresa.com.br</b></div>
-          `;
-        }
-        if (jsonCode) {
-          jsonCode.textContent = JSON.stringify({
-            title: "Integração TOTVS Protheus REST API",
-            schemaId: "SCH-PROTHEUS-V2",
-            status: "Operacional",
-            endpoint: "https://api.erp.totvs.com.br/v2",
-            timeout: 30
-          }, null, 2);
-        }
-        toast('Schema de "Integração ERP Protheus" restaurado!', 'success');
-      }
-      refreshIcons();
-    });
-  }
-
-  // 11. PO Page Default: Filtros, Disclaimers e Busca
-  const defaultSearchInput = root.querySelector('#defaultPageSearchInput');
-  const defaultOrdersTable = root.querySelector('#defaultOrdersTable');
-  const defaultDisclaimers = root.querySelector('#defaultDisclaimersContainer');
-  const defaultOrdersCount = root.querySelector('#defaultOrdersCountBadge');
-  const defaultAddFilterBtn = root.querySelector('#defaultAddFilterBtn');
-  const defaultAddFilterMenu = root.querySelector('#defaultAddFilterMenu');
-  const defaultClearBtn = root.querySelector('#defaultClearFiltersBtn');
-
-  if (defaultOrdersTable) {
-    const updateDefaultTable = () => {
-      const q = (defaultSearchInput?.value || '').toLowerCase().trim();
-      let visible = 0;
-      defaultOrdersTable.querySelectorAll('tbody tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const match = !q || text.includes(q);
-        row.hidden = !match;
-        if (match) visible++;
-      });
-      if (defaultOrdersCount) defaultOrdersCount.textContent = `${visible} ${visible === 1 ? 'Pedido' : 'Pedidos'}`;
-    };
-
-    defaultSearchInput?.addEventListener('input', updateDefaultTable);
-
-    defaultDisclaimers?.addEventListener('click', e => {
-      const removeBtn = e.target.closest('[data-remove-disclaimer]');
-      if (removeBtn) {
-        const tag = removeBtn.closest('.po-disclaimer');
-        if (tag) {
-          const name = tag.textContent.trim();
-          tag.remove();
-          toast(`Filtro "${name}" removido com sucesso!`);
-          updateDefaultTable();
-        }
-      }
-    });
-
-    defaultAddFilterBtn?.addEventListener('click', e => {
-      e.stopPropagation();
-      if (defaultAddFilterMenu) defaultAddFilterMenu.hidden = !defaultAddFilterMenu.hidden;
-    });
-
-    defaultAddFilterMenu?.querySelectorAll('[data-add-disclaimer]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const text = btn.dataset.addDisclaimer;
-        if (defaultDisclaimers && defaultAddFilterBtn) {
-          const pill = document.createElement('span');
-          pill.className = 'po-disclaimer';
-          pill.innerHTML = `${escapeHTML(text)} <button type="button" class="po-disclaimer-remove" data-remove-disclaimer="custom" aria-label="Remover filtro"><i data-lucide="x" style="width:12px;height:12px"></i></button>`;
-          const parentWrap = defaultAddFilterBtn.closest('.dropdown-wrap') || defaultAddFilterBtn;
-          defaultDisclaimers.insertBefore(pill, parentWrap);
-          refreshIcons();
-          toast(`Filtro "${text}" adicionado com sucesso!`, 'success');
-        }
-        if (defaultAddFilterMenu) defaultAddFilterMenu.hidden = true;
-      });
-    });
-
-    defaultClearBtn?.addEventListener('click', () => {
-      if (defaultDisclaimers) {
-        defaultDisclaimers.querySelectorAll('.po-disclaimer').forEach(el => el.remove());
-      }
-      if (defaultSearchInput) defaultSearchInput.value = '';
-      updateDefaultTable();
-      toast('Todos os filtros foram limpos!', 'info');
-    });
-  }
-
-  // 12. PO Page List: Busca, Seleção em Lote, Filtros e Paginação
-  const listSearchInput = root.querySelector('#listPageSearchInput');
-  const listTable = root.querySelector('#listPageTable');
-  const listSelectAll = root.querySelector('#listPageSelectAll');
-  const listBatchBar = root.querySelector('#listPageBatchBar');
-  const listSelectedCount = root.querySelector('#listPageSelectedCount');
-  const listTotalCount = root.querySelector('#listPageTotalCount');
-  const listFilterActiveBtn = root.querySelector('#listFilterActiveBtn');
-  const listFilterAllBtn = root.querySelector('#listFilterAllBtn');
-  const listBatchExportBtn = root.querySelector('#listBatchExportBtn');
-  const listBatchDeleteBtn = root.querySelector('#listBatchDeleteBtn');
-
-  if (listTable) {
-    const updateListSelection = () => {
-      const checks = listTable.querySelectorAll('.list-row-check:checked');
-      const count = checks.length;
-      if (listSelectedCount) listSelectedCount.textContent = count;
-      if (listBatchBar) listBatchBar.hidden = count === 0;
-      if (listSelectAll) {
-        const total = listTable.querySelectorAll('.list-row-check').length;
-        listSelectAll.checked = count === total && total > 0;
-        listSelectAll.indeterminate = count > 0 && count < total;
-      }
-    };
-
-    listSelectAll?.addEventListener('change', () => {
-      const checked = listSelectAll.checked;
-      listTable.querySelectorAll('.list-row-check').forEach(chk => chk.checked = checked);
-      updateListSelection();
-    });
-
-    listTable.addEventListener('change', e => {
-      if (e.target.classList.contains('list-row-check')) {
-        updateListSelection();
-      }
-    });
-
-    listSearchInput?.addEventListener('input', () => {
-      const q = listSearchInput.value.toLowerCase().trim();
-      let visible = 0;
-      listTable.querySelectorAll('tbody tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const match = !q || text.includes(q);
-        row.hidden = !match;
-        if (match) visible++;
-      });
-      if (listTotalCount) listTotalCount.textContent = `${visible} ${visible === 1 ? 'cliente exibido' : 'clientes exibidos'} de 142`;
-    });
-
-    listFilterActiveBtn?.addEventListener('click', () => {
-      let visible = 0;
-      listTable.querySelectorAll('tbody tr').forEach(row => {
-        const isAtivo = row.dataset.status === 'Ativo';
-        row.hidden = !isAtivo;
-        if (isAtivo) visible++;
-      });
-      if (listTotalCount) listTotalCount.textContent = `${visible} clientes ativos exibidos de 142`;
-      toast('Filtrando: apenas clientes ativos.');
-    });
-
-    listFilterAllBtn?.addEventListener('click', () => {
-      listTable.querySelectorAll('tbody tr').forEach(row => row.hidden = false);
-      if (listTotalCount) listTotalCount.textContent = `3 clientes exibidos de 142`;
-      if (listSearchInput) listSearchInput.value = '';
-      toast('Exibindo todos os clientes.');
-    });
-
-    listBatchExportBtn?.addEventListener('click', () => {
-      toast(`Exportando ${listSelectedCount?.textContent || 0} registros selecionados em Excel...`, 'success');
-    });
-
-    listBatchDeleteBtn?.addEventListener('click', () => {
-      const checks = listTable.querySelectorAll('.list-row-check:checked');
-      checks.forEach(chk => chk.closest('tr')?.remove());
-      updateListSelection();
-      toast('Registros selecionados excluídos com sucesso!', 'success');
-    });
-
-    // Paginação
-    const listPagination = root.querySelector('#listPagination');
-    if (listPagination) {
-      listPagination.querySelectorAll('.list-page-num').forEach(btn => {
-        btn.addEventListener('click', () => {
-          listPagination.querySelectorAll('.list-page-num').forEach(b => {
-            b.className = 'po-button ghost sm list-page-num';
-          });
-          btn.className = 'po-button primary sm list-page-num';
-          const p = btn.dataset.page;
-          const currentNum = root.querySelector('#listCurrentPageNum');
-          if (currentNum) currentNum.textContent = p;
-          toast(`Carregando página ${p} da listagem...`);
-        });
-      });
-    }
-  }
-
-  // 13. PO Page Edit: Validação e Ações do Formulário
-  const pageEditSaveBtn = root.querySelector('#pageEditSaveBtn');
-  const pageEditCancelBtn = root.querySelector('#pageEditCancelBtn');
-  const pageEditRazao = root.querySelector('#pageEditRazaoSocial');
-  const pageEditCnpj = root.querySelector('#pageEditCnpj');
-  const pageEditEmail = root.querySelector('#pageEditEmail');
-
-  if (pageEditSaveBtn) {
-    pageEditSaveBtn.addEventListener('click', () => {
-      const razao = pageEditRazao?.value.trim();
-      const cnpj = pageEditCnpj?.value.trim();
-      const email = pageEditEmail?.value.trim();
-
-      if (!razao || !cnpj || !email) {
-        toast('Por favor, preencha todos os campos obrigatórios (*)!', 'danger');
-        if (!razao && pageEditRazao) pageEditRazao.focus();
-        else if (!cnpj && pageEditCnpj) pageEditCnpj.focus();
-        else if (!email && pageEditEmail) pageEditEmail.focus();
-        return;
-      }
-
-      toast(`Registro de "${razao}" atualizado e salvo com sucesso!`, 'success');
-    });
-  }
-
-  if (pageEditCancelBtn) {
-    pageEditCancelBtn.addEventListener('click', () => {
-      toast('Edição cancelada. Os dados não foram alterados.', 'info');
-    });
+  closeSearchModal();
+  if (item.type === 'component') {
+    openComponentDocs(item.id);
+  } else {
+    window.location.hash = item.hash;
   }
 }
 
-function bindAppEvents() {
-  // Clique global
-  document.addEventListener('click', event => {
-    // Abrir componente
-    const compTarget = event.target.closest('[data-component]');
-    if (compTarget) openComponent(compTarget.dataset.component);
-
-    const openTarget = event.target.closest('[data-open]');
-    if (openTarget) openComponent(openTarget.dataset.open);
-
-    // Filtros
-    const filter = event.target.closest('[data-filter]');
-    if (filter) {
-      state.filter = filter.dataset.filter;
-      renderFilters();
-      renderGrid();
-    }
-
-    // Fechar dropdowns ao clicar fora
-    if (!event.target.closest('.dropdown-wrap') && !event.target.closest('.popover-wrap')) {
-      $$('.po-dropdown-menu, .po-popover').forEach(el => el.hidden = true);
-    }
-
-    // Selecionar no modal de lookup
-    const lookupSel = event.target.closest('[data-select-lookup]');
-    if (lookupSel) {
-      const val = lookupSel.dataset.selectLookup;
-      const input = $('#lookupFieldInput');
-      if (input) input.value = val;
-      $('#lookupModalBackdrop').hidden = true;
-      toast(`Registro selecionado: ${val}`);
-    }
-  });
-
-  // Teclado
-  document.addEventListener('keydown', event => {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-      event.preventDefault();
-      search.focus();
-    }
-    if (event.key === 'Escape') {
-      $('#modalBackdrop').hidden = true;
-      $('#lookupModalBackdrop').hidden = true;
-      $('#sidebar').classList.remove('open');
-      $$('.po-dropdown-menu, .po-popover').forEach(el => el.hidden = true);
-    }
-    if (event.key === 'Enter' && event.target.classList.contains('component-card')) {
-      openComponent(event.target.dataset.component);
-    }
-  });
-
-  // Busca global
-  search.addEventListener('input', event => {
-    state.query = event.target.value;
-    if ($('#homeView').hidden) showHome(true);
-    renderGrid();
-  });
-
-  $('.brand')?.addEventListener('click', event => {
-    event.preventDefault();
-    showHome(false);
-  });
-  $('#showAllButton')?.addEventListener('click', () => showHome(true));
-  $('#backButton')?.addEventListener('click', () => showHome(false));
-
-  // Menu mobile
-  $('#menuToggle')?.addEventListener('click', event => {
-    const open = $('#sidebar').classList.toggle('open');
-    event.currentTarget.setAttribute('aria-expanded', open);
-  });
-
-  // Alternador de tema
-  $('#themeToggle')?.addEventListener('click', () => {
-    const dark = document.documentElement.dataset.theme === 'dark';
-    document.documentElement.dataset.theme = dark ? '' : 'dark';
-    localStorage.setItem('po-theme', dark ? 'light' : 'dark');
-    $('#themeToggle').innerHTML = icon(dark ? 'moon' : 'sun');
-    refreshIcons();
-  });
-
-  // Abas de detalhe (Exemplo / Código)
-  $$('.detail-tabs button').forEach(button => {
-    button.addEventListener('click', () => {
-      $$('.detail-tabs button').forEach(tab => {
-        const active = tab === button;
-        tab.classList.toggle('active', active);
-        tab.setAttribute('aria-selected', active);
-      });
-      $$('.tab-panel').forEach(panel => {
-        panel.classList.toggle('active', panel.id === `${button.dataset.tab}Panel`);
-      });
+// Event Listeners da Busca
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('searchInputModal');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      renderSearchResults(e.target.value);
     });
-  });
 
-  // Abas de linguagem de código (HTML / CSS / JS)
-  $$('.code-languages button').forEach(button => {
-    button.addEventListener('click', () => {
-      state.codeLanguage = button.dataset.language;
-      $$('.code-languages button').forEach(tab => {
-        const active = tab === button;
-        tab.classList.toggle('active', active);
-        tab.setAttribute('aria-selected', active);
-      });
-      updateCodeView();
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (selectedSearchIndex < searchResultsData.length - 1) {
+          highlightSearchResult(selectedSearchIndex + 1);
+          document.getElementById(`searchItem-${selectedSearchIndex}`)?.scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (selectedSearchIndex > 0) {
+          highlightSearchResult(selectedSearchIndex - 1);
+          document.getElementById(`searchItem-${selectedSearchIndex}`)?.scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        selectSearchResult(selectedSearchIndex);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeSearchModal();
+      }
     });
-  });
-
-  // Viewport (Desktop / Mobile)
-  $$('[data-viewport]').forEach(button => {
-    button.addEventListener('click', () => {
-      $$('[data-viewport]').forEach(item => item.classList.toggle('active', item === button));
-      $('#previewStage').classList.toggle('mobile', button.dataset.viewport === 'mobile');
-    });
-  });
-
-  // Copiar código
-  $('#copyCode')?.addEventListener('click', async event => {
-    if (!state.current) return;
-    const rawCode = $('#codeBlock')?.dataset.raw || createCode(state.current.name, state.codeLanguage);
-    await copyText(rawCode);
-    const langLabel = state.codeLanguage === 'js' ? 'JavaScript' : state.codeLanguage.toUpperCase();
-    toast(`Código ${langLabel} de ${state.current.name} copiado para a área de transferência!`);
-    
-    event.currentTarget.innerHTML = `<i data-lucide="check"></i><span>Copiado!</span>`;
-    refreshIcons();
-    setTimeout(() => {
-      event.currentTarget.innerHTML = `<i data-lucide="copy"></i><span>Copiar ${langLabel}</span>`;
-      refreshIcons();
-    }, 1800);
-  });
-
-  // Baixar arquivo de código
-  $('#downloadCode')?.addEventListener('click', () => {
-    if (!state.current) return;
-    const ext = state.codeLanguage === 'js' ? 'js' : state.codeLanguage === 'css' ? 'css' : 'html';
-    const filename = `${state.current.name}.${ext}`;
-    const rawCode = $('#codeBlock')?.dataset.raw || createCode(state.current.name, state.codeLanguage);
-    downloadFile(filename, rawCode);
-  });
-
-  // Modais de confirmação e lookup
-  $$('[data-close-modal]').forEach(b => b.addEventListener('click', () => $('#modalBackdrop').hidden = true));
-  $('[data-confirm-modal]')?.addEventListener('click', () => {
-    $('#modalBackdrop').hidden = true;
-    toast('Ação confirmada!');
-  });
-  $$('[data-close-lookup]').forEach(b => b.addEventListener('click', () => $('#lookupModalBackdrop').hidden = true));
-}
-
-function init() {
-  if (localStorage.getItem('po-theme') === 'dark') {
-    document.documentElement.dataset.theme = 'dark';
   }
-
-  renderNavigation();
-  renderFilters();
-  renderGrid();
-  bindAppEvents();
-
-  if (document.documentElement.dataset.theme === 'dark') {
-    $('#themeToggle').innerHTML = icon('sun');
-  }
-
-  refreshIcons();
-
-  const route = location.hash.match(/#\/componente\/(.+)/);
-  if (route) {
-    openComponent(route[1]);
-  }
-}
-
-init();
+});
