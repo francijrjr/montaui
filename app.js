@@ -779,9 +779,8 @@ function renderTemplate(name) {
   if (usedList) {
     const list = templateComponentsUsed[name] || [];
     usedList.innerHTML = list.map(comp => `
-      <button onclick="openComponentDocs('${comp}')" class="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-[#753399]/15 hover:text-[#753399] hover:border-[#753399]/40 transition-colors">
+      <button onclick="openComponentDocs('${comp}')" class="inline-flex items-center rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-[#753399]/15 hover:text-[#753399] hover:border-[#753399]/40 transition-colors">
         <span>${formatTitle(comp)}</span>
-        <i data-lucide="arrow-up-right" class="h-3 w-3 opacity-60"></i>
       </button>
     `).join('');
   }
@@ -2239,13 +2238,13 @@ function renderSidebar() {
         <span class="rounded bg-[#753399]/15 px-1.5 py-0.2 text-[9px] font-bold text-[#753399] dark:text-purple-300">3 Prontos</span>
       </div>
       <a href="#/templates/login" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="login">
-        <span class="flex items-center gap-1.5">🔐 Login & Auth</span>
+        <span>Login & Autenticação</span>
       </a>
       <a href="#/templates/home" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="home">
-        <span class="flex items-center gap-1.5">🌐 Landing Page</span>
+        <span>Landing Page (Home)</span>
       </a>
       <a href="#/templates/dashboard" class="sidebar-tpl-link flex items-center justify-between rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground" data-template="dashboard">
-        <span class="flex items-center gap-1.5">📊 Dashboard SaaS</span>
+        <span>Dashboard SaaS Executivo</span>
       </a>
     </div>
   `;

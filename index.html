@@ -888,15 +888,12 @@ export const WithIcon: Story = {
         <!-- Template Selector Switcher Tabs -->
         <div class="flex flex-wrap gap-2 border-b border-border pb-4">
           <button id="tplBtnLogin" onclick="selectTemplate('login')" class="flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-brand text-white shadow-sm">
-            <i data-lucide="lock" class="h-4 w-4"></i>
             <span>1. Login & Autenticação</span>
           </button>
           <button id="tplBtnHome" onclick="selectTemplate('home')" class="flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-            <i data-lucide="globe" class="h-4 w-4"></i>
             <span>2. Landing Page (Home)</span>
           </button>
           <button id="tplBtnDashboard" onclick="selectTemplate('dashboard')" class="flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-            <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
             <span>3. Dashboard SaaS Executivo</span>
           </button>
         </div>
@@ -945,7 +942,6 @@ export const WithIcon: Story = {
         <div id="templateCodeContainer" class="hidden rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-xl">
           <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2.5 text-xs text-zinc-300">
             <div class="flex items-center gap-2 font-mono">
-              <i data-lucide="file-code" class="h-4 w-4 text-brand"></i>
               <span id="templateCodeFilename">templates/login.tsx</span>
             </div>
             <button id="copyTemplateCodeBtn" class="flex items-center gap-1.5 rounded-md bg-zinc-800 px-3 py-1 text-xs font-semibold text-zinc-200 hover:bg-zinc-700 transition-colors">
@@ -958,8 +954,7 @@ export const WithIcon: Story = {
 
         <!-- Componentes Utilizados neste Template -->
         <div class="rounded-xl border border-border bg-card p-5 space-y-3 shadow-sm">
-          <h4 class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <i data-lucide="boxes" class="h-4 w-4 text-brand"></i>
+          <h4 class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Componentes Monta UI Utilizados Neste Template
           </h4>
           <div id="templateUsedComponentsList" class="flex flex-wrap gap-2 pt-1">
