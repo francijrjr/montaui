@@ -36,7 +36,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/francijrjr/montaui.git"
+    "url": "git+https://github.com/francijrjr/montaui.git"
   },
   "bugs": {
     "url": "https://github.com/francijrjr/montaui/issues"
