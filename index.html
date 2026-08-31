@@ -37,6 +37,51 @@
         origError.apply(console, args);
       };
     })();
+
+    // Anti-Inspection & DevTools Security Shield
+    (function() {
+      // Bloqueia clique com botão direito
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      }, { capture: true });
+
+      // Bloqueia atalhos de inspeção e visualização de código fonte
+      document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123 || e.key === 'F12') {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+        // Ctrl+Shift+I / J / C, Ctrl+U (Ver Código-Fonte), Ctrl+S (Salvar Página)
+        if ((e.ctrlKey || e.metaKey) && (
+          e.key === 'I' || e.key === 'i' ||
+          e.key === 'J' || e.key === 'j' ||
+          e.key === 'C' || e.key === 'c' ||
+          e.key === 'U' || e.key === 'u' ||
+          e.key === 'S' || e.key === 's'
+        )) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }, { capture: true });
+
+      // Anti-Debugging Trap
+      function _shieldTrap() {
+        try { (function() {}).constructor('debugger')(); } catch(e) {}
+      }
+
+      // Detecção de abertura do DevTools
+      var _dtThresh = 160;
+      setInterval(function() {
+        if (window.outerWidth - window.innerWidth > _dtThresh || window.outerHeight - window.innerHeight > _dtThresh) {
+          try { console.clear(); } catch(e) {}
+          _shieldTrap();
+        }
+      }, 1000);
+    })();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -1059,7 +1104,7 @@ export const WithIcon: Story = {
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- App Script -->
-  <script src="app.js"></script>
+  <!-- Protected & Encrypted App Bundle -->
+  <script src="app.min.js"></script>
 </body>
 </html>

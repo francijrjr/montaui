@@ -15,8 +15,10 @@
     "LICENSE"
   ],
   "scripts": {
+    "build": "node build-registry.js && node build-bundle.js",
     "build:registry": "node build-registry.js",
-    "prepublishOnly": "node build-registry.js"
+    "build:bundle": "node build-bundle.js",
+    "prepublishOnly": "node build-registry.js && node build-bundle.js"
   },
   "keywords": [
     "react",
