@@ -88,7 +88,7 @@ const descriptions = {
 };
 
 // ==================== INICIALIZAÇÃO ====================
-document.addEventListener('DOMContentLoaded', () => {
+function bootstrapApp() {
   initTheme();
   renderSidebar();
   renderCategoryFilter();
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (window.lucide) window.lucide.createIcons();
-});
+}
 
 // ==================== TEMA (DARK / LIGHT) ====================
 function initTheme() {
@@ -128,7 +128,7 @@ function toggleTheme() {
 
 // ==================== ROTEAMENTO ====================
 function handleRouting() {
-  const hash = window.location.hash || '#/inicio';
+  const hash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash : '#/inicio';
   if (hash === '#/docs/instalacao' || hash === '#/instalacao') {
     showInstallationDocs(false);
   } else if (hash === '#/docs/tailwind' || hash === '#/tailwind' || hash === '#/tailwind-config') {
@@ -10193,3 +10193,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ==================== EXPORTAÇÃO GLOBAL DE MÉTODOS ====================
+if (typeof window !== 'undefined') {
+  window.openComponentDocs = openComponentDocs;
+  window.showHomePage = showHomePage;
+  window.showInstallationDocs = showInstallationDocs;
+  window.showTailwindDocs = showTailwindDocs;
+  window.showStorybookDocs = showStorybookDocs;
+  window.showTemplatesView = showTemplatesView;
+  window.selectTemplate = selectTemplate;
+  window.switchTemplateTab = switchTemplateTab;
+  window.setTemplateViewport = setTemplateViewport;
+  window.switchDocTab = switchDocTab;
+  window.setFilter = setFilter;
+  window.toggleTheme = toggleTheme;
+  window.openSearchModal = openSearchModal;
+  window.closeSearchModal = closeSearchModal;
+  window.copyCliCommand = copyCliCommand;
+  window.switchPkgManager = switchPkgManager;
+  window.scrollToSection = scrollToSection;
+  window.scrollToCodeSection = scrollToCodeSection;
+  window.handleTemplateLoginSubmit = handleTemplateLoginSubmit;
+  window.handleRouting = handleRouting;
+  window.getTemplateTSX = getTemplateTSX;
+  window.renderTemplate = renderTemplate;
+  window.showToast = showToast;
+  window.copyText = copyText;
+  window.downloadFile = downloadFile;
+}
+
+// Inicialização segura após declaração de todas as variáveis e mapas
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrapApp);
+  } else {
+    bootstrapApp();
+  }
+}
