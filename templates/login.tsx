@@ -30,12 +30,11 @@ export default function LoginPage() {
       <div className="flex flex-col justify-between p-8 sm:p-14">
         {/* Marca & Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-md">
-            M
-          </div>
-          <span className="font-heading text-base font-bold text-foreground">
-            Monta<span className="text-[#753399]">UI</span>
-          </span>
+          <img
+            src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+            alt="Monta UI"
+            className="h-8 w-auto object-contain"
+          />
         </div>
 
         {/* Bloco Central */}

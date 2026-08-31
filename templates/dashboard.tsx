@@ -35,10 +35,11 @@ export default function DashboardPage() {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs">
-                M
-              </div>
-              <span className="font-heading text-sm font-bold">Monta Tech</span>
+              <img
+                src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+                alt="Monta UI"
+                className="h-6 w-auto object-contain"
+              />
             </div>
             <SidebarTrigger />
           </SidebarHeader>

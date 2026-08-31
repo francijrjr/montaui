@@ -1,17 +1,18 @@
 <div align="center">
 
-# 💎 Monta UI Design System
-### Biblioteca Corporativa em React, TypeScript e Tailwind CSS (Zero Radix)
+<img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI Design System" width="380" />
+
+<br>
 
 <p align="center">
-  <b>44 componentes corporativos autorais e 3 templates de telas completas prontos para produção.</b>
+  <b>44 componentes corporativos autorais e 3 templates de telas completas em React, TypeScript e Tailwind CSS (100% Zero Radix).</b>
 </p>
 
 [![React](https://img.shields.io/badge/React-18%2F19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Zero Radix](https://img.shields.io/badge/Zero_Radix-100%25_Próprio-753399?style=for-the-badge)](https://github.com/francijrjr/wf-willfran)
-[![Dark Mode](https://img.shields.io/badge/Dark%20Mode-Nativo-753399?style=for-the-badge)](https://github.com/francijrjr/wf-willfran)
+[![Zero Radix](https://img.shields.io/badge/Zero_Radix-100%25_Próprio-753399?style=for-the-badge)](https://github.com/francijrjr/montaui)
+[![Dark Mode](https://img.shields.io/badge/Dark%20Mode-Nativo-753399?style=for-the-badge)](https://github.com/francijrjr/montaui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 ---

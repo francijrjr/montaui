@@ -322,10 +322,7 @@ function renderTemplate(name) {
           <div class="flex flex-col justify-between p-6 sm:p-10 bg-card">
             <!-- Brand Header -->
             <div class="flex items-center gap-2.5">
-              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-md">
-                M
-              </div>
-              <span class="font-heading text-base font-bold text-foreground">Monta<span class="text-[#753399]">UI</span></span>
+              <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-8 w-auto object-contain">
             </div>
 
             <!-- Main Form Block -->
@@ -459,8 +456,7 @@ function renderTemplate(name) {
           <header class="h-14 border-b border-border px-6 flex items-center justify-between">
             <div class="flex items-center gap-6">
               <div class="flex items-center gap-2">
-                <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs">M</div>
-                <span class="font-heading text-sm font-bold text-foreground">Monta<span class="text-[#753399]">UI</span></span>
+                <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-7 w-auto object-contain">
               </div>
               <nav class="hidden md:flex items-center gap-4 text-xs font-medium text-muted-foreground">
                 <a href="javascript:void(0)" class="text-foreground font-semibold">Recursos</a>
@@ -566,11 +562,7 @@ function renderTemplate(name) {
             <div class="space-y-4">
               <!-- Brand Header -->
               <div class="flex items-center gap-2.5 px-2 py-1">
-                <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-sm">M</div>
-                <div class="space-y-0.5">
-                  <h5 class="font-heading text-xs font-bold text-foreground leading-none">Monta Tech</h5>
-                  <p class="text-[10px] text-muted-foreground leading-none">SaaS Admin</p>
-                </div>
+                <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-6 w-auto object-contain">
               </div>
 
               <!-- Nav Links -->
@@ -852,12 +844,11 @@ export default function LoginPage() {
       <div className="flex flex-col justify-between p-8 sm:p-14">
         {/* Marca & Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs shadow-md">
-            M
-          </div>
-          <span className="font-heading text-base font-bold text-foreground">
-            Monta<span className="text-[#753399]">UI</span>
-          </span>
+          <img
+            src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+            alt="Monta UI"
+            className="h-8 w-auto object-contain"
+          />
         </div>
 
         {/* Bloco Central */}
@@ -987,6 +978,13 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* 1. Navbar Superior */}
       <Navbar
+        brand={
+          <img
+            src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+            alt="Monta UI"
+            className="h-7 w-auto object-contain"
+          />
+        }
         links={[
           { label: "Recursos", href: "#recursos", active: true },
           { label: "Componentes", href: "#componentes" },
@@ -1104,10 +1102,11 @@ export default function DashboardPage() {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#753399] text-white font-bold text-xs">
-                M
-              </div>
-              <span className="font-heading text-sm font-bold">Monta Tech</span>
+              <img
+                src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+                alt="Monta UI"
+                className="h-6 w-auto object-contain"
+              />
             </div>
             <SidebarTrigger />
           </SidebarHeader>

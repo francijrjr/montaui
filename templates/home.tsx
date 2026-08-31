@@ -11,6 +11,13 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* 1. Navbar Superior */}
       <Navbar
+        brand={
+          <img
+            src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
+            alt="Monta UI"
+            className="h-7 w-auto object-contain"
+          />
+        }
         links={[
           { label: "Recursos", href: "#recursos", active: true },
           { label: "Componentes", href: "#componentes" },
