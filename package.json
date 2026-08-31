@@ -1,0 +1,50 @@
+{
+  "name": "montaui",
+  "version": "1.0.0",
+  "description": "Enterprise Design System nativo em React, TypeScript e Tailwind CSS (100% Zero Radix)",
+  "main": "registry/index.json",
+  "bin": {
+    "montaui": "./bin/cli.js",
+    "monta-ui": "./bin/cli.js"
+  },
+  "files": [
+    "registry",
+    "templates",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build:registry": "node build-registry.js",
+    "prepublishOnly": "node build-registry.js"
+  },
+  "keywords": [
+    "react",
+    "design-system",
+    "tailwind",
+    "tailwindcss",
+    "components",
+    "zero-radix",
+    "typescript",
+    "ui",
+    "enterprise",
+    "cli"
+  ],
+  "author": "Francinilton Sobreira da Silva Junior <silva.junior13@aluno.ifce.edu.br>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/francijrjr/montaui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/francijrjr/montaui/issues"
+  },
+  "homepage": "https://github.com/francijrjr/montaui#readme",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "lucide-react": ">=0.300.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
+  }
+}
