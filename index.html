@@ -11,13 +11,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS CDN (with console warning filter for clean devtools) -->
+  <!-- Console Clean Filter: silencia ruídos de extensões (MetaMask/Web3 contentscripts) e avisos do Play CDN -->
   <script>
-    const _origWarn = console.warn;
-    console.warn = function(...args) {
-      if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
-      _origWarn.apply(console, args);
-    };
+    (function() {
+      const origWarn = console.warn;
+      const origError = console.error;
+      function shouldIgnore(args) {
+        try {
+          const str = args.map(a => (typeof a === 'object' && a !== null ? (a.message || a.stack || JSON.stringify(a)) : String(a))).join(' ');
+          return str.includes('MaxListenersExceededWarning') ||
+                 str.includes('ObjectMultiplex') ||
+                 str.includes('app-init-liveness') ||
+                 str.includes('background-liveness') ||
+                 str.includes('cdn.tailwindcss.com should not be used in production');
+        } catch(e) { return false; }
+      }
+      console.warn = function(...args) {
+        if (shouldIgnore(args)) return;
+        origWarn.apply(console, args);
+      };
+      console.error = function(...args) {
+        if (shouldIgnore(args)) return;
+        origError.apply(console, args);
+      };
+    })();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
