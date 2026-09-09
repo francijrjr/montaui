@@ -5,7 +5,7 @@
 <br>
 
 <p align="center">
-  <b>44 componentes corporativos autorais e 3 templates de telas completas em React, TypeScript e Tailwind CSS (100% Zero Radix).</b>
+  <b>48 componentes corporativos autorais e 3 templates de telas completas em React, TypeScript e Tailwind CSS (100% Zero Radix).</b>
 </p>
 
 [![React](https://img.shields.io/badge/React-18%2F19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
@@ -21,8 +21,8 @@
 
 ## Principais Recursos
 
-- **100% Zero Radix**: Construído diretamente em **React + TypeScript + Tailwind CSS** nativos, sem dependências de terceiros.
-- **Monta CLI**: Instalação simples e individual de componentes com `pnpm dlx monta-ui add [componente]`.
+- **100% Zero Radix**: Construído diretamente em **React + TypeScript + Tailwind CSS** nativos, sem Radix UI. As dependências de cada componente estão declaradas no registro.
+- **Monta CLI**: Instalação simples e individual de componentes com `pnpm dlx montaui add [componente]`.
 - **Paleta Corporativa**: Roxo `#753399`, modo escuro/claro nativo (`class="dark"`) e tokens HSL universais.
 - **Suíte de Gráficos**: Gráficos analíticos de Barras com Metas, Linhas/Área com gradientes, Donut e Barras Horizontais.
 - **Templates Prontos**: Telas completas de **Login**, **Landing Page** e **Dashboard SaaS Executivo**.
@@ -35,25 +35,27 @@
 ### 1. Inicializar Monta UI no seu projeto React
 ```bash
 # Inicializa a estrutura de componentes e utilitários
-pnpm dlx monta-ui init
+pnpm dlx montaui init
 ```
 
 ### 2. Adicionar Componentes
 ```bash
-# Adiciona qualquer um dos 44 componentes
-pnpm dlx monta-ui add button
-pnpm dlx monta-ui add sidebar
-pnpm dlx monta-ui add chart
-pnpm dlx monta-ui add form
-pnpm dlx monta-ui add loading
+# Adiciona qualquer um dos 48 componentes
+pnpm dlx montaui add button
+pnpm dlx montaui add sidebar
+pnpm dlx montaui add chart
+pnpm dlx montaui add form
+pnpm dlx montaui add loading
 ```
 
 ---
 
-## Catálogo dos 44 Componentes Corporativos
+## Catálogo dos 48 Componentes Corporativos
 
 | Categoria | Componentes |
 | :--- | :--- |
+| **Gradientes Animados** | `animated-gradient` |
+| **Text Animations** | `gradient-text`, `shimmer-text`, `text-reveal` |
 | **Ações & Menus** | `button`, `button-group`, `dropdown-menu`, `popover`, `context-menu`, `menubar`, `navigation-menu` |
 | **Formulários** | `field`, `form`, `input`, `checkbox`, `switch`, `select`, `textarea`, `radio-group`, `slider`, `date-picker`, `lookup`, `combo`, `multiselect` |
 | **Layout & Containers** | `dialog`, `card`, `accordion`, `tabs` |
@@ -76,8 +78,8 @@ pnpm dlx monta-ui add loading
 ```text
 ├── index.html                  # Portal interativo de documentação e laboratório
 ├── app.js                      # Motor interativo, live previews e gerador TSX
-├── build-registry.js           # Compilador dos 44 componentes para TSX e JSON
-├── registry/                   # Registro oficial com os 44 componentes .tsx e .json
+├── build-registry.js           # Compilador dos 48 componentes para TSX e JSON
+├── registry/                   # Registro oficial com os 48 componentes .tsx e .json
 │   ├── ui/                     # Componentes React + TypeScript nativos
 │   └── json/                   # Definições de dependências para o Monta CLI
 ├── templates/                  # Telas completas (Login, Home, Dashboard)
@@ -99,3 +101,11 @@ Distribuído sob a licença **MIT**. Consulte o arquivo `LICENSE` para obter mai
 <div align="center">
   <b>Monta UI — Design System Enterprise</b>
 </div>
+
+## Integração para pessoas e agentes
+
+Consulte [o guia de integração](docs/integration.md), os [contratos derivados do TypeScript](registry/contracts.json) e os [exemplos compiláveis](examples/). Use `npx montaui info text-reveal --json` para obter um contrato específico.
+
+Os quatro componentes de movimento dependem somente de React e incluem seu CSS. As durações são em segundos e respeitam movimento reduzido.
+
+Execute `npm test` para reconstruir e verificar os 48 componentes e exemplos.

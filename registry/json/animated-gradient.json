@@ -1,0 +1,15 @@
+{
+  "name": "animated-gradient",
+  "type": "registry:ui",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/animated-gradient.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nconst presets = {\n  brand: [\"#35154a\", \"#753399\", \"#c084fc\"],\n  aurora: [\"#082f49\", \"#0d9488\", \"#818cf8\"],\n  sunset: [\"#701a75\", \"#e11d48\", \"#fbbf24\"],\n} as const;\n\nexport interface AnimatedGradientProps extends React.HTMLAttributes<HTMLDivElement> {\n  /** Paleta usada quando colors não é informado. @default \"brand\" */\n  preset?: keyof typeof presets;\n  /** Duas ou mais cores CSS; substitui preset. */\n  colors?: readonly [string, string, ...string[]];\n  /** Duração de um ciclo em segundos. Mínimo 0.1. @default 12 */\n  duration?: number;\n  /** Pausa o movimento na posição atual. @default false */\n  paused?: boolean;\n}\n\nconst css = `\n@keyframes monta-gradient-pan { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }\n.monta-animated-gradient { position: relative; isolation: isolate; overflow: hidden; }\n.monta-animated-gradient > .monta-gradient-layer { position: absolute; inset: 0; z-index: -1; pointer-events: none; background-size: 300% 300%; animation: monta-gradient-pan var(--monta-duration,12s) ease-in-out infinite; animation-play-state: var(--monta-play,running); }\n@media (prefers-reduced-motion: reduce) { .monta-animated-gradient > .monta-gradient-layer { animation: none; } }\n`;\n\n/** Fundo decorativo. Defina altura/padding e contraste do conteúdo no contêiner. */\nexport const AnimatedGradient = React.forwardRef<\n  HTMLDivElement,\n  AnimatedGradientProps\n>(function AnimatedGradient(\n  {\n    preset = \"brand\",\n    colors,\n    duration = 12,\n    paused = false,\n    className,\n    style,\n    children,\n    ...props\n  },\n  ref,\n) {\n  const palette =\n    colors && colors.length >= 2 ? colors : presets[preset] || presets.brand;\n  const seconds = Number.isFinite(duration) ? Math.max(0.1, duration) : 12;\n  return (\n    <div\n      {...props}\n      ref={ref}\n      className={[\"monta-animated-gradient\", className]\n        .filter(Boolean)\n        .join(\" \")}\n      style={\n        {\n          \"--monta-duration\": `${seconds}s`,\n          \"--monta-play\": paused ? \"paused\" : \"running\",\n          ...style,\n        } as React.CSSProperties\n      }\n    >\n      <style>{css}</style>\n      <span\n        aria-hidden=\"true\"\n        className=\"monta-gradient-layer\"\n        style={{\n          backgroundImage: `linear-gradient(120deg, ${palette.join(\", \")})`,\n        }}\n      />\n      {children}\n    </div>\n  );\n});\n",
+      "type": "registry:ui",
+      "target": "components/monta-ui/animated-gradient.tsx"
+    }
+  ]
+}

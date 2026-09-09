@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -16,7 +18,7 @@ export interface StepperProps {
 
 export function Stepper({ steps, currentStep, onStepClick, className }: StepperProps) {
   return (
-    <div className={cn("w-full grid grid-cols-4 relative px-2", className)}>
+    <div className={cn("w-full grid relative px-2", className)} style={{ gridTemplateColumns: "repeat(" + Math.max(1, steps.length) + ", minmax(0, 1fr))" }}>
       {steps.map((step, idx) => {
         const stepNum = idx + 1
         const isCompleted = stepNum < currentStep

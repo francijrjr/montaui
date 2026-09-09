@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
@@ -7,8 +9,8 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, maxLength, showCount = false, value, onChange, ...props }, ref) => {
-    const [count, setCount] = React.useState(0)
+  ({ className, maxLength, showCount = false, value, defaultValue, onChange, ...props }, ref) => {
+    const [count, setCount] = React.useState(String(defaultValue ?? "").length)
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setCount(e.target.value.length)
@@ -24,13 +26,14 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           ref={ref}
           maxLength={maxLength}
+          defaultValue={defaultValue}
           onChange={handleChange}
           value={value}
           {...props}
         />
         {showCount && maxLength && (
           <div className="mt-1 flex justify-end text-[11px] font-mono text-muted-foreground">
-            {count}/{maxLength}
+            {value !== undefined ? String(value).length : count}/{maxLength}
           </div>
         )}
       </div>

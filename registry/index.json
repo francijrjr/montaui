@@ -513,6 +513,38 @@
       "files": [
         "ui/loading.tsx"
       ]
+    },
+    {
+      "name": "animated-gradient",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/animated-gradient.tsx"
+      ]
+    },
+    {
+      "name": "gradient-text",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/gradient-text.tsx"
+      ]
+    },
+    {
+      "name": "shimmer-text",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/shimmer-text.tsx"
+      ]
+    },
+    {
+      "name": "text-reveal",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/text-reveal.tsx"
+      ]
     }
   ]
 }

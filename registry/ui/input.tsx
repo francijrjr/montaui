@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Eye, EyeOff, X, LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -37,6 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {isPassword && !disabled && (
           <button
             type="button"
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none"
           >
@@ -46,6 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {clearable && !isPassword && value && !disabled && (
           <button
             type="button"
+            aria-label="Limpar campo"
             onClick={onClear}
             className="absolute right-3 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none"
           >

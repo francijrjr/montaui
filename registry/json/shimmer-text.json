@@ -1,0 +1,15 @@
+{
+  "name": "shimmer-text",
+  "type": "registry:ui",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/shimmer-text.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> {\n  /** Texto a exibir, sem marcação interna. */\n  children: string;\n  /** Cor base CSS. @default \"#753399\" */\n  color?: string;\n  /** Cor da faixa de brilho. @default \"#e9d5ff\" */\n  highlightColor?: string;\n  /** Duração de um ciclo em segundos. Mínimo 0.1. @default 3 */\n  duration?: number;\n  /** Pausa o movimento na posição atual. @default false */\n  paused?: boolean;\n}\n\nconst css = `\n@keyframes monta-text-shimmer { from { background-position: 100% center; } to { background-position: -100% center; } }\n.monta-shimmer-text { color: var(--monta-base,#753399); }\n@supports (background-clip: text) or (-webkit-background-clip: text) {\n  .monta-shimmer-text { background-image: linear-gradient(110deg,var(--monta-base) 35%,var(--monta-highlight) 50%,var(--monta-base) 65%); background-size: 200% auto; background-clip: text; -webkit-background-clip: text; color: transparent; animation: monta-text-shimmer var(--monta-duration,3s) linear infinite; animation-play-state: var(--monta-play,running); }\n}\n@media (prefers-reduced-motion: reduce) { .monta-shimmer-text { animation: none; background: none; color: var(--monta-base); } }\n@media (forced-colors: active) { .monta-shimmer-text { background: none; color: CanvasText; } }\n`;\n\nexport const ShimmerText = React.forwardRef<HTMLSpanElement, ShimmerTextProps>(\n  function ShimmerText(\n    {\n      children,\n      color = \"#753399\",\n      highlightColor = \"#e9d5ff\",\n      duration = 3,\n      paused = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) {\n    const seconds = Number.isFinite(duration) ? Math.max(0.1, duration) : 3;\n    return (\n      <span\n        {...props}\n        ref={ref}\n        className={[\"monta-shimmer-text\", className].filter(Boolean).join(\" \")}\n        style={\n          {\n            \"--monta-base\": color,\n            \"--monta-highlight\": highlightColor,\n            \"--monta-duration\": `${seconds}s`,\n            \"--monta-play\": paused ? \"paused\" : \"running\",\n            ...style,\n          } as React.CSSProperties\n        }\n      >\n        <style>{css}</style>\n        {children}\n      </span>\n    );\n  },\n);\n",
+      "type": "registry:ui",
+      "target": "components/monta-ui/shimmer-text.tsx"
+    }
+  ]
+}

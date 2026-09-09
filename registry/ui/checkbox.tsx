@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -9,7 +11,8 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, description, checked, defaultChecked, onChange, disabled, id, ...props }, ref) => {
-    const inputId = id || React.useId()
+    const generatedId = React.useId()
+    const inputId = id || generatedId
     const [isChecked, setIsChecked] = React.useState(defaultChecked || false)
     const effectiveChecked = checked !== undefined ? checked : isChecked
 
@@ -31,22 +34,18 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             className="peer sr-only"
             {...props}
           />
-          <div
-            onClick={() => {
-              if (!disabled) {
-                const newChecked = !effectiveChecked
-                if (checked === undefined) setIsChecked(newChecked)
-              }
-            }}
+          <label
+            htmlFor={inputId}
+            aria-hidden="true"
             className={cn(
-              "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-input transition-all cursor-pointer",
+              "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-input transition-all cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-[#753399]",
               effectiveChecked ? "bg-[#753399] border-[#753399] text-white shadow-sm" : "bg-background hover:border-[#753399]",
               disabled && "cursor-not-allowed opacity-50",
               className
             )}
           >
             {effectiveChecked && <Check className="h-3 w-3 stroke-[3]" />}
-          </div>
+          </label>
         </div>
         {(label || description) && (
           <div className="grid gap-0.5 leading-none">

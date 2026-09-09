@@ -1,0 +1,14 @@
+# Monta UI
+
+React 18/19, TypeScript and Tailwind CSS components. Named exports. Source is copied into your project; there is no Radix dependency.
+
+- [Integration guide](docs/integration.md): installation, aliases, composition, accessibility and motion conventions.
+- [Machine-readable contracts](registry/contracts.json): actual exports, custom props, required flags, defaults, dependencies, source and runnable examples for every component.
+- [Registry index](registry/index.json): component names and dependencies.
+- [Examples](examples/): one typechecked React example per component.
+
+Run `npx montaui info <component> --json` for a focused contract. Read the corresponding source before adding inherited HTML props. Do not infer props from shadcn or Radix APIs: `asChild` is not supported by Monta triggers.
+
+Motion: animated-gradient, gradient-text, shimmer-text, text-reveal. All four require only React and ship their CSS inside the TSX file. Motion duration/delay/stagger use seconds. Respect prefers-reduced-motion; do not override it. Text components accept a string; compose inside semantic headings. TextReveal replays by changing its React key.
+
+The local repository can contain changes newer than the published npm version. Use a locally packed tarball when validating unreleased components.

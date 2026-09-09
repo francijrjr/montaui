@@ -13,76 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Console Clean Filter: silencia ruídos de extensões (MetaMask/Web3 contentscripts) e avisos do Play CDN -->
-  <script>
-    (function() {
-      const origWarn = console.warn;
-      const origError = console.error;
-      function shouldIgnore(args) {
-        try {
-          const str = args.map(a => (typeof a === 'object' && a !== null ? (a.message || a.stack || JSON.stringify(a)) : String(a))).join(' ');
-          return str.includes('MaxListenersExceededWarning') ||
-                 str.includes('ObjectMultiplex') ||
-                 str.includes('app-init-liveness') ||
-                 str.includes('background-liveness') ||
-                 str.includes('cdn.tailwindcss.com should not be used in production');
-        } catch(e) { return false; }
-      }
-      console.warn = function(...args) {
-        if (shouldIgnore(args)) return;
-        origWarn.apply(console, args);
-      };
-      console.error = function(...args) {
-        if (shouldIgnore(args)) return;
-        origError.apply(console, args);
-      };
-    })();
-
-    // Anti-Inspection & DevTools Security Shield
-    (function() {
-      // Bloqueia clique com botão direito
-      document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-      }, { capture: true });
-
-      // Bloqueia atalhos de inspeção e visualização de código fonte
-      document.addEventListener('keydown', function(e) {
-        // F12
-        if (e.keyCode === 123 || e.key === 'F12') {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
-        // Ctrl+Shift+I / J / C, Ctrl+U (Ver Código-Fonte), Ctrl+S (Salvar Página)
-        if ((e.ctrlKey || e.metaKey) && (
-          e.key === 'I' || e.key === 'i' ||
-          e.key === 'J' || e.key === 'j' ||
-          e.key === 'C' || e.key === 'c' ||
-          e.key === 'U' || e.key === 'u' ||
-          e.key === 'S' || e.key === 's'
-        )) {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
-      }, { capture: true });
-
-      // Anti-Debugging Trap
-      function _shieldTrap() {
-        try { (function() {}).constructor('debugger')(); } catch(e) {}
-      }
-
-      // Detecção de abertura do DevTools
-      var _dtThresh = 160;
-      setInterval(function() {
-        if (window.outerWidth - window.innerWidth > _dtThresh || window.outerHeight - window.innerHeight > _dtThresh) {
-          try { console.clear(); } catch(e) {}
-          _shieldTrap();
-        }
-      }, 1000);
-    })();
-  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -218,29 +148,30 @@
   </style>
 
   <!-- Lucide Icons -->
+  <link rel="stylesheet" href="layout.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-brand selection:text-white">
+<body data-view="home" class="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-brand selection:text-white">
 
   <!-- ==================== HEADER / NAVBAR ==================== -->
-  <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <header id="siteHeader" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
     <div class="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
       <div class="flex items-center gap-6">
         <a href="#/inicio" class="flex items-center gap-2.5 font-heading font-bold text-base tracking-tight transition-opacity hover:opacity-90">
           <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-7 w-auto object-contain">
         </a>
-        <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+        <nav id="primaryNav" aria-label="Navegação principal" class="flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <a href="#/componente/button" data-view="docs" class="transition-colors hover:text-foreground font-semibold">Componentes</a>
           <a href="#/docs/instalacao" class="transition-colors hover:text-foreground">Instalação CLI</a>
           <a href="#/docs/tailwind" class="transition-colors hover:text-foreground">Tailwind Config</a>
           <a href="#/docs/storybook" class="transition-colors hover:text-foreground">Storybook</a>
           <a href="#/templates/login" class="transition-colors hover:text-foreground font-semibold text-brand">Templates</a>
-          <a href="#/componente/button" class="text-foreground transition-colors hover:text-foreground font-semibold">Componentes</a>
         </nav>
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
         <!-- Search Button (Command Palette) -->
-        <button id="searchTrigger" class="relative flex h-8 w-full items-center justify-between rounded-md border border-input bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-accent sm:w-64">
+        <button id="searchTrigger" aria-label="Buscar no Monta UI" class="relative flex h-8 w-full items-center justify-between rounded-md border border-input bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-accent sm:w-64">
           <span class="inline-flex items-center gap-2">
             <i data-lucide="search" class="h-3.5 w-3.5"></i>
             <span>Buscar no Monta UI...</span>
@@ -263,17 +194,20 @@
   </header>
 
   <!-- ==================== MAIN WRAPPER ==================== -->
-  <div class="container mx-auto max-w-screen-2xl flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)] px-4 sm:px-8">
+  <div id="pageLayout" class="container mx-auto max-w-screen-2xl flex-1 items-start px-4 sm:px-8">
+    <button id="componentMenuToggle" onclick="toggleComponentMenu()" aria-controls="sidebar" aria-expanded="false" class="items-center gap-2 rounded-md border border-input px-3 py-2 text-sm font-medium">
+      <i data-lucide="panel-left" class="h-4 w-4"></i> Menu de componentes
+    </button>
     
     <!-- ==================== SIDEBAR ==================== -->
-    <aside id="sidebar" class="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border/40 py-6 pr-6 lg:py-8">
+    <aside id="sidebar" aria-label="Componentes e documentação" class="overflow-y-auto border-r border-border/40 py-6 pr-6 lg:py-8">
       <div class="w-full flex flex-col gap-6" id="sidebarContent">
         <!-- Inserido dinamicamente via JS -->
       </div>
     </aside>
 
     <!-- ==================== CONTENT AREA ==================== -->
-    <main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_220px]">
+    <main id="pageContent" class="relative min-w-0 py-6 lg:gap-10 lg:py-8">
       
       <!-- ==================== VIEW 1: HOME / LANDING ==================== -->
       <section id="homeView" class="w-full min-w-0">
@@ -285,11 +219,11 @@
             <i data-lucide="arrow-right" class="h-3 w-3"></i>
           </a>
           <h1 class="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-            Construa interfaces com o<br>
+            Construa interfaces com o&nbsp;<br>
             <span class="text-brand">Monta UI Design System.</span>
           </h1>
           <p class="max-w-[700px] text-base sm:text-lg text-muted-foreground">
-            Biblioteca corporativa com 44 componentes nativos de alto nível construídos em <b>React 18/19</b>, <b>TypeScript</b> e <b>Tailwind CSS</b>. 100% autoral, sem dependências de terceiros.
+            Biblioteca corporativa com 48 componentes nativos de alto nível construídos em <b>React 18/19</b>, <b>TypeScript</b> e <b>Tailwind CSS</b>. Componentes autorais, sem Radix UI.
           </p>
           <div class="flex flex-wrap items-center gap-3 pt-2">
             <button onclick="openComponentDocs('button')" class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand px-5 text-sm font-semibold text-white shadow transition-colors hover:bg-brand-hover">
@@ -297,11 +231,16 @@
               <i data-lucide="arrow-right" class="h-4 w-4"></i>
             </button>
             <button onclick="copyInstallCmd()" class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground font-mono text-xs">
-              <span id="heroInstallText">pnpm dlx monta-ui add button</span>
+              <span id="heroInstallText">pnpm dlx montaui add button</span>
               <i data-lucide="copy" class="h-3.5 w-3.5 text-muted-foreground"></i>
             </button>
           </div>
         </div>
+
+        <section class="motion-section" aria-labelledby="motionHeading">
+          <div class="motion-section-heading"><div><span class="motion-eyebrow">NOVO / MOTION COLLECTION</span><h2 id="motionHeading">Um pouco de movimento.<br>Muitas possibilidades.</h2></div><p>Gradientes e textos animados.<br>Explore, ajuste e leve para o seu projeto.</p></div>
+          <div id="motionGallery"></div>
+        </section>
 
         <!-- Showcase Mockup: Cards & Interactive Widgets -->
         <div id="homeShowcaseSection" class="mt-12 rounded-xl border border-border bg-card p-6 shadow-sm scroll-mt-24">
@@ -428,6 +367,10 @@
             <span id="docCategoryBadge" class="rounded-md bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">Ações</span>
           </div>
           <p id="docDescription" class="text-base text-muted-foreground">Exibe um botão de disparo ou gatilho com variantes visuais e suporte a acessibilidade.</p>
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="copyIntegrationContext()" class="inline-flex items-center gap-2 rounded-md border border-input px-3 py-2 text-xs font-medium hover:bg-accent"><i data-lucide="copy" class="h-3.5 w-3.5"></i> Copiar para IA</button>
+            <span class="text-xs text-muted-foreground">Import, props, dependências, exemplo e código em um só contexto.</span>
+          </div>
         </div>
 
         <!-- Interactive Preview Box (Tabs: Preview | Code) -->
@@ -484,7 +427,7 @@
               </button>
             </div>
             <div class="p-4 font-mono text-xs text-[#79c0ff]">
-              <code id="docCliCommand">pnpm dlx monta-ui add button</code>
+              <code id="docCliCommand">pnpm dlx montaui add button</code>
             </div>
           </div>
         </div>
@@ -588,7 +531,7 @@
           </h2>
           <p class="text-sm text-muted-foreground">Execute o assistente de inicialização para gerar o arquivo <code class="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">components.json</code>:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
-            <code>pnpm dlx monta-ui init</code>
+            <code>pnpm dlx montaui init</code>
           </div>
           <p class="text-xs text-muted-foreground mt-2">O arquivo <code class="bg-muted px-1 rounded font-mono">components.json</code> gerado terá a seguinte estrutura:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs">
@@ -637,7 +580,7 @@ export function cn(...inputs: ClassValue[]) {
           </h2>
           <p class="text-sm text-muted-foreground">Agora você pode instalar qualquer componente do catálogo instantaneamente:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
-            <code># Adicionar múltiplos componentes<br>pnpm dlx monta-ui add button dialog input table badge</code>
+            <code># Adicionar múltiplos componentes<br>pnpm dlx montaui add button dialog input table badge</code>
           </div>
         </div>
       </section>
@@ -938,7 +881,7 @@ export const WithIcon: Story = {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 id="templateViewTitle" class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Templates de Telas</h1>
-              <p class="mt-1.5 text-sm text-muted-foreground">Telas corporativas prontas para produção construídas com os 44 componentes 100% nativos do Monta UI.</p>
+              <p class="mt-1.5 text-sm text-muted-foreground">Telas corporativas prontas para produção construídas com os 48 componentes 100% nativos do Monta UI.</p>
             </div>
             <div class="flex items-center gap-2">
               <span class="rounded-full bg-brand/15 px-3 py-1 text-xs font-bold text-brand">3 Templates Disponíveis</span>
@@ -1025,7 +968,7 @@ export const WithIcon: Story = {
       </section>
 
       <!-- ==================== RIGHT TOC SIDEBAR ==================== -->
-      <div class="hidden text-sm xl:block w-56 shrink-0">
+      <div id="pageToc" class="hidden text-sm xl:block w-56 shrink-0">
         <div class="sticky top-20 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-8">
           <div class="space-y-3">
             <p class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">Nesta Página</p>
@@ -1104,7 +1047,9 @@ export const WithIcon: Story = {
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Protected & Encrypted App Bundle -->
+  <!-- Generated registry, React previews and documentation runtime -->
+  <script src="registry/catalog.js"></script>
+  <script src="motion-preview.js"></script>
   <script src="app.min.js"></script>
 </body>
 </html>

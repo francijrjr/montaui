@@ -588,6 +588,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {isPassword && !disabled && (
           <button
             type="button"
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none"
           >
@@ -597,6 +598,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {clearable && !isPassword && value && !disabled && (
           <button
             type="button"
+            aria-label="Limpar campo"
             onClick={onClear}
             className="absolute right-3 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none"
           >
@@ -623,8 +625,8 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, maxLength, showCount = false, value, onChange, ...props }, ref) => {
-    const [count, setCount] = React.useState(0)
+  ({ className, maxLength, showCount = false, value, defaultValue, onChange, ...props }, ref) => {
+    const [count, setCount] = React.useState(String(defaultValue ?? "").length)
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setCount(e.target.value.length)
@@ -640,13 +642,14 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           ref={ref}
           maxLength={maxLength}
+          defaultValue={defaultValue}
           onChange={handleChange}
           value={value}
           {...props}
         />
         {showCount && maxLength && (
           <div className="mt-1 flex justify-end text-[11px] font-mono text-muted-foreground">
-            {count}/{maxLength}
+            {value !== undefined ? String(value).length : count}/{maxLength}
           </div>
         )}
       </div>
@@ -671,7 +674,8 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, description, checked, defaultChecked, onChange, disabled, id, ...props }, ref) => {
-    const inputId = id || React.useId()
+    const generatedId = React.useId()
+    const inputId = id || generatedId
     const [isChecked, setIsChecked] = React.useState(defaultChecked || false)
     const effectiveChecked = checked !== undefined ? checked : isChecked
 
@@ -693,22 +697,18 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             className="peer sr-only"
             {...props}
           />
-          <div
-            onClick={() => {
-              if (!disabled) {
-                const newChecked = !effectiveChecked
-                if (checked === undefined) setIsChecked(newChecked)
-              }
-            }}
+          <label
+            htmlFor={inputId}
+            aria-hidden="true"
             className={cn(
-              "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-input transition-all cursor-pointer",
+              "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-input transition-all cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-[#753399]",
               effectiveChecked ? "bg-[#753399] border-[#753399] text-white shadow-sm" : "bg-background hover:border-[#753399]",
               disabled && "cursor-not-allowed opacity-50",
               className
             )}
           >
             {effectiveChecked && <Check className="h-3 w-3 stroke-[3]" />}
-          </div>
+          </label>
         </div>
         {(label || description) && (
           <div className="grid gap-0.5 leading-none">
@@ -741,7 +741,7 @@ export interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
 }
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
-  ({ className, checked, defaultChecked = false, onCheckedChange, disabled, ...props }, ref) => {
+  ({ className, checked, defaultChecked = false, onCheckedChange, onClick, disabled, ...props }, ref) => {
     const [isChecked, setIsChecked] = React.useState(defaultChecked)
     const effectiveChecked = checked !== undefined ? checked : isChecked
 
@@ -759,7 +759,7 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         role="switch"
         aria-checked={effectiveChecked}
         disabled={disabled}
-        onClick={handleToggle}
+        onClick={(event) => { onClick?.(event); if (!event.defaultPrevented) handleToggle() }}
         className={cn(
           "inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#753399] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           effectiveChecked ? "bg-[#753399]" : "bg-input",
@@ -2105,7 +2105,7 @@ export interface StepperProps {
 
 export function Stepper({ steps, currentStep, onStepClick, className }: StepperProps) {
   return (
-    <div className={cn("w-full grid grid-cols-4 relative px-2", className)}>
+    <div className={cn("w-full grid relative px-2", className)} style={{ gridTemplateColumns: "repeat(" + Math.max(1, steps.length) + ", minmax(0, 1fr))" }}>
       {steps.map((step, idx) => {
         const stepNum = idx + 1
         const isCompleted = stepNum < currentStep
@@ -3293,10 +3293,12 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   collapsible?: boolean
 }
 
-export function Sidebar({ className, children, ...props }: SidebarProps) {
-  const { collapsed } = useSidebar()
+export function Sidebar({ className, children, collapsible = true, ...props }: SidebarProps) {
+  const context = useSidebar()
+  const collapsed = collapsible && context.collapsed
 
   return (
+    <SidebarContext.Provider value={{ ...context, collapsed }}>
     <aside
       className={cn(
         "flex flex-col justify-between border-r border-border bg-card transition-all duration-300 select-none h-screen",
@@ -3307,6 +3309,7 @@ export function Sidebar({ className, children, ...props }: SidebarProps) {
     >
       {children}
     </aside>
+    </SidebarContext.Provider>
   )
 }
 
@@ -3858,6 +3861,16 @@ export function Loading({
   }
 ];
 
+// Novos componentes têm arquivos TSX legíveis como fonte única.
+for (const name of ['animated-gradient', 'gradient-text', 'shimmer-text', 'text-reveal']) {
+  components.push({ name, dependencies: [], content: fs.readFileSync(path.join(__dirname, 'components', `${name}.tsx`), 'utf8') });
+}
+
+// forwardRef, context e hooks precisam da fronteira client no Next.js App Router.
+components.forEach(comp => {
+  if (!comp.content.startsWith('"use client"')) comp.content = '"use client"\n\n' + comp.content;
+});
+
 // Gerar os arquivos TypeScript e JSON
 console.log(`[Monta UI] Compilando ${components.length} componentes 100% nativos (Zero Radix)...`);
 
@@ -3900,3 +3913,4 @@ const registryIndex = {
 fs.writeFileSync(path.join(REGISTRY_DIR, 'index.json'), JSON.stringify(registryIndex, null, 2), 'utf-8');
 
 console.log(`[Monta UI] Registro completo gerado com sucesso! ${components.length} componentes gravados em ${REGISTRY_DIR}`);
+require('./scripts/build-contracts.js');

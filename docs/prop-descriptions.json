@@ -1,0 +1,269 @@
+{
+  "button": {
+    "variant": "Estilo visual e intenção semântica do botão.",
+    "size": "Dimensões, altura mínima e padding interno.",
+    "isLoading": "Ativa o spinner de carregamento e desativa interações.",
+    "fullWidth": "Ocupa 100% da largura disponível do contêiner.",
+    "disabled": "Desativa o elemento e reduz a opacidade para 50%.",
+    "children": "Conteúdo, texto ou ícones internos do botão."
+  },
+  "button-group": {
+    "attached": "Conecta os botões lado a lado eliminando bordas duplas.",
+    "className": "Classes utilitárias adicionais do Tailwind CSS.",
+    "children": "Conjunto de elementos <Button>."
+  },
+  "dropdown-menu": {
+    "align": "Alinhamento horizontal do painel <DropdownMenuContent>.",
+    "sideOffset": "Distância em pixels entre o gatilho e o painel flutuante.",
+    "disabled": "Desativa o item de menu impedindo cliques.",
+    "onClick": "Callback disparado ao clicar no <DropdownMenuItem>.",
+    "children": "Subcomponentes e itens de menu."
+  },
+  "context-menu": {
+    "onClick": "Callback de ação para o <ContextMenuItem>.",
+    "className": "Classes de estilização para o contêiner ou itens.",
+    "children": "Itens contextuais e gatilho."
+  },
+  "menubar": {
+    "open": "Estado de abertura de cada submenu da barra.",
+    "align": "Alinhamento do painel suspenso <MenubarContent>.",
+    "onClick": "Ação executada ao selecionar um item."
+  },
+  "navigation-menu": {
+    "href": "Destino do link para <NavigationMenuLink>.",
+    "open": "Estado de abertura do painel mega-menu.",
+    "children": "Lista de links e painéis."
+  },
+  "dialog": {
+    "open": "Estado de abertura em modo controlado.",
+    "onOpenChange": "Callback disparado quando o diálogo abre ou fecha.",
+    "children": "Estrutura com Header, Title, Description, Content e Footer."
+  },
+  "popover": {
+    "align": "Posicionamento horizontal da caixa flutuante.",
+    "children": "Gatilho e conteúdo flutuante."
+  },
+  "card": {
+    "className": "Classes Tailwind para ajuste de padding, cor ou sombra.",
+    "children": "Subcomponentes Header, Title, Description, Content e Footer."
+  },
+  "accordion": {
+    "defaultValue": "Valor do item que inicia expandido.",
+    "value": "Identificador exclusivo do <AccordionItem>.",
+    "children": "Lista de sanfonas e conteúdos."
+  },
+  "tabs": {
+    "defaultValue": "Identificador da aba inicialmente ativa.",
+    "value": "Valor da aba ativa em modo controlado.",
+    "onValueChange": "Callback disparado ao alternar a aba."
+  },
+  "table": {
+    "className": "Classes para ajuste de largura, scroll e espaçamento.",
+    "children": "Estrutura padrão com Thead, Tbody, Tr, Th e Td."
+  },
+  "stepper": {
+    "steps": "Array com as etapas do processo sequencial.",
+    "currentStep": "Etapa ativa atual (índice 1-based).",
+    "onStepClick": "Callback disparado ao clicar em uma etapa navegável."
+  },
+  "timeline": {
+    "items": "Conjunto de eventos históricos cronológicos.",
+    "className": "Customização da trilha vertical."
+  },
+  "tree-view": {
+    "data": "Estrutura aninhada com id, label e children recursivos.",
+    "onSelect": "Callback ao clicar em um nó da árvore."
+  },
+  "chart": {
+    "type": "Tipo de visualização gráfica a ser renderizada.",
+    "data": "Array de pontos contendo label, value, target opcional e color.",
+    "title": "Título do cabeçalho do gráfico corporativo.",
+    "description": "Subtítulo de apoio contextual.",
+    "color": "Cor primária aplicada às barras, linhas ou preenchimentos.",
+    "height": "Altura do contêiner de renderização gráfica em pixels.",
+    "showLegend": "Exibe a legenda lateral detalhada com percentuais.",
+    "showGrid": "Exibe linhas pontilhadas de grade no fundo (modo área/linha)."
+  },
+  "calendar": {
+    "selectedDate": "Data selecionada no calendário.",
+    "onSelectDate": "Callback disparado ao selecionar um dia.",
+    "className": "Classes de contorno e dimensões."
+  },
+  "input": {
+    "icon": "Ícone decorativo posicionado à esquerda.",
+    "clearable": "Exibe botão X para limpar o texto digitado.",
+    "onClear": "Callback chamado ao limpar o campo.",
+    "error": "Mensagem de erro de validação em vermelho.",
+    "type": "Tipo HTML do input (text, password, email, etc.)."
+  },
+  "textarea": {
+    "maxLength": "Limite numérico de caracteres.",
+    "showCount": "Exibe contador de caracteres no rodapé.",
+    "placeholder": "Texto provisório auxiliar."
+  },
+  "checkbox": {
+    "label": "Texto do rótulo ao lado do seletor.",
+    "description": "Texto de apoio abaixo do rótulo.",
+    "checked": "Estado booleano marcado/desmarcado.",
+    "onChange": "Evento de alteração."
+  },
+  "switch": {
+    "checked": "Estado ativo/inativo do interruptor.",
+    "onCheckedChange": "Callback disparado na alternância.",
+    "disabled": "Desativa interações com o switch."
+  },
+  "select": {
+    "label": "Rótulo superior do seletor.",
+    "error": "Texto de validação em caso de erro.",
+    "children": "Elementos <option>."
+  },
+  "radio-group": {
+    "value": "Valor do item de rádio atualmente selecionado (modo controlado).",
+    "defaultValue": "Valor inicial selecionado (modo não controlado).",
+    "onValueChange": "Callback disparado quando uma nova opção é selecionada.",
+    "name": "Nome do grupo de formulário para envio nativo.",
+    "disabled": "Desativa todo o grupo de rádio."
+  },
+  "slider": {
+    "value": "Valor numérico atual do slider (modo controlado).",
+    "defaultValue": "Valor inicial não controlado.",
+    "min": "Valor mínimo da escala do slider.",
+    "max": "Valor máximo da escala do slider.",
+    "step": "Intervalo de incremento ao arrastar.",
+    "showValue": "Exibe badge centralizada com o valor atual.",
+    "valuePrefix": "Prefixo exibido junto ao valor (ex: 'R$ ').",
+    "valueSuffix": "Sufixo exibido junto ao valor (ex: ' %', ' kg').",
+    "onValueChange": "Callback disparado em tempo real ao mover o slider."
+  },
+  "date-picker": {
+    "value": "Data selecionada em modo controlado.",
+    "defaultValue": "Data inicial não controlada.",
+    "onValueChange": "Callback disparado ao escolher ou limpar a data.",
+    "placeholder": "Texto exibido quando nenhuma data foi selecionada.",
+    "label": "Rótulo superior do campo.",
+    "disabled": "Desabilita a interação com o date picker."
+  },
+  "lookup": {
+    "label": "Rótulo superior do campo de consulta.",
+    "title": "Título do diálogo modal de pesquisa.",
+    "placeholder": "Texto indicativo no botão do campo.",
+    "items": "Lista de registros corporativos com id, code, label e subtitle.",
+    "value": "Registro atualmente selecionado.",
+    "onSelect": "Callback executado ao confirmar a seleção.",
+    "disabled": "Desativa o campo e impede abertura do modal."
+  },
+  "combo": {
+    "options": "Lista de opções pesquisáveis com value, label e hint opcional.",
+    "value": "Valor do item selecionado.",
+    "onValueChange": "Callback disparado ao escolher uma opção.",
+    "placeholder": "Placeholder do botão do dropdown.",
+    "searchPlaceholder": "Placeholder da caixa de busca interna.",
+    "label": "Rótulo superior do combobox."
+  },
+  "multiselect": {
+    "options": "Lista de opções disponíveis para múltipla escolha.",
+    "selected": "Array com os valores dos itens selecionados.",
+    "onSelectedChange": "Callback disparado ao adicionar ou remover itens.",
+    "placeholder": "Texto exibido quando nenhum item está marcado.",
+    "label": "Rótulo superior do seletor."
+  },
+  "badge": {
+    "variant": "Tonalidade semântica e cor de fundo do badge.",
+    "size": "Tamanho e padding do badge.",
+    "dot": "Exibe ponto luminoso indicador de status no canto esquerdo.",
+    "dotColor": "Classe de cor Tailwind para o ponto (ex: 'bg-emerald-500').",
+    "removable": "Exibe botão 'x' para remoção da tag.",
+    "onRemove": "Callback disparado ao clicar no botão de remoção."
+  },
+  "alert": {
+    "variant": "Nível de severidade e esquema de cores do alerta.",
+    "icon": "Ícone customizado. Se omitido, utiliza o ícone automático da variante.",
+    "dismissable": "Exibe botão de fechar no canto superior direito.",
+    "onClose": "Callback disparado ao fechar o alerta.",
+    "children": "Subcomponentes AlertTitle, AlertDescription e ações."
+  },
+  "toast": {
+    "title": "Título de destaque da notificação temporária.",
+    "description": "Texto de apoio ou detalhes da ação executada.",
+    "variant": "Estilo visual e ícone temático do toast.",
+    "duration": "Tempo em milissegundos antes do fechamento automático.",
+    "action": "Botão de ação interativa (ex: 'Desfazer')."
+  },
+  "progress": {
+    "value": "Valor numérico atual da barra de progresso.",
+    "max": "Valor máximo de referência da escala (100%).",
+    "variant": "Cor da barra de preenchimento.",
+    "size": "Espessura/altura vertical da barra.",
+    "indeterminate": "Ativa animação contínua em loop para carregamento indeterminado.",
+    "showValue": "Exibe percentual formatado ao lado do rótulo.",
+    "label": "Rótulo descritivo superior do progresso."
+  },
+  "skeleton": {
+    "shape": "Formato geométrico do bloco em pulso.",
+    "className": "Dimensões personalizadas via Tailwind (ex: 'h-4 w-full')."
+  },
+  "avatar": {
+    "src": "URL da imagem de perfil.",
+    "fallback": "Iniciais de texto para fallback de imagem quebrada.",
+    "status": "Indicador de status colorido no canto.",
+    "size": "Tamanho do círculo do avatar."
+  },
+  "breadcrumb": {
+    "children": "Links intermediários e página atual.",
+    "className": "Classes para alinhamento e espaçamento."
+  },
+  "statistic": {
+    "title": "Rótulo da métrica ou KPI.",
+    "value": "Número ou quantia em destaque.",
+    "trend": "Percentual numérico de tendência.",
+    "trendLabel": "Texto descritivo do comparativo.",
+    "icon": "Ícone temático exibido no card."
+  },
+  "page-header": {
+    "title": "Título principal da página corporativa.",
+    "description": "Descrição ou subtítulo de apoio.",
+    "breadcrumbs": "Trilha de navegação superior.",
+    "badge": "Tag de status ou homologação.",
+    "actions": "Botões de ação no cabeçalho."
+  },
+  "navbar": {
+    "brand": "Elemento de marca e logo no canto esquerdo.",
+    "links": "Links de navegação exibidos no desktop.",
+    "actions": "Botões de ação rápida à direita (ex: Novo, Notificações).",
+    "user": "Dados do perfil do usuário logado com avatar.",
+    "searchPlaceholder": "Texto do atalho de busca.",
+    "onSearchClick": "Callback ao clicar na caixa de busca ou atalho ⌘K."
+  },
+  "sidebar": {
+    "defaultCollapsed": "Define se o painel inicia recolhido no SidebarProvider.",
+    "children": "Subcomponentes estruturais (Header, Content, Group, Item, Footer).",
+    "className": "Classes de largura ou tema adicional."
+  },
+  "field": {
+    "error": "Ativa o estado de validação de erro em vermelho nos filhos.",
+    "disabled": "Desabilita a interação com o conjunto do campo.",
+    "children": "Composição de Label, Input/Control, Description e Error."
+  },
+  "form": {
+    "onSubmit": "Handler disparado ao submeter o formulário.",
+    "children": "Seções, linhas e controles do formulário."
+  },
+  "marker": {
+    "variant": "Cor semântica do marcador e do pulso de radar.",
+    "label": "Conteúdo central (número, letra ou mini-ícone).",
+    "tooltip": "Card flutuante aberto ao passar o mouse.",
+    "pulse": "Ativa animação de onda radar (ping) em torno do ponto.",
+    "size": "Dimensão do marcador circular."
+  },
+  "pagination": {
+    "children": "Subcomponentes (Content, Item, Link, Previous, Next, Ellipsis).",
+    "className": "Classes para centralização e alinhamento."
+  },
+  "loading": {
+    "variant": "Estilo visual da animação de carregamento.",
+    "size": "Tamanho do elemento visual indicador.",
+    "text": "Texto ou rótulo contextual exibido ao lado ou abaixo.",
+    "fullscreen": "Ativa camada modal fixa em tela cheia com backdrop blur.",
+    "className": "Classes CSS customizadas adicionais."
+  }
+}

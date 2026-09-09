@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { PanelLeftClose, PanelLeft, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -39,14 +41,14 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   collapsible?: boolean
 }
 
-export function Sidebar({ className, children, ...props }: SidebarProps) {
+export function Sidebar({ className, children, collapsible = true, ...props }: SidebarProps) {
   const { collapsed } = useSidebar()
 
   return (
     <aside
       className={cn(
         "flex flex-col justify-between border-r border-border bg-card transition-all duration-300 select-none h-screen",
-        collapsed ? "w-16" : "w-64",
+        collapsible && collapsed ? "w-16" : "w-64",
         className
       )}
       {...props}
