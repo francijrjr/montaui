@@ -42,19 +42,22 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function Sidebar({ className, children, collapsible = true, ...props }: SidebarProps) {
-  const { collapsed } = useSidebar()
+  const context = useSidebar()
+  const collapsed = collapsible && context.collapsed
 
   return (
+    <SidebarContext.Provider value={{ ...context, collapsed }}>
     <aside
       className={cn(
         "flex flex-col justify-between border-r border-border bg-card transition-all duration-300 select-none h-screen",
-        collapsible && collapsed ? "w-16" : "w-64",
+        collapsed ? "w-16" : "w-64",
         className
       )}
       {...props}
     >
       {children}
     </aside>
+    </SidebarContext.Provider>
   )
 }
 

@@ -39,6 +39,11 @@
 #primaryNav a { white-space: nowrap; }
 #primaryNav a[aria-current="page"] { color: #753399; }
 #searchTrigger { width: 256px; white-space: nowrap; }
+/* The light theme must remain legible on muted surfaces and small controls. */
+:root body { color: hsl(var(--foreground)); }
+:root body .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+:root body .border-border, :root body .border-input { border-color: hsl(var(--border)); }
+:root body .motion-controls input:not([type="range"]), :root body .motion-controls select { border-color: hsl(var(--input)); }
 #homeHeroSection {
   align-items: center;
   text-align: center;
