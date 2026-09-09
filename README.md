@@ -15,6 +15,8 @@
 [![Dark Mode](https://img.shields.io/badge/Dark%20Mode-Nativo-753399?style=for-the-badge)](https://github.com/francijrjr/montaui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
+[Abrir documentação online](https://montaui.vercel.app/) · [Ver pacote no npm](https://www.npmjs.com/package/montaui) · [Ver Packages no GitHub](https://github.com/users/francijrjr/packages?repo_name=montaui)
+
 ---
 
 </div>

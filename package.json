@@ -1,6 +1,6 @@
 {
   "name": "montaui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Enterprise Design System nativo em React, TypeScript e Tailwind CSS (100% Zero Radix)",
   "main": "registry/index.json",
   "bin": {
