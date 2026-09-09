@@ -520,8 +520,9 @@
           </h2>
           <p class="text-sm text-muted-foreground">Instale os pacotes fundamentais para manipulação de classes e ícones:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#a5d6ff]">
-            <code>pnpm add clsx tailwind-merge class-variance-authority lucide-react</code>
+            <code>npm install clsx tailwind-merge class-variance-authority lucide-react</code>
           </div>
+          <p class="text-xs text-muted-foreground">Equivalentes: <code class="text-brand">pnpm add</code>, <code class="text-brand">yarn add</code> ou <code class="text-brand">bun add</code>.</p>
         </div>
 
         <!-- Passo 3: Inicializar Monta CLI -->
@@ -532,8 +533,9 @@
           </h2>
           <p class="text-sm text-muted-foreground">Execute o assistente de inicialização para gerar o arquivo <code class="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">components.json</code>:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs text-[#79c0ff]">
-            <code>pnpm dlx montaui init</code>
+            <code>npx montaui init</code>
           </div>
+          <p class="text-xs text-muted-foreground mt-2">Com pnpm: <code class="text-brand">pnpm dlx montaui init</code>. Com yarn: <code class="text-brand">yarn dlx montaui init</code>. Com bun: <code class="text-brand">bunx --bun montaui init</code>.</p>
           <p class="text-xs text-muted-foreground mt-2">O arquivo <code class="bg-muted px-1 rounded font-mono">components.json</code> gerado terá a seguinte estrutura:</p>
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 p-4 font-mono text-xs">
             <pre class="overflow-x-auto text-[#a5d6ff]"><code>{

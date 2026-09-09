@@ -38,6 +38,21 @@
 pnpm dlx montaui init
 ```
 
+Com npm, use `npx` sem instalar o CLI globalmente:
+
+```bash
+npx montaui init
+npx montaui add button animated-gradient text-reveal
+```
+
+Também funciona com `yarn dlx montaui ...` e `bunx --bun montaui ...`.
+
+Dependências usando npm:
+
+```bash
+npm install clsx tailwind-merge lucide-react class-variance-authority
+```
+
 ### 2. Adicionar Componentes
 ```bash
 # Adiciona qualquer um dos 48 componentes

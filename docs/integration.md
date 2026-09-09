@@ -10,6 +10,25 @@ npx montaui add button animated-gradient text-reveal
 npx montaui info text-reveal --json
 ```
 
+O mesmo CLI pode ser executado com qualquer gerenciador:
+
+```sh
+# npm (usa npx, sem instalação global)
+npx montaui init
+npx montaui add button animated-gradient text-reveal
+
+# pnpm / yarn / bun
+pnpm dlx montaui add button animated-gradient text-reveal
+yarn dlx montaui add button animated-gradient text-reveal
+bunx --bun montaui add button animated-gradient text-reveal
+```
+
+Dependências do projeto usando npm:
+
+```sh
+npm install clsx tailwind-merge lucide-react class-variance-authority
+```
+
 O pacote se chama **montaui**. `monta-ui` é um alias de executável, não o nome usado para baixar o pacote. O CLI copia arquivos para `src/components/monta-ui` quando existe `src`, ou `components/monta-ui` caso contrário. O utilitário `cn` fica em `src/lib/utils.ts` ou `lib/utils.ts`. Arquivos existentes são preservados; `--overwrite` substitui os componentes explicitamente solicitados. O CLI imprime as dependências necessárias; execute o comando de instalação informado.
 
 Configure `@/` no TypeScript **e no bundler** para apontar para `src/` (ou para a raiz). Importe componentes assim:
