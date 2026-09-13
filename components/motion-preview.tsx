@@ -1,3 +1,7 @@
+import ReplyThreadLineExample from "../examples/reply-thread-line";
+import CommentConnectorLineExample from "../examples/comment-connector-line";
+import ThreadConnectorExample from "../examples/thread-connector";
+import NestedCommentConnectorExample from "../examples/nested-comment-connector";
 import * as React from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { AnimatedGradient } from "./animated-gradient";
@@ -5,7 +9,15 @@ import { GradientText } from "./gradient-text";
 import { ShimmerText } from "./shimmer-text";
 import { TextReveal } from "./text-reveal";
 
+const threadExamples: Record<string, React.ComponentType> = {
+  "reply-thread-line": ReplyThreadLineExample,
+  "comment-connector-line": CommentConnectorLineExample,
+  "thread-connector": ThreadConnectorExample,
+  "nested-comment-connector": NestedCommentConnectorExample,
+};
+
 const names = [
+  ...Object.keys(threadExamples),
   "animated-gradient",
   "gradient-text",
   "shimmer-text",
@@ -187,7 +199,8 @@ const api = {
     api.unmount(element);
     const root = createRoot(element);
     roots.set(element, root);
-    root.render(<Playground name={name} />);
+    const Example = threadExamples[name];
+    root.render(Example ? <Example /> : <Playground name={name} />);
   },
   mountGallery(element: HTMLElement) {
     api.unmount(element);

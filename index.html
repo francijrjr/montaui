@@ -7,8 +7,6 @@
   <meta name="description" content="Monta UI é uma biblioteca de componentes corporativos de alta performance em React, TypeScript e Tailwind CSS (Zero Radix).">
   <link rel="icon" type="image/png" href="https://cdn.dribbble.com/userupload/48878223/file/db82780d5a1c09a6a7f0bd29e6330448.png?resize=752x752&vertical=center">
   <link rel="apple-touch-icon" href="https://cdn.dribbble.com/userupload/48878223/file/db82780d5a1c09a6a7f0bd29e6330448.png?resize=752x752&vertical=center">
-
-  <!-- Google Fonts: Inter & Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
@@ -75,7 +73,6 @@
     }
   </script>
 
-  <!-- Monta UI Design Tokens -->
   <style>
     @layer base {
       :root {
@@ -90,7 +87,7 @@
         --secondary: 240 4.8% 95.9%;
         --secondary-foreground: 240 5.9% 10%;
         --muted: 240 4.8% 95.9%;
-        /* 5.7:1 contrast on white; readable in navigation, captions and tables. */
+
         --muted-foreground: 240 4.5% 35%;
         --accent: 240 4.8% 95.9%;
         --accent-foreground: 240 5.9% 10%;
@@ -124,37 +121,34 @@
       }
     }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(120,120,120,0.25); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(120,120,120,0.45); }
 
-    /* Code Block & Syntax Highlighting (High Contrast in Light & Dark Mode) */
     pre, pre code, code {
-      color: #e4e4e7 !important; /* text-zinc-200 base */
+      color: #e4e4e7 !important;
       font-family: 'JetBrains Mono', monospace;
     }
-    
-    .tok-kw { color: #ff7b72 !important; font-weight: 600; }     /* Palavras-chave: import, const, return */
-    .tok-tag { color: #7ee787 !important; font-weight: 600; }    /* Componentes JSX: Button, Dialog */
-    .tok-attr { color: #d2a8ff !important; }                    /* Props: variant, className, size */
-    .tok-str { color: #a5d6ff !important; }                     /* Strings: "default", "icon" */
-    .tok-prop { color: #79c0ff !important; }                    /* Propriedades JSON / Objeto */
-    .tok-fn { color: #d2a8ff !important; font-weight: 500; }    /* Funções e Hooks: useState, cn, forwardRef */
-    .tok-type { color: #ffa657 !important; font-weight: 500; }  /* Tipos TypeScript: boolean, string, React.FC */
-    .tok-comm { color: #8b949e !important; font-style: italic; } /* Comentários */
-    .tok-num { color: #79c0ff !important; }                     /* Números */
-    .tok-punc { color: #a1a1aa !important; }                    /* Pontuação: {}, (), [], =, ; */
+
+    .tok-kw { color: #ff7b72 !important; font-weight: 600; }
+    .tok-tag { color: #7ee787 !important; font-weight: 600; }
+    .tok-attr { color: #d2a8ff !important; }
+    .tok-str { color: #a5d6ff !important; }
+    .tok-prop { color: #79c0ff !important; }
+    .tok-fn { color: #d2a8ff !important; font-weight: 500; }
+    .tok-type { color: #ffa657 !important; font-weight: 500; }
+    .tok-comm { color: #8b949e !important; font-style: italic; }
+    .tok-num { color: #79c0ff !important; }
+    .tok-punc { color: #a1a1aa !important; }
   </style>
 
-  <!-- Lucide Icons -->
   <link rel="stylesheet" href="layout.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body data-view="home" class="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-brand selection:text-white">
 
-  <!-- ==================== HEADER / NAVBAR ==================== -->
+
   <header id="siteHeader" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
     <div class="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
       <div class="flex items-center gap-6">
@@ -171,7 +165,6 @@
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Search Button (Command Palette) -->
         <button id="searchTrigger" aria-label="Buscar no Monta UI" class="relative flex h-8 w-full items-center justify-between rounded-md border border-input bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-accent sm:w-64">
           <span class="inline-flex items-center gap-2">
             <i data-lucide="search" class="h-3.5 w-3.5"></i>
@@ -180,14 +173,11 @@
           <kbd class="pointer-events-none hidden rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:inline-block">Ctrl + K</kbd>
         </button>
 
-        <!-- Theme Toggle -->
         <button id="themeToggle" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground" aria-label="Alternar tema">
           <i data-lucide="sun" class="hidden dark:block h-4 w-4"></i>
           <i data-lucide="moon" class="block dark:hidden h-4 w-4"></i>
         </button>
 
-        <!-- GitHub Link -->
-        <!-- repository: francijrjr/montaui -->
         <a href="https://github.com/francijrjr/montaui" target="_blank" rel="noreferrer" aria-label="Abrir repositório no GitHub" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
           <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         </a>
@@ -199,25 +189,19 @@
     </div>
   </header>
 
-  <!-- ==================== MAIN WRAPPER ==================== -->
   <div id="pageLayout" class="container mx-auto max-w-screen-2xl flex-1 items-start px-4 sm:px-8">
     <button id="componentMenuToggle" onclick="toggleComponentMenu()" aria-controls="sidebar" aria-expanded="false" class="items-center gap-2 rounded-md border border-input px-3 py-2 text-sm font-medium">
       <i data-lucide="panel-left" class="h-4 w-4"></i> Menu de componentes
     </button>
-    
-    <!-- ==================== SIDEBAR ==================== -->
+
     <aside id="sidebar" aria-label="Componentes e documentação" class="overflow-y-auto border-r border-border/40 py-6 pr-6 lg:py-8">
       <div class="w-full flex flex-col gap-6" id="sidebarContent">
-        <!-- Inserido dinamicamente via JS -->
       </div>
     </aside>
 
-    <!-- ==================== CONTENT AREA ==================== -->
     <main id="pageContent" class="relative min-w-0 py-6 lg:gap-10 lg:py-8">
-      
-      <!-- ==================== VIEW 1: HOME / LANDING ==================== -->
+
       <section id="homeView" class="w-full min-w-0">
-        <!-- Hero Section -->
         <div id="homeHeroSection" class="flex flex-col items-start gap-4 md:pt-4 scroll-mt-24">
           <a href="#/docs/instalacao" class="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted">
             <span class="flex h-2 w-2 rounded-full bg-brand"></span>
@@ -248,7 +232,6 @@
           <div id="motionGallery"></div>
         </section>
 
-        <!-- Showcase Mockup: Cards & Interactive Widgets -->
         <div id="homeShowcaseSection" class="mt-12 rounded-xl border border-border bg-card p-6 shadow-sm scroll-mt-24">
           <div class="flex items-center justify-between border-b border-border pb-4 mb-6">
             <div>
@@ -263,7 +246,6 @@
           </div>
 
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <!-- Widget 1: Card de Ações -->
             <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between">
@@ -289,7 +271,6 @@
               </div>
             </div>
 
-            <!-- Widget 2: Formulário -->
             <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between">
@@ -313,7 +294,6 @@
               </div>
             </div>
 
-            <!-- Widget 3: Tabela / Registro -->
             <div class="rounded-lg border border-border bg-background p-5 shadow-sm flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between">
@@ -340,14 +320,13 @@
           </div>
         </div>
 
-        <!-- Grid de Todos os Componentes -->
         <div id="homeCatalogSection" class="mt-16 scroll-mt-24">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
             <div>
               <h2 class="font-heading text-2xl font-bold tracking-tight">Catálogo Monta UI</h2>
               <p class="text-sm text-muted-foreground">Explore os componentes disponíveis para cópia e instalação.</p>
             </div>
-            <!-- Filtro de Categoria -->
+
             <div id="categoryFilter" class="flex flex-wrap gap-1.5"></div>
           </div>
 
@@ -355,9 +334,7 @@
         </div>
       </section>
 
-      <!-- ==================== VIEW 2: COMPONENT DOCS ==================== -->
       <section id="docsView" class="hidden w-full min-w-0">
-        <!-- Breadcrumbs -->
         <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
           <a href="#/inicio" class="hover:text-foreground">Monta UI</a>
           <i data-lucide="chevron-right" class="h-3 w-3"></i>
@@ -366,7 +343,7 @@
           <span id="breadcrumbName" class="font-medium text-foreground">Button</span>
         </nav>
 
-        <!-- Title & Description -->
+
         <div class="space-y-2">
           <div class="flex items-center gap-2">
             <h1 id="docTitle" class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">Button</h1>
@@ -379,7 +356,6 @@
           </div>
         </div>
 
-        <!-- Interactive Preview Box (Tabs: Preview | Code) -->
         <div class="mt-8 space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex h-9 items-center rounded-lg bg-muted p-1 text-muted-foreground">
@@ -400,12 +376,9 @@
             </div>
           </div>
 
-          <!-- Preview Container -->
           <div id="docPreviewContainer" class="scroll-mt-24 flex min-h-[320px] w-full items-center justify-center rounded-lg border border-border bg-card p-8 shadow-sm">
             <div id="docPreviewStage" class="w-full max-w-xl"></div>
           </div>
-
-          <!-- Code Container (Hidden by default) -->
           <div id="docCodeContainer" class="scroll-mt-24 hidden rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden text-sm">
             <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
               <span id="docCodeFilename">components/monta-ui/button.tsx</span>
@@ -415,11 +388,10 @@
           </div>
         </div>
 
-        <!-- CLI Installation Section -->
         <div class="mt-12 space-y-3 scroll-mt-24" id="installationSection">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground border-b border-border pb-2">Instalação via Monta CLI</h2>
           <p class="text-sm text-muted-foreground">Instale o componente no seu projeto diretamente com o gerenciador de pacotes da sua preferência.</p>
-          
+
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
             <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2">
               <div class="flex gap-4 text-xs font-mono text-zinc-400">
@@ -438,7 +410,7 @@
           </div>
         </div>
 
-        <!-- Usage Example Section -->
+
         <div class="mt-10 space-y-3 scroll-mt-24" id="usageSection">
           <div class="flex items-center justify-between border-b border-border pb-2">
             <h2 class="font-heading text-xl font-bold tracking-tight text-foreground">Exemplo de Uso</h2>
@@ -456,7 +428,7 @@
           </div>
         </div>
 
-        <!-- Component Anatomy & Composition Section -->
+
         <div class="mt-10 space-y-4 scroll-mt-24" id="compositionSection">
           <div class="flex items-center justify-between border-b border-border pb-2">
             <div class="space-y-0.5">
@@ -469,11 +441,11 @@
             <span id="compositionCountBadge" class="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-bold text-brand">1 parte</span>
           </div>
 
-          <!-- Composition Content (Injected by JS) -->
+
           <div id="compositionContainer" class="space-y-4"></div>
         </div>
 
-        <!-- API Reference / Referência da API Section -->
+
         <div class="mt-10 space-y-4 scroll-mt-24" id="apiSection">
           <div class="flex items-center justify-between border-b border-border pb-2">
             <div class="space-y-0.5">
@@ -486,12 +458,12 @@
             <span id="apiPropsCountBadge" class="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-bold text-brand">Props</span>
           </div>
 
-          <!-- API Props Table Container -->
+
           <div id="apiPropsContainer" class="space-y-4"></div>
         </div>
       </section>
 
-      <!-- ==================== VIEW 3: INSTALAÇÃO CLI ==================== -->
+
       <section id="installationDocsView" class="hidden w-full min-w-0 space-y-8">
         <div>
           <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
@@ -505,7 +477,7 @@
           <p class="mt-2 text-base text-muted-foreground">Aprenda a configurar seu projeto React com Tailwind CSS e utilizar o Monta CLI para gerenciar componentes.</p>
         </div>
 
-        <!-- Passo 1: Criar Projeto -->
+
         <div id="installStep1" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>
@@ -517,7 +489,7 @@
           </div>
         </div>
 
-        <!-- Passo 2: Dependências Base -->
+
         <div id="installStep2" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>
@@ -530,7 +502,7 @@
           <p class="text-xs text-muted-foreground">Equivalentes: <code class="text-brand">pnpm add</code>, <code class="text-brand">yarn add</code> ou <code class="text-brand">bun add</code>.</p>
         </div>
 
-        <!-- Passo 3: Inicializar Monta CLI -->
+
         <div id="installStep3" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">3</span>
@@ -563,7 +535,7 @@
           </div>
         </div>
 
-        <!-- Passo 4: Adicionar Utilitário cn() -->
+
         <div id="installStep4" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">4</span>
@@ -580,7 +552,7 @@ export function cn(...inputs: ClassValue[]) {
           </div>
         </div>
 
-        <!-- Passo 5: Baixar Componentes -->
+
         <div id="installStep5" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">5</span>
@@ -593,7 +565,7 @@ export function cn(...inputs: ClassValue[]) {
         </div>
       </section>
 
-      <!-- ==================== VIEW 4: TAILWIND CONFIG ==================== -->
+
       <section id="tailwindDocsView" class="hidden w-full min-w-0 space-y-8">
         <div>
           <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
@@ -607,7 +579,7 @@ export function cn(...inputs: ClassValue[]) {
           <p class="mt-2 text-base text-muted-foreground">Definição oficial dos tokens, variáveis CSS, cores do Design System e animações do Monta UI.</p>
         </div>
 
-        <!-- 1. tailwind.config.js -->
+
         <div id="tailwindConfigFileSection" class="space-y-3 scroll-mt-24">
           <div class="flex items-center justify-between border-b border-border pb-2">
             <h2 class="font-heading text-lg font-bold tracking-tight text-foreground">1. <code class="font-mono">tailwind.config.js</code></h2>
@@ -621,14 +593,14 @@ export function cn(...inputs: ClassValue[]) {
                 <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copiar Config
               </button>
             </div>
-            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[420px] text-[#a5d6ff]"><code>/** @type {import('tailwindcss').Config} */
+            <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[420px] text-[#a5d6ff]"><code>
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages*.{ts,tsx}',
+    './components*.{ts,tsx}',
+    './app*.{ts,tsx}',
+    './src*.{ts,tsx}',
   ],
   theme: {
     container: {
@@ -709,7 +681,7 @@ module.exports = {
           </div>
         </div>
 
-        <!-- 2. globals.css -->
+
         <div id="tailwindGlobalsCssSection" class="space-y-3 scroll-mt-24">
           <div class="flex items-center justify-between border-b border-border pb-2">
             <h2 class="font-heading text-lg font-bold tracking-tight text-foreground">2. <code class="font-mono">src/globals.css</code></h2>
@@ -786,7 +758,7 @@ module.exports = {
         </div>
       </section>
 
-      <!-- ==================== VIEW 5: STORYBOOK ==================== -->
+
       <section id="storybookDocsView" class="hidden w-full min-w-0 space-y-8">
         <div>
           <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
@@ -807,7 +779,7 @@ module.exports = {
           </div>
         </div>
 
-        <!-- Execução do Storybook -->
+
         <div id="storybookRunSection" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">1</span>
@@ -819,14 +791,14 @@ module.exports = {
           </div>
         </div>
 
-        <!-- Estrutura de Configuração -->
+
         <div id="storybookSetupSection" class="space-y-3 scroll-mt-24">
           <h2 class="font-heading text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <span class="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">2</span>
             Configuração com Tema Monta UI & Tailwind
           </h2>
           <p class="text-sm text-muted-foreground">O Storybook já está configurado com o tema escuro/claro nativo e tokens do Tailwind CSS em <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">.storybook/main.ts</code> e <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">.storybook/preview.ts</code>.</p>
-          
+
           <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
             <div class="flex items-center justify-between border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
               <span>stories/Button.stories.tsx</span>
@@ -876,7 +848,7 @@ export const WithIcon: Story = {
         </div>
       </section>
 
-      <!-- ==================== VIEW 6: TEMPLATES DE TELAS COMPLETAS ==================== -->
+
       <section id="templatesView" class="hidden w-full min-w-0 space-y-6">
         <div>
           <nav class="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
@@ -897,7 +869,7 @@ export const WithIcon: Story = {
           </div>
         </div>
 
-        <!-- Template Selector Switcher Tabs -->
+
         <div class="flex flex-wrap gap-2 border-b border-border pb-4">
           <button id="tplBtnLogin" onclick="selectTemplate('login')" class="flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold transition-all bg-brand text-white shadow-sm">
             <span>1. Login & Autenticação</span>
@@ -910,7 +882,7 @@ export const WithIcon: Story = {
           </button>
         </div>
 
-        <!-- Preview & Code View Tabs Controls -->
+
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-muted/40 p-2 rounded-xl border border-border">
           <div class="flex items-center gap-1.5">
             <button id="tplTabPreviewBtn" onclick="switchTemplateTab('preview')" class="flex items-center gap-1.5 rounded-lg bg-card px-3 py-1.5 text-xs font-bold text-foreground shadow-sm border border-border">
@@ -923,7 +895,7 @@ export const WithIcon: Story = {
             </button>
           </div>
 
-          <!-- Viewport Size Switcher for Interactive Preview -->
+
           <div id="tplViewportControls" class="flex items-center gap-1 text-xs">
             <span class="text-muted-foreground text-[11px] mr-1 hidden md:inline">Visualização:</span>
             <button onclick="setTemplateViewport('desktop')" id="tplVpDesktop" class="rounded p-1.5 text-brand bg-brand/15 font-semibold text-xs flex items-center gap-1" title="Desktop 100%">
@@ -941,16 +913,16 @@ export const WithIcon: Story = {
           </div>
         </div>
 
-        <!-- Template Stage (Preview Mode) -->
+
         <div id="templatePreviewContainer" class="w-full flex justify-center transition-all">
           <div id="templateViewportWrapper" class="w-full transition-all duration-300">
             <div id="templatePreviewStage" class="rounded-2xl border border-border bg-card shadow-xl overflow-hidden min-h-[500px]">
-              <!-- Injetado dinamicamente via JS -->
+
             </div>
           </div>
         </div>
 
-        <!-- Template Code Block Container (Code Mode) -->
+
         <div id="templateCodeContainer" class="hidden rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-xl">
           <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2.5 text-xs text-zinc-300">
             <div class="flex items-center gap-2 font-mono">
@@ -964,18 +936,18 @@ export const WithIcon: Story = {
           <pre class="overflow-x-auto p-5 font-mono text-xs leading-relaxed max-h-[600px]"><code id="templateCodeBlock" class="language-tsx"></code></pre>
         </div>
 
-        <!-- Componentes Utilizados neste Template -->
+
         <div class="rounded-xl border border-border bg-card p-5 space-y-3 shadow-sm">
           <h4 class="font-heading text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Componentes Monta UI Utilizados Neste Template
           </h4>
           <div id="templateUsedComponentsList" class="flex flex-wrap gap-2 pt-1">
-            <!-- Inserido dinamicamente -->
+
           </div>
         </div>
       </section>
 
-      <!-- ==================== RIGHT TOC SIDEBAR ==================== -->
+
       <div id="pageToc" class="hidden text-sm xl:block w-56 shrink-0">
         <div class="sticky top-20 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-8">
           <div class="space-y-3">
@@ -1025,23 +997,23 @@ export const WithIcon: Story = {
     </main>
   </div>
 
-  <!-- Search Modal / Command Palette -->
+
   <div id="searchModal" onclick="closeSearchModal()" class="hidden fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-150">
     <div onclick="event.stopPropagation()" class="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]">
-      
-      <!-- Search Input Header -->
+
+
       <div class="flex items-center gap-3 px-4 border-b border-border bg-background">
         <i data-lucide="search" class="h-4 w-4 text-muted-foreground shrink-0"></i>
         <input id="searchInputModal" type="text" placeholder="Buscar componentes, docs, storybook, CLI..." class="flex h-12 w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" spellcheck="false">
         <button onclick="closeSearchModal()" class="cursor-pointer rounded border border-border bg-muted px-2 py-0.5 font-mono text-[10px] text-muted-foreground hover:bg-accent hover:text-foreground">ESC</button>
       </div>
 
-      <!-- Results Container -->
+
       <div id="searchResultsList" class="overflow-y-auto p-2 space-y-1 text-xs max-h-96">
-        <!-- Preenchido dinamicamente via app.js -->
+
       </div>
 
-      <!-- Search Modal Footer -->
+
       <div class="flex items-center justify-between px-4 py-2.5 border-t border-border bg-muted/40 text-[11px] text-muted-foreground">
         <div class="flex items-center gap-3">
           <span class="flex items-center gap-1"><kbd class="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[9px]">↑↓</kbd> Navegar</span>
@@ -1052,10 +1024,10 @@ export const WithIcon: Story = {
     </div>
   </div>
 
-  <!-- Toast Notification -->
+
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Generated registry, React previews and documentation runtime -->
+
   <script src="registry/catalog.js"></script>
   <script src="motion-preview.js"></script>
   <script src="app.min.js"></script>

@@ -1,0 +1,60 @@
+"use client";
+
+import * as React from "react";
+
+export interface ThreadConnectorProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  last?: boolean;
+  lineColor?: string;
+}
+
+export function ThreadConnector({
+  children,
+  last = false,
+  lineColor = "#a1a1aa",
+  className,
+  style,
+  ...props
+}: ThreadConnectorProps) {
+  return (
+    <div
+      {...props}
+      className={className}
+      style={{
+        position: "relative",
+        paddingInlineStart: 28,
+        paddingBlock: 10,
+        minWidth: 0,
+        overflowWrap: "anywhere",
+        ...style,
+      }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          pointerEvents: "none",
+          insetInlineStart: 8,
+          top: 0,
+          bottom: last ? "auto" : 0,
+          height: last ? 26 : undefined,
+          width: 16,
+          borderInlineStart: `2px solid ${lineColor}`,
+        }}
+      />
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          insetInlineStart: 4,
+          top: 20,
+          width: 10,
+          height: 10,
+          borderRadius: "50%",
+          background: lineColor,
+        }}
+      />
+      {children}
+    </div>
+  );
+}

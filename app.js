@@ -1,30 +1,30 @@
-// ==============================================================================
-// Monta UI - Documentation & Live Registry Manager
-// Design System Corporativo em React & Tailwind CSS
-// ==============================================================================
+
+
+
+
 
 const state = {
   theme: localStorage.getItem('monta-theme') || 'dark',
   current: 'button',
-  view: 'home', // 'home' | 'docs' | 'installation' | 'tailwind' | 'storybook' | 'templates'
-  template: 'login', // 'login' | 'home' | 'dashboard'
-  templateTab: 'preview', // 'preview' | 'code'
-  templateViewport: 'desktop', // 'desktop' | 'tablet' | 'mobile'
-  docTab: 'preview', // 'preview' | 'code'
+  view: 'home',
+  template: 'login',
+  templateTab: 'preview',
+  templateViewport: 'desktop',
+  docTab: 'preview',
   pkgManager: 'pnpm',
   filter: 'Todos',
 };
 
-// ==================== MAPEAMENTO DE CATEGORIAS ====================
 const groups = {
+  "Thread line": ["reply-thread-line", "comment-connector-line", "thread-connector", "nested-comment-connector"],
   "Gradientes Animados": ["animated-gradient"],
   "Text Animations": ["gradient-text", "shimmer-text", "text-reveal"],
   "Ações & Menus": [
-    "button", "button-group", "dropdown-menu", "popover", "context-menu", 
+    "button", "button-group", "dropdown-menu", "popover", "context-menu",
     "menubar", "navigation-menu"
   ],
   "Formulários": [
-    "field", "form", "input", "checkbox", "switch", "select", "textarea", "radio-group", 
+    "field", "form", "input", "checkbox", "switch", "select", "textarea", "radio-group",
     "slider", "date-picker", "lookup", "combo", "multiselect"
   ],
   "Layout & Containers": [
@@ -34,7 +34,7 @@ const groups = {
     "badge", "toast", "progress", "skeleton", "alert", "loading"
   ],
   "Dados & Visualização": [
-    "table", "avatar", "chart", "calendar", "tree-view", "stepper", 
+    "table", "avatar", "chart", "calendar", "tree-view", "stepper",
     "timeline", "page-header", "statistic", "marker"
   ],
   "Navegação": [
@@ -43,6 +43,11 @@ const groups = {
 };
 
 const descriptions = {
+"reply-thread-line": "Liga uma mensagem à sua resposta.",
+"comment-connector-line": "Liga comentários do mesmo nível e encerra a linha no último.",
+"thread-connector": "Conecta etapas de uma conversa em uma linha vertical.",
+"nested-comment-connector": "Agrupa respostas dentro de respostas, mantendo a hierarquia.",
+
   "animated-gradient": "Fundo com gradiente em movimento, três paletas, cores personalizadas e controle de pausa. CSS nativo, sem WebGL.",
   "gradient-text": "Texto com cores em movimento para títulos e destaques. Gradiente personalizável com pausa e movimento reduzido.",
   "shimmer-text": "Faixa de brilho que percorre o texto, com controle de cor, duração e pausa.",
@@ -93,7 +98,6 @@ const descriptions = {
   multiselect: "Seletor múltiplo com tags removíveis (chips), busca rápida e opções desmarcáveis."
 };
 
-// ==================== INICIALIZAÇÃO ====================
 function bootstrapApp() {
   initTheme();
   renderSidebar();
@@ -118,7 +122,6 @@ function bootstrapApp() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// ==================== TEMA (DARK / LIGHT) ====================
 function initTheme() {
   if (state.theme === 'dark') {
     document.documentElement.classList.add('dark');
@@ -133,7 +136,6 @@ function toggleTheme() {
   initTheme();
 }
 
-// ==================== ROTEAMENTO ====================
 function handleRouting() {
   const hash = (typeof window !== 'undefined' && window.location && window.location.hash) ? window.location.hash : '#/inicio';
   if (hash === '#/docs/instalacao' || hash === '#/instalacao') {
@@ -223,7 +225,6 @@ function showStorybookDocs(updateHistory = true) {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// ==================== TEMPLATES DE TELAS COMPLETAS ====================
 const templateComponentsUsed = {
   login: ['field', 'form', 'input', 'checkbox', 'button', 'loading', 'card', 'badge'],
   home: ['navbar', 'button', 'badge', 'card', 'statistic', 'chart', 'avatar'],
@@ -243,7 +244,6 @@ function showTemplatesView(tplName = 'login', updateHistory = true) {
     if (window.location.hash !== targetHash) window.location.hash = targetHash;
   }
 
-  // Atualizar links da sidebar
   document.querySelectorAll('.sidebar-tpl-link').forEach(link => {
     const active = link.dataset.template === tplName;
     link.className = active
@@ -308,7 +308,7 @@ function setTemplateViewport(mode) {
 }
 
 function renderTemplate(name) {
-  // Atualizar botões de seleção de template
+
   const btnLogin = document.getElementById('tplBtnLogin');
   const btnHome = document.getElementById('tplBtnHome');
   const btnDashboard = document.getElementById('tplBtnDashboard');
@@ -333,27 +333,26 @@ function renderTemplate(name) {
     if (titleEl) titleEl.textContent = 'Template: Painel Administrativo SaaS';
   }
 
-  // Injetar Preview HTML
   const stage = document.getElementById('templatePreviewStage');
   if (stage) {
     if (name === 'login') {
       stage.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[580px]">
-          <!-- Left: Login Form -->
+
           <div class="flex flex-col justify-between p-6 sm:p-10 bg-card">
-            <!-- Brand Header -->
+
             <div class="flex items-center gap-2.5">
               <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-8 w-auto object-contain">
             </div>
 
-            <!-- Main Form Block -->
+
             <div class="my-6 max-w-sm w-full mx-auto space-y-6">
               <div class="space-y-1.5 text-left">
                 <h3 class="font-heading text-2xl font-bold text-foreground">Bem-vindo de volta</h3>
                 <p class="text-xs text-muted-foreground">Digite seu e-mail e senha corporativa para acessar.</p>
               </div>
 
-              <!-- Form Fields -->
+
               <form onsubmit="handleTemplateLoginSubmit(event)" class="space-y-4 text-left">
                 <div class="space-y-1.5">
                   <label class="text-xs font-semibold text-foreground flex items-center justify-between">
@@ -412,7 +411,7 @@ function renderTemplate(name) {
                 <span class="absolute bg-card px-2 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">ou acesse com SSO</span>
               </div>
 
-              <!-- SSO Corporate Buttons -->
+
               <div class="grid grid-cols-2 gap-2.5">
                 <button onclick="showToast('Autenticando via Google Workspace...')" class="flex items-center justify-center gap-2 rounded-lg border border-border bg-card py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
                   <svg class="h-3.5 w-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
@@ -425,16 +424,16 @@ function renderTemplate(name) {
               </div>
             </div>
 
-            <!-- Footer Privacy Policy -->
+
             <p class="text-[11px] text-muted-foreground text-center">
               Ao continuar, você concorda com nossos <a href="javascript:void(0)" class="underline hover:text-foreground">Termos de Serviço</a> e <a href="javascript:void(0)" class="underline hover:text-foreground">Privacidade</a>.
             </p>
           </div>
 
-          <!-- Right: Hero Banner with Purple Gradient -->
+
           <div class="hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-[#753399] via-[#4d1f66] to-zinc-950 text-white relative overflow-hidden">
             <div class="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
-            
+
             <div class="flex items-center justify-between z-10">
               <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs font-semibold text-white/90 border border-white/15">
                 <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
@@ -456,7 +455,7 @@ function renderTemplate(name) {
               </div>
             </div>
 
-            <!-- Bottom Stats -->
+
             <div class="grid grid-cols-2 gap-4 border-t border-white/15 pt-6 z-10 text-left">
               <div>
                 <p class="text-lg font-extrabold text-white">44 Componentes</p>
@@ -473,7 +472,7 @@ function renderTemplate(name) {
     } else if (name === 'home') {
       stage.innerHTML = `
         <div class="w-full bg-card flex flex-col text-left">
-          <!-- 1. Top Mini Navigation -->
+
           <header class="h-14 border-b border-border px-6 flex items-center justify-between">
             <div class="flex items-center gap-6">
               <div class="flex items-center gap-2">
@@ -492,13 +491,13 @@ function renderTemplate(name) {
             </div>
           </header>
 
-          <!-- 2. Hero Section -->
+
           <div class="p-8 sm:p-14 text-center space-y-5 max-w-3xl mx-auto">
             <span class="inline-flex items-center gap-2 rounded-full border border-[#753399]/30 bg-[#753399]/10 px-3.5 py-1 text-xs font-bold text-[#753399] dark:text-purple-300">
               <span class="h-2 w-2 rounded-full bg-[#753399] animate-pulse"></span>
               Novo Release v2.4 — 44 Componentes Corporativos
             </span>
-            
+
             <h2 class="font-heading text-3xl sm:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
               O Design System Enterprise Feito para Alta Performance
             </h2>
@@ -518,7 +517,7 @@ function renderTemplate(name) {
               </button>
             </div>
 
-            <!-- 3. Mockup Visual Preview -->
+
             <div class="mt-8 rounded-xl border border-border bg-muted/20 p-4 shadow-xl text-left space-y-3">
               <div class="flex items-center justify-between border-b border-border pb-2">
                 <div class="flex items-center gap-2">
@@ -549,7 +548,7 @@ function renderTemplate(name) {
             </div>
           </div>
 
-          <!-- 4. Feature Cards Grid -->
+
           <div class="border-t border-border p-8 bg-muted/10 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="space-y-2">
               <div class="h-8 w-8 rounded-lg bg-[#753399]/15 flex items-center justify-center text-[#753399]">
@@ -578,15 +577,15 @@ function renderTemplate(name) {
     } else if (name === 'dashboard') {
       stage.innerHTML = `
         <div class="flex h-[620px] bg-card text-left overflow-hidden">
-          <!-- Sidebar Left -->
+
           <aside class="w-56 border-r border-border bg-card flex flex-col justify-between p-3 select-none">
             <div class="space-y-4">
-              <!-- Brand Header -->
+
               <div class="flex items-center gap-2.5 px-2 py-1">
                 <img src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center" alt="Monta UI" class="h-6 w-auto object-contain">
               </div>
 
-              <!-- Nav Links -->
+
               <div class="space-y-1">
                 <p class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Plataforma</p>
                 <button class="w-full flex items-center gap-2 rounded-lg bg-[#753399]/15 px-2.5 py-1.5 text-xs font-bold text-[#753399] dark:text-purple-300">
@@ -615,7 +614,7 @@ function renderTemplate(name) {
               </div>
             </div>
 
-            <!-- Profile Card -->
+
             <div class="border-t border-border pt-2.5">
               <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-muted cursor-pointer" onclick="showToast('Perfil: Monta UI')">
                 <div class="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs">MU</div>
@@ -627,9 +626,9 @@ function renderTemplate(name) {
             </div>
           </aside>
 
-          <!-- Main Dashboard Content -->
+
           <main class="flex-1 flex flex-col overflow-y-auto bg-muted/20">
-            <!-- Top Navbar -->
+
             <header class="h-12 border-b border-border bg-card px-4 flex items-center justify-between">
               <div class="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>Painel</span>
@@ -648,9 +647,9 @@ function renderTemplate(name) {
               </div>
             </header>
 
-            <!-- Dashboard Body -->
+
             <div class="p-5 space-y-4">
-              <!-- KPI 4 Cards Grid -->
+
               <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
                   <span class="text-[10px] font-bold text-muted-foreground uppercase">Faturamento Mês</span>
@@ -674,9 +673,9 @@ function renderTemplate(name) {
                 </div>
               </div>
 
-              <!-- Middle Charts Row -->
+
               <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                <!-- Area Chart -->
+
                 <div class="lg:col-span-2 rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm">
                   <div class="flex items-center justify-between">
                     <h5 class="font-heading text-xs font-bold text-foreground">Evolução de Receita & Conciliação</h5>
@@ -710,7 +709,7 @@ function renderTemplate(name) {
                   </div>
                 </div>
 
-                <!-- Donut Breakdown -->
+
                 <div class="rounded-xl border border-border bg-card p-4 space-y-3 shadow-sm flex flex-col justify-between">
                   <h5 class="font-heading text-xs font-bold text-foreground">Canais de Recebimento</h5>
                   <div class="space-y-2">
@@ -733,7 +732,7 @@ function renderTemplate(name) {
                 </div>
               </div>
 
-              <!-- Bottom Transactions Table with Pagination -->
+
               <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
                 <div class="p-3 border-b border-border flex items-center justify-between">
                   <h5 class="font-heading text-xs font-bold text-foreground">Últimas Transações Conciliadas</h5>
@@ -777,7 +776,6 @@ function renderTemplate(name) {
     }
   }
 
-  // Injetar Código TSX
   const tsxCode = getTemplateTSX(name);
   const codeBlock = document.getElementById('templateCodeBlock');
   const codeFilename = document.getElementById('templateCodeFilename');
@@ -787,7 +785,6 @@ function renderTemplate(name) {
   const copyBtn = document.getElementById('copyTemplateCodeBtn');
   if (copyBtn) copyBtn.onclick = () => copyText(tsxCode, `Código TSX do Template ${name.toUpperCase()} copiado!`);
 
-  // Injetar Componentes Utilizados
   const usedList = document.getElementById('templateUsedComponentsList');
   if (usedList) {
     const list = templateComponentsUsed[name] || [];
@@ -861,9 +858,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-background text-foreground">
-      {/* Coluna Esquerda: Formulário de Autenticação */}
+
       <div className="flex flex-col justify-between p-8 sm:p-14">
-        {/* Marca & Logo */}
+
         <div className="flex items-center gap-2.5">
           <img
             src="https://cdn.dribbble.com/userupload/48878224/file/2fbdb62ff72fa4698957846c2ac8c9a9.png?resize=1024x308&vertical=center"
@@ -872,7 +869,7 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Bloco Central */}
+
         <div className="my-8 max-w-sm w-full mx-auto space-y-6">
           <div className="space-y-1.5">
             <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
@@ -949,7 +946,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Coluna Direita: Banner Hero Corporativo */}
+
       <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-[#753399] via-[#4d1f66] to-zinc-950 text-white relative overflow-hidden">
         <div className="flex items-center justify-between z-10">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs font-semibold text-white border border-white/15">
@@ -997,7 +994,7 @@ import { ArrowRight, Terminal, ShieldCheck, Zap, Layout } from "lucide-react"
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* 1. Navbar Superior */}
+
       <Navbar
         brand={
           <img
@@ -1019,7 +1016,7 @@ export default function LandingPage() {
         }
       />
 
-      {/* 2. Hero Section */}
+
       <section className="py-20 px-6 sm:px-12 text-center max-w-4xl mx-auto space-y-6">
         <Badge variant="brand" className="px-3.5 py-1 gap-2 text-xs">
           <span className="h-2 w-2 rounded-full bg-[#753399] animate-pulse" />
@@ -1046,7 +1043,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. Grid de Funcionalidades */}
+
       <section className="border-t border-border py-16 px-6 sm:px-12 bg-muted/10">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2 p-6 rounded-xl border border-border bg-card shadow-sm">
@@ -1119,7 +1116,7 @@ export default function DashboardPage() {
   return (
     <SidebarProvider defaultCollapsed={false}>
       <div className="flex h-screen w-full bg-background text-foreground">
-        {/* Barra Lateral (Sidebar) */}
+
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2.5">
@@ -1169,7 +1166,7 @@ export default function DashboardPage() {
           </SidebarFooter>
         </Sidebar>
 
-        {/* Conteúdo Principal com Top Navbar */}
+
         <main className="flex-1 flex flex-col overflow-y-auto bg-muted/20">
           <Navbar
             searchPlaceholder="Buscar no sistema (⌘K)..."
@@ -1193,7 +1190,7 @@ export default function DashboardPage() {
           />
 
           <div className="p-6 space-y-6">
-            {/* 4 Cards de KPI Executivo */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Statistic title="Faturamento Mês" value="R$ 489.250,00" change="+14.8%" trend="up" />
               <Statistic title="Transações Aprovadas" value="3.420" change="+8.2%" trend="up" />
@@ -1201,7 +1198,7 @@ export default function DashboardPage() {
               <Statistic title="Taxa de Conversão" value="4.92%" change="+1.1%" trend="up" />
             </div>
 
-            {/* Linha de Gráficos */}
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 p-5 rounded-xl border border-border bg-card shadow-sm space-y-3">
                 <h3 className="font-heading text-sm font-bold">Evolução de Receita & Conciliação</h3>
@@ -1241,7 +1238,6 @@ export default function DashboardPage() {
   return `// Template ${name}`
 }
 
-// ==================== DOCUMENTAÇÃO DO COMPONENTE ====================
 function openComponentDocs(name, updateHistory = true) {
   state.current = name;
   state.view = 'docs';
@@ -1260,10 +1256,8 @@ function openComponentDocs(name, updateHistory = true) {
   document.getElementById('docCategoryBadge').textContent = category;
   document.getElementById('docDescription').textContent = desc;
 
-  // 1. Exemplo Interativo
   renderComponentPreview(name);
 
-  // 2. Código TSX & Exemplo de Uso
   const tsxCode = getComponentTSX(name);
   const usageCode = getComponentUsage(name);
 
@@ -1271,19 +1265,14 @@ function openComponentDocs(name, updateHistory = true) {
   document.getElementById('docCodeBlock').innerHTML = highlightCode(tsxCode, 'tsx');
   document.getElementById('docUsageBlock').innerHTML = highlightCode(usageCode, 'tsx');
 
-  // 3. Instalação via CLI
   updateCliCommand();
 
-  // 4. Composição & Anatomia
   renderComponentComposition(name);
 
-  // 5. Referência da API (Props)
   renderComponentApiReference(name);
 
-  // 6. Atualizar Tabela de Conteúdos da Página
   renderTableOfContents();
 
-  // Ações
   document.getElementById('copyDocCodeBtn').onclick = () => copyText(tsxCode, 'Código TSX copiado!');
   document.getElementById('downloadBtn').onclick = () => downloadFile(`${name}.tsx`, tsxCode);
 
@@ -1295,7 +1284,6 @@ function openComponentDocs(name, updateHistory = true) {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Atualizar sidebar
   document.querySelectorAll('.sidebar-link').forEach(link => {
     const active = link.dataset.component === name;
     link.className = active
@@ -1309,7 +1297,7 @@ function openComponentDocs(name, updateHistory = true) {
 function switchDocTab(tab) {
   state.docTab = tab;
   const isPreview = tab === 'preview';
-  
+
   const previewBtn = document.getElementById('tabPreviewBtn');
   const codeBtn = document.getElementById('tabCodeBtn');
   const previewContainer = document.getElementById('docPreviewContainer');
@@ -1328,7 +1316,6 @@ function switchDocTab(tab) {
   }
 }
 
-// ==================== SCROLLSPY & NAVEGAÇÃO "NESTA PÁGINA" ====================
 const tableOfContentsMap = {
   home: [
     { id: "homeHeroSection", label: "Destaque & Início" },
@@ -1371,7 +1358,7 @@ function renderTableOfContents() {
     const clickHandler = item.isCode
       ? `scrollToCodeSection(event)`
       : `scrollToSection(event, '${item.id}')`;
-    
+
     return `
       <li>
         <a href="#${item.id}" onclick="${clickHandler}" data-section="${item.id}" class="toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
@@ -1391,16 +1378,16 @@ function scrollToSection(e, sectionId) {
   if (e) e.preventDefault();
   const target = document.getElementById(sectionId);
   if (!target) return;
-  
+
   const headerOffset = 90;
   const elementPosition = target.getBoundingClientRect().top;
   const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-  
+
   window.scrollTo({
     top: offsetPosition,
     behavior: 'smooth'
   });
-  
+
   highlightTocItem(sectionId);
 }
 
@@ -1426,7 +1413,7 @@ function highlightTocItem(sectionId) {
   items.forEach(item => {
     const isTarget = item.dataset.section === sectionId;
     const indicator = item.querySelector('.toc-indicator');
-    
+
     if (isTarget) {
       item.className = 'toc-item flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold text-brand bg-brand/10 dark:text-purple-300 transition-all';
       if (indicator) indicator.className = 'toc-indicator h-1.5 w-1.5 rounded-full bg-brand transition-colors';
@@ -1458,7 +1445,6 @@ function handleScrollSpy() {
   highlightTocItem(currentSection);
 }
 
-// ==================== CLI PACKAGE MANAGER SELECTOR ====================
 function switchPkgManager(pkg) {
   state.pkgManager = pkg;
   ['pnpm', 'npx', 'yarn', 'bun'].forEach(p => {
@@ -1495,7 +1481,6 @@ function updateCliCommand() {
   }
 }
 
-// ==================== COMPOSIÇÃO & ANATOMIA ====================
 function renderComponentComposition(name) {
   const container = document.getElementById('compositionContainer');
   const countBadge = document.getElementById('compositionCountBadge');
@@ -1517,7 +1502,7 @@ function renderComponentComposition(name) {
   }
 
   container.innerHTML = `
-    <!-- 1. Anatomia / Estrutura JSX -->
+
     <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
       <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
         <span class="flex items-center gap-1.5"><i data-lucide="code-2" class="h-3.5 w-3.5 text-brand"></i> Estrutura JSX / Hierarquia</span>
@@ -1526,7 +1511,7 @@ function renderComponentComposition(name) {
       <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[260px] text-[#a5d6ff]"><code>${escapeHTML(data.anatomy)}</code></pre>
     </div>
 
-    <!-- 2. Tabela de Subcomponentes -->
+
     <p class="mb-3 text-xs text-muted-foreground">Props próprias extraídas do TypeScript. * indica obrigatória. Atributos HTML herdados, className, style e ref seguem o tipo do elemento no código. — indica que não há padrão explícito no contrato.</p>
     <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
       <div class="overflow-x-auto">
@@ -1566,7 +1551,6 @@ function renderComponentComposition(name) {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// ==================== REFERÊNCIA DA API (PROPS) ====================
 function renderComponentApiReference(name) {
   const container = document.getElementById('apiPropsContainer');
   const countBadge = document.getElementById('apiPropsCountBadge');
@@ -1621,7 +1605,6 @@ function renderComponentApiReference(name) {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// ==================== SIDEBAR ====================
 function renderSidebar() {
   const container = document.getElementById('sidebarContent');
   if (!container) return;
@@ -1668,7 +1651,6 @@ function renderSidebar() {
   container.innerHTML = html;
 }
 
-// ==================== GRID DE COMPONENTES NA HOME ====================
 function renderCategoryFilter() {
   const container = document.getElementById('categoryFilter');
   if (!container) return;
@@ -1724,7 +1706,6 @@ function renderComponentsGrid() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// ==================== 1. EXEMPLOS INTERATIVOS REAIS ====================
 function renderComponentPreview(name) {
   const stage = document.getElementById('docPreviewStage');
   if (!stage) return;
@@ -1803,7 +1784,7 @@ function renderComponentPreview(name) {
             <i data-lucide="external-link" class="h-4 w-4"></i> Abrir Modal Interativo
           </button>
 
-          <!-- Modal Mockup -->
+
           <div id="demoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
             <div class="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
               <div class="flex items-center justify-between border-b border-border pb-3">
@@ -2001,7 +1982,7 @@ function renderComponentPreview(name) {
     case 'chart':
       stage.innerHTML = `
         <div class="w-full max-w-xl mx-auto space-y-4">
-          <!-- Chart Type Selector Buttons -->
+
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
             <div class="space-y-0.5 text-left">
               <h4 class="font-heading text-xs font-bold text-foreground">Monta UI Corporate Charts</h4>
@@ -2023,7 +2004,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 1. BAR CHART CONTAINER -->
+
           <div id="chartView-bar" class="chart-view-pane rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
             <div class="flex items-center justify-between">
               <div>
@@ -2036,7 +2017,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Bar Visualizer -->
+
             <div class="pt-4 flex items-end justify-between gap-3 h-48 border-b border-border pb-2 px-2">
               <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer" onclick="showToast('Janeiro: R$ 85.000 (Meta 70k)')">
                 <div class="w-full flex items-end justify-center gap-1 h-36">
@@ -2087,7 +2068,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 2. AREA / LINE CHART CONTAINER -->
+
           <div id="chartView-area" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
             <div class="flex items-center justify-between">
               <div>
@@ -2099,7 +2080,7 @@ function renderComponentPreview(name) {
               </span>
             </div>
 
-            <!-- SVG Smooth Area Chart -->
+
             <div class="relative h-44 w-full pt-2">
               <svg viewBox="0 0 500 160" class="w-full h-full overflow-visible" preserveAspectRatio="none">
                 <defs>
@@ -2108,17 +2089,17 @@ function renderComponentPreview(name) {
                     <stop offset="100%" stop-color="#753399" stop-opacity="0.0"/>
                   </linearGradient>
                 </defs>
-                <!-- Grid Lines -->
+
                 <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
                 <line x1="0" y1="80" x2="500" y2="80" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
                 <line x1="0" y1="120" x2="500" y2="120" stroke="currentColor" stroke-opacity="0.08" stroke-dasharray="4"/>
 
-                <!-- Area Fill -->
+
                 <path d="M 0,120 Q 80,100 120,60 T 240,40 T 360,70 T 500,20 L 500,160 L 0,160 Z" fill="url(#montaAreaGradient)"/>
-                <!-- Line Stroke -->
+
                 <path d="M 0,120 Q 80,100 120,60 T 240,40 T 360,70 T 500,20" fill="none" stroke="#753399" stroke-width="3" stroke-linecap="round"/>
 
-                <!-- Data Dots -->
+
                 <circle cx="120" cy="60" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('04:00 - 45k req/s')"/>
                 <circle cx="240" cy="40" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('08:00 - 82k req/s')"/>
                 <circle cx="360" cy="70" r="4" fill="#753399" stroke="white" stroke-width="2" class="cursor-pointer hover:r-6 transition-all" onclick="showToast('12:00 - 64k req/s')"/>
@@ -2136,7 +2117,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 3. DONUT / PIE CHART CONTAINER -->
+
           <div id="chartView-donut" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
             <div class="flex items-center justify-between">
               <div>
@@ -2147,18 +2128,18 @@ function renderComponentPreview(name) {
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-around gap-6 pt-2">
-              <!-- SVG Donut -->
+
               <div class="relative w-40 h-40 flex items-center justify-center">
                 <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
-                  <!-- Background Track -->
+
                   <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" stroke-opacity="0.1" stroke-width="4.5"/>
-                  <!-- Segment 1: E-commerce (45%) -->
+
                   <circle cx="18" cy="18" r="14" fill="none" stroke="#753399" stroke-width="4.5" stroke-dasharray="39.6 88" stroke-dashoffset="0" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('E-commerce: 45% (R$ 576.000)')"/>
-                  <!-- Segment 2: PDV / Lojas (30%) -->
+
                   <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="4.5" stroke-dasharray="26.4 88" stroke-dashoffset="-39.6" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Lojas Físicas: 30% (R$ 384.000)')"/>
-                  <!-- Segment 3: Marketplace (15%) -->
+
                   <circle cx="18" cy="18" r="14" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="13.2 88" stroke-dashoffset="-66" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Marketplace: 15% (R$ 192.000)')"/>
-                  <!-- Segment 4: API B2B (10%) -->
+
                   <circle cx="18" cy="18" r="14" fill="none" stroke="#3b82f6" stroke-width="4.5" stroke-dasharray="8.8 88" stroke-dashoffset="-79.2" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="showToast('Integrações B2B: 10% (R$ 128.000)')"/>
                 </svg>
                 <div class="absolute flex flex-col items-center justify-center text-center">
@@ -2167,7 +2148,7 @@ function renderComponentPreview(name) {
                 </div>
               </div>
 
-              <!-- Legend List -->
+
               <div class="space-y-2 flex-1 max-w-xs">
                 <div class="flex items-center justify-between text-xs cursor-pointer p-1.5 rounded-lg hover:bg-muted transition-colors" onclick="showToast('E-commerce: 45%')">
                   <div class="flex items-center gap-2">
@@ -2201,7 +2182,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 4. HORIZONTAL BAR / RANKING CONTAINER -->
+
           <div id="chartView-horizontal" class="chart-view-pane hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm text-left animate-in fade-in duration-200">
             <div class="flex items-center justify-between">
               <div>
@@ -2211,7 +2192,7 @@ function renderComponentPreview(name) {
               <span class="text-[11px] font-bold text-emerald-500">+18% Geral</span>
             </div>
 
-            <!-- Horizontal Bars -->
+
             <div class="space-y-3 pt-1">
               <div class="space-y-1">
                 <div class="flex justify-between text-xs font-medium">
@@ -2357,7 +2338,7 @@ function renderComponentPreview(name) {
     case 'stepper':
       stage.innerHTML = `
         <div class="w-full max-w-lg mx-auto space-y-6">
-          <!-- Stepper Header Navigation -->
+
           <div class="space-y-2">
             <div class="flex items-center justify-between text-xs text-muted-foreground font-semibold px-1">
               <span>Progresso do Cadastro</span>
@@ -2368,9 +2349,9 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- Perfectly Aligned Grid Steps -->
+
           <div class="grid grid-cols-4 relative px-2">
-            <!-- Step 1 -->
+
             <div id="step-node-1" onclick="jumpToStep(1)" class="flex flex-col items-center text-center cursor-pointer group relative">
               <div id="step-line-1" class="absolute top-4 left-1/2 w-full h-0.5 bg-emerald-600 -z-0"></div>
               <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shadow ring-4 ring-card group-hover:scale-105 transition-all">
@@ -2379,7 +2360,7 @@ function renderComponentPreview(name) {
               <span class="mt-2 text-xs font-bold text-foreground">1. Empresa</span>
             </div>
 
-            <!-- Step 2 -->
+
             <div id="step-node-2" onclick="jumpToStep(2)" class="flex flex-col items-center text-center cursor-pointer group relative">
               <div id="step-line-2" class="absolute top-4 left-1/2 w-full h-0.5 bg-border -z-0"></div>
               <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white font-bold text-xs shadow ring-4 ring-brand/20 group-hover:scale-105 transition-all">
@@ -2388,7 +2369,7 @@ function renderComponentPreview(name) {
               <span class="mt-2 text-xs font-bold text-brand">2. Logística</span>
             </div>
 
-            <!-- Step 3 -->
+
             <div id="step-node-3" onclick="jumpToStep(3)" class="flex flex-col items-center text-center cursor-pointer group relative">
               <div id="step-line-3" class="absolute top-4 left-1/2 w-full h-0.5 bg-border -z-0"></div>
               <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground border border-border font-bold text-xs ring-4 ring-card group-hover:scale-105 transition-all">
@@ -2397,7 +2378,7 @@ function renderComponentPreview(name) {
               <span class="mt-2 text-xs font-medium text-muted-foreground">3. Pagamento</span>
             </div>
 
-            <!-- Step 4 -->
+
             <div id="step-node-4" onclick="jumpToStep(4)" class="flex flex-col items-center text-center cursor-pointer group relative">
               <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground border border-border font-bold text-xs ring-4 ring-card group-hover:scale-105 transition-all">
                 4
@@ -2406,14 +2387,14 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- Dynamic Step Content Form -->
+
           <div class="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
             <div class="border-b border-border pb-3">
               <h3 id="stepTitle" class="font-heading text-sm font-bold text-foreground">Etapa 2: Endereço & Logística</h3>
               <p id="stepDesc" class="text-xs text-muted-foreground mt-0.5">Informe os dados para entrega e conferência tributária.</p>
             </div>
 
-            <!-- Form Content Box -->
+
             <div id="stepFormContainer" class="space-y-3 text-xs">
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
@@ -2431,7 +2412,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Action Controls -->
+
             <div class="flex justify-between items-center pt-3 border-t border-border">
               <button onclick="prevStepDemo()" id="stepperBackBtn" class="inline-flex h-9 items-center gap-1.5 rounded-md border border-input bg-background px-4 text-xs font-semibold hover:bg-muted transition-colors">
                 <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i> Voltar
@@ -2453,7 +2434,7 @@ function renderComponentPreview(name) {
     case 'timeline':
       stage.innerHTML = `
         <div class="w-full max-w-lg mx-auto space-y-4">
-          <!-- Timeline Header -->
+
           <div class="flex items-center justify-between border-b border-border pb-3">
             <div>
               <h4 class="font-heading text-sm font-bold text-foreground">Auditoria do Pedido #PED-9481</h4>
@@ -2464,10 +2445,10 @@ function renderComponentPreview(name) {
             </span>
           </div>
 
-          <!-- Perfectly Aligned Timeline Events -->
+
           <div class="space-y-4 pt-2">
-            
-            <!-- Event 1: Concluído -->
+
+
             <div class="flex gap-4 items-start relative">
               <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
               <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm ring-4 ring-card">
@@ -2491,7 +2472,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Event 2: Pagamento Aprovado -->
+
             <div class="flex gap-4 items-start relative">
               <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
               <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm ring-4 ring-card">
@@ -2514,7 +2495,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Event 3: Em Separação (Ativo Pulsante) -->
+
             <div class="flex gap-4 items-start relative">
               <div class="absolute left-3.5 top-7 bottom-0 w-0.5 bg-border -z-0"></div>
               <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-4 ring-brand/20 animate-pulse">
@@ -2537,7 +2518,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Event 4: Próxima Etapa -->
+
             <div class="flex gap-4 items-start relative opacity-60">
               <div class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted border border-border text-muted-foreground ring-4 ring-card">
                 <i data-lucide="truck" class="h-3.5 w-3.5"></i>
@@ -2666,7 +2647,7 @@ function renderComponentPreview(name) {
               <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
             </button>
 
-            <!-- Dropdown Menu Box -->
+
             <div id="demoDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-56 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
               <div class="px-2.5 py-2 border-b border-border mb-1">
                 <p class="text-xs font-bold text-foreground">Monta UI Enterprise</p>
@@ -2700,7 +2681,7 @@ function renderComponentPreview(name) {
     case 'context-menu':
       stage.innerHTML = `
         <div class="w-full max-w-md mx-auto space-y-4">
-          <!-- Right Click Trigger Area -->
+
           <div oncontextmenu="handleContextMenuDemo(event)" class="rounded-xl border-2 border-dashed border-border bg-muted/20 p-8 text-center space-y-2 cursor-context-menu hover:border-brand/50 hover:bg-muted/40 transition-all select-none relative">
             <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand mx-auto">
               <i data-lucide="mouse-pointer-click" class="h-5 w-5"></i>
@@ -2713,7 +2694,7 @@ function renderComponentPreview(name) {
               </button>
             </div>
 
-            <!-- Context Menu Float Box -->
+
             <div id="demoContextMenu" class="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-52 rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 text-left animate-in fade-in zoom-in-95 duration-100">
               <div class="space-y-0.5 text-xs">
                 <button onclick="showToast('Link copiado!'); hideContextMenuDemo()" class="flex w-full items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-muted text-foreground transition-colors">
@@ -2749,10 +2730,10 @@ function renderComponentPreview(name) {
     case 'menubar':
       stage.innerHTML = `
         <div class="w-full max-w-lg mx-auto space-y-4">
-          <!-- Menubar Container -->
+
           <div class="inline-flex h-9 items-center rounded-lg border border-border bg-card p-1 text-xs shadow-sm relative">
-            
-            <!-- Item 1: Arquivo -->
+
+
             <div class="relative">
               <button onclick="toggleMenubarMenu('file')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
                 Arquivo
@@ -2773,7 +2754,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Item 2: Editar -->
+
             <div class="relative">
               <button onclick="toggleMenubarMenu('edit')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
                 Editar
@@ -2790,7 +2771,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Item 3: Exibir -->
+
             <div class="relative">
               <button onclick="toggleMenubarMenu('view')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
                 Exibir
@@ -2807,7 +2788,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Item 4: Ajuda -->
+
             <div class="relative">
               <button onclick="toggleMenubarMenu('help')" class="menubar-trigger rounded px-3 py-1 font-semibold text-foreground hover:bg-muted transition-colors">
                 Ajuda
@@ -2834,17 +2815,17 @@ function renderComponentPreview(name) {
     case 'navigation-menu':
       stage.innerHTML = `
         <div class="w-full max-w-lg mx-auto space-y-4">
-          <!-- Navigation Menu Bar -->
+
           <div class="flex items-center justify-center gap-1 relative">
-            
-            <!-- Dropdown Trigger 1 -->
+
+
             <div class="relative">
               <button onclick="toggleNavMegaMenu('solucoes')" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
                 <span>Soluções</span>
                 <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
               </button>
 
-              <!-- Mega Menu Dropdown -->
+
               <div id="nav-mega-solucoes" class="nav-mega-dropdown hidden absolute left-1/2 -translate-x-1/2 mt-2 w-80 sm:w-96 rounded-xl border border-border bg-card p-4 shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
                 <div class="grid grid-cols-2 gap-2">
                   <div onclick="showToast('Módulo Core'); closeAllNavMenus()" class="rounded-lg p-2.5 hover:bg-muted cursor-pointer transition-colors space-y-1">
@@ -2879,7 +2860,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Dropdown Trigger 2 -->
+
             <div class="relative">
               <button onclick="toggleNavMegaMenu('docs')" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
                 <span>Documentação</span>
@@ -2898,7 +2879,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Direct Nav Link -->
+
             <a href="#/docs/tailwind" class="inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
               Tailwind Config
             </a>
@@ -2958,9 +2939,9 @@ function renderComponentPreview(name) {
             <label class="text-xs font-semibold text-foreground">Plano de Subscrição Corporativa</label>
             <p class="text-[11px] text-muted-foreground">Selecione a capacidade computacional da sua organização.</p>
           </div>
-          
+
           <div class="grid gap-2.5">
-            <!-- Card 1 -->
+
             <div onclick="selectRadioDemo('enterprise')" id="radio-card-enterprise" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border-2 border-brand bg-brand/5 dark:bg-brand/10 p-4 shadow-sm transition-all">
               <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-brand bg-brand flex items-center justify-center">
                 <div class="h-1.5 w-1.5 rounded-full bg-white"></div>
@@ -2977,7 +2958,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Card 2 -->
+
             <div onclick="selectRadioDemo('business')" id="radio-card-business" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border border-border bg-card p-4 shadow-sm hover:border-brand/40 transition-all">
               <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-input bg-background flex items-center justify-center"></div>
               <div class="flex-1 space-y-1">
@@ -2992,7 +2973,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Card 3 -->
+
             <div onclick="selectRadioDemo('starter')" id="radio-card-starter" class="radio-demo-card relative flex cursor-pointer items-start gap-4 rounded-xl border border-border bg-card p-4 shadow-sm hover:border-brand/40 transition-all">
               <div class="mt-0.5 h-4 w-4 shrink-0 rounded-full border border-input bg-background flex items-center justify-center"></div>
               <div class="flex-1 space-y-1">
@@ -3064,9 +3045,9 @@ function renderComponentPreview(name) {
               </button>
             </div>
 
-            <!-- Date Picker Calendar Popover -->
+
             <div id="demoDatePickerPopover" class="hidden absolute left-0 top-full mt-2 w-72 rounded-xl border border-border bg-card p-3 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150">
-              <!-- Shortcuts -->
+
               <div class="flex gap-1 border-b border-border pb-2 mb-2">
                 <button onclick="selectDatePreset(0)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">Hoje</button>
                 <button onclick="selectDatePreset(1)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">Amanhã</button>
@@ -3074,14 +3055,14 @@ function renderComponentPreview(name) {
                 <button onclick="selectDatePreset(30)" class="rounded bg-muted px-2 py-1 text-[10px] font-semibold hover:bg-brand hover:text-white transition-colors">+30 Dias</button>
               </div>
 
-              <!-- Header -->
+
               <div class="flex items-center justify-between pb-2 mb-2 border-b border-border/60">
                 <button onclick="navDateMonth(-1)" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="chevron-left" class="h-3.5 w-3.5"></i></button>
                 <span id="datePickerMonthYear" class="font-heading text-xs font-bold text-foreground">Agosto 2026</span>
                 <button onclick="navDateMonth(1)" class="rounded p-1 hover:bg-muted text-muted-foreground"><i data-lucide="chevron-right" class="h-3.5 w-3.5"></i></button>
               </div>
 
-              <!-- Days Grid -->
+
               <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-muted-foreground mb-1">
                 <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
               </div>
@@ -3113,7 +3094,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- Lookup Modal -->
+
           <div id="demoLookupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
             <div class="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
               <div class="flex items-center justify-between border-b border-border bg-muted/40 px-5 py-3.5">
@@ -3131,7 +3112,7 @@ function renderComponentPreview(name) {
                 </div>
 
                 <div id="lookupItemsContainer" class="max-h-60 overflow-y-auto rounded-lg border border-border divide-y divide-border/60">
-                  <!-- Inserido dinamicamente via JS -->
+
                 </div>
               </div>
             </div>
@@ -3152,7 +3133,7 @@ function renderComponentPreview(name) {
               <i data-lucide="chevrons-up-down" class="h-3.5 w-3.5 opacity-50"></i>
             </button>
 
-            <!-- Combo Dropdown -->
+
             <div id="demoComboDropdown" class="hidden absolute left-0 top-full mt-1.5 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
               <div class="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
                 <i data-lucide="search" class="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0"></i>
@@ -3177,7 +3158,7 @@ function renderComponentPreview(name) {
               <i data-lucide="chevrons-up-down" class="ml-auto h-3.5 w-3.5 opacity-50 pr-1 shrink-0"></i>
             </div>
 
-            <!-- MultiSelect Dropdown -->
+
             <div id="demoMultiSelectDropdown" class="hidden absolute left-0 top-full mt-1.5 w-full rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-100">
               <div class="flex items-center border-b border-border px-2 pb-1.5 mb-1.5">
                 <i data-lucide="search" class="h-3.5 w-3.5 text-muted-foreground mr-2 shrink-0"></i>
@@ -3195,7 +3176,7 @@ function renderComponentPreview(name) {
     case 'badge':
       stage.innerHTML = `
         <div class="w-full max-w-lg space-y-6 text-left">
-          <!-- 1. Variantes Semânticas -->
+
           <div class="space-y-2">
             <h4 class="font-heading text-xs font-bold text-foreground">1. Variantes Semânticas</h4>
             <div class="flex flex-wrap items-center gap-2">
@@ -3220,7 +3201,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 2. Badges com Dot Indicator -->
+
           <div class="space-y-2">
             <h4 class="font-heading text-xs font-bold text-foreground">2. Indicadores de Status (Luminous Dot)</h4>
             <div class="flex flex-wrap items-center gap-3">
@@ -3243,7 +3224,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 3. Tags Removíveis Interativas -->
+
           <div class="space-y-2">
             <h4 class="font-heading text-xs font-bold text-foreground">3. Badges Removíveis (Clique para remover)</h4>
             <div id="demoBadgeChipsContainer" class="flex flex-wrap items-center gap-2">
@@ -3291,7 +3272,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- Toast Card Preview Inline -->
+
           <div class="space-y-2 pt-2">
             <h4 class="font-heading text-xs font-bold text-foreground">Estrutura Visual do Toast</h4>
             <div class="relative flex items-start justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300 shadow-md">
@@ -3316,7 +3297,7 @@ function renderComponentPreview(name) {
     case 'progress':
       stage.innerHTML = `
         <div class="w-full max-w-md space-y-6 text-left">
-          <!-- 1. Barra Controlada com Botões -->
+
           <div class="space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="font-heading text-xs font-bold text-foreground">1. Upload de Arquivos / Backup</span>
@@ -3337,10 +3318,10 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 2. Variantes de Cores e Estados -->
+
           <div class="space-y-3 pt-2">
             <h4 class="font-heading text-xs font-bold text-foreground">2. Variantes Semânticas & Tamanhos</h4>
-            
+
             <div class="space-y-1">
               <div class="flex justify-between text-[11px] text-muted-foreground font-medium">
                 <span>Armazenamento em Nuvem</span>
@@ -3388,9 +3369,9 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- Skeleton Loading Card -->
+
           <div id="demoSkeletonContainer" class="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
-            <!-- Header Skeleton -->
+
             <div class="flex items-center gap-3">
               <div class="h-10 w-10 rounded-full bg-muted animate-pulse shrink-0"></div>
               <div class="space-y-2 flex-1">
@@ -3398,20 +3379,20 @@ function renderComponentPreview(name) {
                 <div class="h-2.5 w-1/2 rounded bg-muted/70 animate-pulse"></div>
               </div>
             </div>
-            <!-- Body Skeleton -->
+
             <div class="space-y-2 pt-2">
               <div class="h-3 w-full rounded bg-muted animate-pulse"></div>
               <div class="h-3 w-5/6 rounded bg-muted animate-pulse"></div>
               <div class="h-3 w-2/3 rounded bg-muted animate-pulse"></div>
             </div>
-            <!-- Footer Skeleton -->
+
             <div class="flex items-center justify-between pt-2 border-t border-border/50">
               <div class="h-7 w-20 rounded-md bg-muted animate-pulse"></div>
               <div class="h-7 w-28 rounded-md bg-muted animate-pulse"></div>
             </div>
           </div>
 
-          <!-- Real Content Card (Hidden by default in demo) -->
+
           <div id="demoRealContentContainer" class="hidden rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
             <div class="flex items-center gap-3">
               <div class="h-10 w-10 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-sm shrink-0">
@@ -3439,7 +3420,7 @@ function renderComponentPreview(name) {
     case 'alert':
       stage.innerHTML = `
         <div class="w-full max-w-lg space-y-3.5 text-left">
-          <!-- 1. Alerta Informativo Brand -->
+
           <div id="alert-info" class="relative flex items-start gap-3 rounded-xl border border-[#753399]/40 bg-[#753399]/10 p-4 text-[#753399] dark:text-purple-300 shadow-sm">
             <i data-lucide="info" class="h-5 w-5 shrink-0 mt-0.5 text-[#753399] dark:text-purple-300"></i>
             <div class="flex-1 space-y-1">
@@ -3451,7 +3432,7 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- 2. Alerta Sucesso -->
+
           <div id="alert-success" class="relative flex items-start gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300 shadow-sm">
             <i data-lucide="check-circle" class="h-5 w-5 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400"></i>
             <div class="flex-1 space-y-1">
@@ -3463,7 +3444,7 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- 3. Alerta Aviso -->
+
           <div id="alert-warning" class="relative flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-800 dark:text-amber-300 shadow-sm">
             <i data-lucide="alert-triangle" class="h-5 w-5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400"></i>
             <div class="flex-1 space-y-1">
@@ -3475,7 +3456,7 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- 4. Alerta Destrutivo / Erro -->
+
           <div id="alert-danger" class="relative flex items-start gap-3 rounded-xl border border-rose-500/40 bg-rose-500/10 p-4 text-rose-800 dark:text-rose-300 shadow-sm">
             <i data-lucide="alert-octagon" class="h-5 w-5 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400"></i>
             <div class="flex-1 space-y-1">
@@ -3499,10 +3480,10 @@ function renderComponentPreview(name) {
     case 'navbar':
       stage.innerHTML = `
         <div class="w-full max-w-2xl mx-auto space-y-4 text-left">
-          <!-- Navbar Preview Header Component -->
+
           <div class="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
             <header class="h-14 border-b border-border bg-card/90 backdrop-blur px-4 flex items-center justify-between gap-4">
-              <!-- Left: Brand & Links -->
+
               <div class="flex items-center gap-6">
                 <div class="flex items-center gap-2 cursor-pointer" onclick="showToast('Logo Monta UI clicado')">
                   <div class="h-7 w-7 rounded-lg bg-[#753399] flex items-center justify-center text-white shadow-sm font-black text-xs">
@@ -3512,7 +3493,7 @@ function renderComponentPreview(name) {
                   <span class="rounded-full bg-[#753399]/15 px-1.5 py-0.2 text-[9px] font-bold text-[#753399] dark:text-purple-300">PRO</span>
                 </div>
 
-                <!-- Nav Links Desktop -->
+
                 <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
                   <button onclick="selectNavbarLinkDemo(this, 'Dashboard')" class="navbar-demo-link rounded-md bg-[#753399]/10 px-2.5 py-1 font-bold text-[#753399] dark:text-purple-300 transition-colors">
                     Dashboard
@@ -3529,22 +3510,22 @@ function renderComponentPreview(name) {
                 </nav>
               </div>
 
-              <!-- Right: Search, Notifications & User -->
+
               <div class="flex items-center gap-2">
-                <!-- Search Input Quick Trigger -->
+
                 <div class="hidden sm:flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground cursor-pointer hover:border-input transition-colors" onclick="openSearchModal()">
                   <i data-lucide="search" class="h-3.5 w-3.5"></i>
                   <span>Buscar no sistema...</span>
                   <kbd class="ml-2 rounded border border-border bg-background px-1 py-0.2 text-[9px] font-mono">⌘K</kbd>
                 </div>
 
-                <!-- Notification Bell -->
+
                 <button onclick="showToast('3 novas notificações não lidas')" class="relative rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                   <i data-lucide="bell" class="h-4 w-4"></i>
                   <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#753399] animate-pulse"></span>
                 </button>
 
-                <!-- User Profile Dropdown Trigger -->
+
                 <div class="flex items-center gap-2 pl-2 border-l border-border cursor-pointer group" onclick="showToast('Perfil: Monta UI')">
                   <div class="h-7 w-7 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shadow-sm">
                     MU
@@ -3558,7 +3539,7 @@ function renderComponentPreview(name) {
               </div>
             </header>
 
-            <!-- Mock Page Body under Navbar -->
+
             <div class="p-6 bg-muted/20 space-y-3">
               <div class="flex items-center justify-between">
                 <div>
@@ -3588,11 +3569,11 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- Demo Workspace Container with Sidebar -->
+
           <div class="flex h-[420px] rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-            <!-- Collapsible Aside -->
+
             <aside id="demoCollapsibleSidebar" class="w-60 border-r border-border bg-card flex flex-col justify-between transition-all duration-300 select-none">
-              <!-- Sidebar Header -->
+
               <div class="p-3.5 border-b border-border space-y-2">
                 <div class="flex items-center gap-2.5">
                   <div class="h-8 w-8 rounded-lg bg-[#753399] flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
@@ -3605,12 +3586,12 @@ function renderComponentPreview(name) {
                 </div>
               </div>
 
-              <!-- Sidebar Navigation Links List -->
+
               <div class="flex-1 overflow-y-auto p-2 space-y-4">
-                <!-- Group 1: Core -->
+
                 <div class="space-y-1">
                   <p id="sidebarGroupLabel1" class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Plataforma</p>
-                  
+
                   <button onclick="selectSidebarItemDemo(this, 'Dashboard Geral')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg bg-[#753399]/15 px-2.5 py-2 text-xs font-bold text-[#753399] dark:text-purple-300 transition-colors">
                     <div class="flex items-center gap-2.5 min-w-0">
                       <i data-lucide="layout-dashboard" class="h-4 w-4 shrink-0"></i>
@@ -3634,10 +3615,10 @@ function renderComponentPreview(name) {
                   </button>
                 </div>
 
-                <!-- Group 2: Gestão -->
+
                 <div class="space-y-1">
                   <p id="sidebarGroupLabel2" class="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Gestão & Finanças</p>
-                  
+
                   <button onclick="selectSidebarItemDemo(this, 'Contas a Pagar')" class="sidebar-item-btn w-full flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
                     <div class="flex items-center gap-2.5 min-w-0">
                       <i data-lucide="credit-card" class="h-4 w-4 shrink-0"></i>
@@ -3654,7 +3635,7 @@ function renderComponentPreview(name) {
                 </div>
               </div>
 
-              <!-- Sidebar Footer: Profile Card -->
+
               <div class="p-2.5 border-t border-border">
                 <div class="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-muted cursor-pointer transition-colors" onclick="showToast('Usuário: Monta UI (Administrador)')">
                   <div class="h-8 w-8 rounded-full bg-[#753399] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow">
@@ -3669,7 +3650,7 @@ function renderComponentPreview(name) {
               </div>
             </aside>
 
-            <!-- Main Content Stage on the Right -->
+
             <main class="flex-1 bg-muted/20 p-6 flex flex-col justify-between">
               <div class="space-y-3">
                 <div class="flex items-center justify-between border-b border-border pb-3">
@@ -3682,7 +3663,7 @@ function renderComponentPreview(name) {
                   </button>
                 </div>
 
-                <!-- KPI Mini Cards -->
+
                 <div class="grid grid-cols-2 gap-3">
                   <div class="rounded-xl border border-border bg-card p-3 space-y-1 shadow-sm">
                     <span class="text-[10px] font-bold text-muted-foreground uppercase">Faturamento Mês</span>
@@ -3717,7 +3698,7 @@ function renderComponentPreview(name) {
             </button>
           </div>
 
-          <!-- Field 1: Standard with hint -->
+
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
               <label for="demoFieldRazao" class="text-xs font-bold text-foreground flex items-center gap-1">
@@ -3735,7 +3716,7 @@ function renderComponentPreview(name) {
             <p class="text-[11px] text-muted-foreground">Nome empresarial oficial registrado no cartão do CNPJ.</p>
           </div>
 
-          <!-- Field 2: Error state demo -->
+
           <div class="space-y-1.5" id="demoFieldErrorContainer">
             <div class="flex items-center justify-between">
               <label for="demoFieldCnpj" class="text-xs font-bold text-foreground flex items-center gap-1">
@@ -3755,7 +3736,7 @@ function renderComponentPreview(name) {
             </p>
           </div>
 
-          <!-- Field 3: Textarea with Counter -->
+
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
               <label for="demoFieldObs" class="text-xs font-bold text-foreground">
@@ -3780,7 +3761,7 @@ function renderComponentPreview(name) {
       stage.innerHTML = `
         <div class="w-full max-w-lg mx-auto space-y-4 text-left">
           <form onsubmit="handleFormSubmitDemo(event)" class="rounded-xl border border-border bg-card shadow-lg p-5 space-y-5">
-            <!-- Form Header -->
+
             <div class="border-b border-border pb-3 flex items-center justify-between">
               <div>
                 <h4 class="font-heading text-sm font-bold text-foreground">Cadastro de Empresa Fornecedora</h4>
@@ -3791,7 +3772,7 @@ function renderComponentPreview(name) {
               </span>
             </div>
 
-            <!-- Form Section 1: Dados Gerais -->
+
             <div class="space-y-3">
               <h5 class="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">1. Identificação Fiscal</h5>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -3817,7 +3798,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Form Divider -->
+
             <div class="border-t border-border pt-3 space-y-3">
               <h5 class="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">2. Regime Tributário</h5>
               <div class="flex items-center gap-4">
@@ -3833,7 +3814,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Form Actions -->
+
             <div class="border-t border-border pt-4 flex items-center justify-between gap-3">
               <button type="button" onclick="resetFormDemo()" class="rounded-md border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
                 Limpar Campos
@@ -3860,12 +3841,12 @@ function renderComponentPreview(name) {
             <span class="text-[11px] font-mono font-bold text-[#753399]">3 Marcadores Ativos</span>
           </div>
 
-          <!-- Simulated Map / Floor Plan Stage -->
+
           <div class="relative h-64 w-full rounded-2xl border border-border bg-gradient-to-br from-muted/30 to-muted/80 overflow-hidden shadow-inner flex items-center justify-center">
-            <!-- Background Map Grid Pattern -->
+
             <div class="absolute inset-0 bg-[radial-gradient(#753399_1px,transparent_1px)] [background-size:16px_16px] opacity-15"></div>
 
-            <!-- Marker 1: Matriz SP -->
+
             <div class="absolute top-12 left-16 group cursor-pointer" onclick="showToast('Marcador #1: Matriz São Paulo (Operação 100%)')">
               <div class="relative flex items-center justify-center">
                 <span class="absolute h-8 w-8 rounded-full bg-[#753399]/30 animate-ping"></span>
@@ -3881,7 +3862,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Marker 2: CD Rio -->
+
             <div class="absolute bottom-16 left-1/2 -translate-x-1/2 group cursor-pointer" onclick="showToast('Marcador #2: CD Logístico Rio (Em trânsito)')">
               <div class="relative flex items-center justify-center">
                 <span class="absolute h-8 w-8 rounded-full bg-emerald-500/30 animate-ping"></span>
@@ -3897,7 +3878,7 @@ function renderComponentPreview(name) {
               </div>
             </div>
 
-            <!-- Marker 3: Filial BH -->
+
             <div class="absolute top-16 right-16 group cursor-pointer" onclick="showToast('Marcador #3: Filial Minas Gerais (Aguardando Vistoria)')">
               <div class="relative flex items-center justify-center">
                 <span class="absolute h-8 w-8 rounded-full bg-amber-500/30 animate-ping"></span>
@@ -3930,15 +3911,15 @@ function renderComponentPreview(name) {
             <span id="demoPaginationInfoText" class="text-xs font-mono text-muted-foreground font-semibold">Página 3 de 18</span>
           </div>
 
-          <!-- Pagination Bar Component -->
+
           <div class="rounded-xl border border-border bg-card p-4 shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <!-- Info left -->
+
               <p id="demoPaginationRangeText" class="text-xs text-muted-foreground">
                 Mostrando <span class="font-bold text-foreground">21 a 30</span> de <span class="font-bold text-foreground">180</span> registros
               </p>
 
-              <!-- Controls Right -->
+
               <nav class="flex items-center gap-1" aria-label="Paginação">
                 <button id="demoPagPrevBtn" onclick="changePaginationDemoPage(-1)" class="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40 transition-colors">
                   <i data-lucide="chevron-left" class="h-3.5 w-3.5"></i>
@@ -3968,12 +3949,12 @@ function renderComponentPreview(name) {
     case 'loading':
       stage.innerHTML = `
         <div class="w-full max-w-xl mx-auto space-y-6 text-left">
-          <!-- 1. Variantes de Spinners e Animações -->
+
           <div class="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
             <h4 class="font-heading text-xs font-bold text-foreground">Variantes de Indicadores de Carregamento</h4>
-            
+
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-              <!-- Circular Spinner -->
+
               <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
                 <svg class="h-6 w-6 animate-spin text-[#753399]" viewBox="0 0 24 24" fill="none">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
@@ -3982,7 +3963,7 @@ function renderComponentPreview(name) {
                 <span class="text-[11px] font-semibold text-foreground">Circular Spinner</span>
               </div>
 
-              <!-- Pulse Radar -->
+
               <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
                 <div class="relative flex h-6 w-6 items-center justify-center">
                   <span class="absolute h-full w-full animate-ping rounded-full bg-[#753399]/40"></span>
@@ -3991,7 +3972,7 @@ function renderComponentPreview(name) {
                 <span class="text-[11px] font-semibold text-foreground">Radar Pulse</span>
               </div>
 
-              <!-- Wave Dots -->
+
               <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
                 <div class="flex items-center gap-1.5 h-6">
                   <span class="h-2 w-2 rounded-full bg-[#753399] animate-bounce [animation-delay:-0.3s]"></span>
@@ -4001,7 +3982,7 @@ function renderComponentPreview(name) {
                 <span class="text-[11px] font-semibold text-foreground">Wave Dots</span>
               </div>
 
-              <!-- Equalizer Bars -->
+
               <div class="rounded-xl border border-border/60 bg-muted/20 p-4 flex flex-col items-center justify-center gap-2">
                 <div class="flex items-end gap-1 h-6">
                   <span class="w-1 bg-[#753399] rounded-full animate-pulse h-3"></span>
@@ -4014,7 +3995,7 @@ function renderComponentPreview(name) {
             </div>
           </div>
 
-          <!-- 2. Overlay Assíncrono com Simulação Interativa -->
+
           <div class="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
             <div class="flex items-center justify-between">
               <div>
@@ -4026,9 +4007,9 @@ function renderComponentPreview(name) {
               </button>
             </div>
 
-            <!-- Card Stage with Overlay -->
+
             <div class="relative rounded-xl border border-border bg-muted/10 p-5 space-y-3 overflow-hidden min-h-[140px] flex flex-col justify-center">
-              <!-- Content below -->
+
               <div class="flex items-center justify-between">
                 <div class="space-y-0.5">
                   <h5 class="text-xs font-bold text-foreground">Relatório Financeiro Consolidado</h5>
@@ -4040,7 +4021,7 @@ function renderComponentPreview(name) {
                 Dados consolidados de faturamento, conciliação de recebíveis via Pix e cartões de crédito.
               </p>
 
-              <!-- Loading Overlay Element (Hidden by default) -->
+
               <div id="demoLoadingOverlay" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-card/85 backdrop-blur-sm animate-in fade-in-0 duration-150">
                 <svg class="h-8 w-8 animate-spin text-[#753399]" viewBox="0 0 24 24" fill="none">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
@@ -4076,7 +4057,6 @@ function renderComponentPreview(name) {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// Helpers de Menus e Navegação
 function toggleDropdownDemo() {
   const el = document.getElementById('demoDropdownMenu');
   el?.classList.toggle('hidden');
@@ -4126,7 +4106,6 @@ function closeAllNavMenus() {
   document.querySelectorAll('.nav-mega-dropdown').forEach(m => m.classList.add('hidden'));
 }
 
-// Helpers de Interação no Preview
 function toggleGroupItem(btn) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.group-btn').forEach(b => {
@@ -4214,8 +4193,7 @@ function updateProg(delta) {
   bar.style.width = `${current}%`;
 }
 
-// ==================== HELPERS DE FORMULÁRIOS ====================
-// 1. Radio Group Demo
+
 function selectRadioDemo(plan) {
   const cards = document.querySelectorAll('.radio-demo-card');
   cards.forEach(c => {
@@ -4239,11 +4217,10 @@ function selectRadioDemo(plan) {
   showToast(`Plano ${plan.toUpperCase()} selecionado com sucesso!`);
 }
 
-// 2. Slider Demo
 function updateSliderDemo(val) {
   const num = Number(val);
   const percent = (num / 100000) * 100;
-  
+
   const badge = document.getElementById('sliderBadgeValue');
   const bar = document.getElementById('sliderFillBar');
   const thumb = document.getElementById('sliderThumbDot');
@@ -4258,7 +4235,6 @@ function updateSliderDemo(val) {
   }
 }
 
-// 3. Date Picker Demo
 let demoSelectedDate = new Date(2026, 7, 31);
 let demoViewingMonth = 7;
 let demoViewingYear = 2026;
@@ -4299,14 +4275,14 @@ function selectCalendarDate(day, month = demoViewingMonth, year = demoViewingYea
   demoSelectedDate = new Date(year, month, day);
   demoViewingMonth = month;
   demoViewingYear = year;
-  
+
   const label = document.getElementById('demoDatePickerLabel');
   if (label) {
     const dStr = String(day).padStart(2, '0');
     const mStr = String(month + 1).padStart(2, '0');
     label.textContent = `${dStr}/${mStr}/${year}`;
   }
-  
+
   renderCalendarDaysDemo();
   toggleDatePickerDemo();
   showToast(`Data selecionada: ${label ? label.textContent : ''}`);
@@ -4356,7 +4332,6 @@ function renderCalendarDaysDemo() {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// 4. Lookup Demo
 const lookupDataDemo = [
   { id: '1', code: 'CLI-101', name: 'Petrobras Petróleo Brasileiro S/A', cnpj: '33.000.167/0001-01', location: 'Rio de Janeiro - RJ', tag: 'VIP' },
   { id: '2', code: 'CLI-102', name: 'Vale S/A Mineração & Logística', cnpj: '33.592.510/0001-54', location: 'Nova Lima - MG', tag: 'Ativo' },
@@ -4383,7 +4358,7 @@ function renderLookupItemsDemo(query = '') {
   const container = document.getElementById('lookupItemsContainer');
   if (!container) return;
 
-  const filtered = lookupDataDemo.filter(item => 
+  const filtered = lookupDataDemo.filter(item =>
     item.code.toLowerCase().includes(query.toLowerCase()) ||
     item.name.toLowerCase().includes(query.toLowerCase()) ||
     item.cnpj.includes(query) ||
@@ -4433,7 +4408,6 @@ function selectLookupItem(id) {
   }
 }
 
-// 5. Combobox Demo
 const comboOptionsDemo = [
   { value: 'ti', label: 'Tecnologia da Informação', hint: 'CC-0101' },
   { value: 'fin', label: 'Controladoria & Finanças', hint: 'CC-0102' },
@@ -4495,7 +4469,6 @@ function selectComboOption(val) {
   showToast(`Departamento selecionado: ${opt ? opt.label : val}`);
 }
 
-// 6. MultiSelect Demo
 const multiSelectOptionsDemo = [
   { value: 'read_nfe', label: 'Consulta NF-e' },
   { value: 'emit_nfe', label: 'Emissão NF-e' },
@@ -4607,7 +4580,6 @@ function simulateLoading(btn) {
   }
 }
 
-// Helpers de Feedback (Badge, Toast, Progress, Skeleton, Alert)
 function removeBadgeChipDemo(id) {
   const el = document.getElementById(id);
   if (el) {
@@ -4720,7 +4692,6 @@ function restoreAlertsDemo() {
   showToast('Alertas restaurados.');
 }
 
-// Helpers de Gráficos (Chart Switcher)
 function switchChartDemoType(type) {
   ['bar', 'area', 'donut', 'horizontal'].forEach(t => {
     const pane = document.getElementById(`chartView-${t}`);
@@ -4745,7 +4716,6 @@ function switchChartDemoType(type) {
   if (window.lucide) window.lucide.createIcons();
 }
 
-// Helpers de Navbar e Sidebar Demo
 function selectNavbarLinkDemo(btn, label) {
   document.querySelectorAll('.navbar-demo-link').forEach(b => {
     b.className = 'navbar-demo-link rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors';
@@ -4804,7 +4774,6 @@ function selectSidebarItemDemo(btn, pageTitle) {
   showToast(`Módulo carregado: ${pageTitle}`);
 }
 
-// Helpers de Field Demo
 let isFieldInError = true;
 function toggleFieldErrorDemo() {
   isFieldInError = !isFieldInError;
@@ -4838,7 +4807,6 @@ function updateFieldCharCounter(textarea) {
   }
 }
 
-// Helpers de Form Demo
 function handleFormSubmitDemo(e) {
   e.preventDefault();
   const btn = document.getElementById('formSubmitBtn');
@@ -4866,7 +4834,6 @@ function resetFormDemo() {
   showToast('Campos do formulário resetados.');
 }
 
-// Helpers de Paginação Demo
 let currentPagPage = 3;
 const totalPagPages = 18;
 
@@ -4910,7 +4877,6 @@ function updatePaginationDemoUI() {
   });
 }
 
-// Helpers de Loading Demo
 function triggerAsyncLoadingDemo() {
   const overlay = document.getElementById('demoLoadingOverlay');
   if (overlay) {
@@ -4923,7 +4889,6 @@ function triggerAsyncLoadingDemo() {
   }
 }
 
-// Helpers de Dados & Visualização
 function filterDemoTable(val) {
   const q = val.toLowerCase();
   const rows = document.querySelectorAll('#demoTableBody tr');
@@ -5132,17 +5097,14 @@ function resetStepperDemo() {
   showToast('Fluxo de cadastro reiniciado.');
 }
 
-// ==================== 2. GERADORES DE CÓDIGO TSX ====================
 function getComponentTSX(name) {
   return window.MONTA_REGISTRY?.[name]?.source || '// Componente não encontrado no registro.';
 }
 
-// ==================== 3. EXEMPLO DE USO EM REACT ====================
 function getComponentUsage(name) {
   return window.MONTA_REGISTRY?.[name]?.example || '// Consulte o contrato do componente.';
 }
 
-// ==================== REGISTRY JSON ====================
 function getComponentJSON(name) {
   const tsx = getComponentTSX(name);
   const data = {
@@ -5163,7 +5125,6 @@ function getComponentJSON(name) {
   return JSON.stringify(data, null, 2);
 }
 
-// ==================== UTILITÁRIOS ====================
 function formatTitle(name) {
   return name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
@@ -5192,34 +5153,28 @@ function highlightCode(code, lang) {
     safe = safe.replace(/:\s*(&quot;.*?&quot;)/g, ': <span class="tok-str">$1</span>');
     safe = safe.replace(/:\s*(\b\d+\b|true|false|null)/g, ': <span class="tok-num">$1</span>');
   } else {
-    // Comentários
+
     safe = safe.replace(/(\/\/.*$)/gm, '<span class="tok-comm">$1</span>');
-    
-    // Strings
+
     safe = safe.replace(/(&quot;.*?&quot;|&#039;.*?&#039;|`[\s\S]*?`)/g, '<span class="tok-str">$1</span>');
-    
-    // Palavras-chave JavaScript / TypeScript
+
     const kws = ['import', 'export', 'from', 'const', 'let', 'var', 'function', 'return', 'if', 'else', 'new', 'interface', 'type', 'default', 'as', 'typeof', 'extends'];
     kws.forEach(kw => {
       safe = safe.replace(new RegExp('\\b(' + kw + ')\\b', 'g'), '<span class="tok-kw">$1</span>');
     });
 
-    // Tipos TypeScript
     const types = ['boolean', 'string', 'number', 'void', 'any', 'HTMLButtonElement', 'HTMLInputElement', 'HTMLDivElement', 'ClassValue', 'VariantProps', 'ButtonProps', 'InputProps', 'DialogProps'];
     types.forEach(t => {
       safe = safe.replace(new RegExp('\\b(' + t + ')\\b', 'g'), '<span class="tok-type">$1</span>');
     });
 
-    // Funções e React Hooks
     const builtins = ['React', 'useState', 'useEffect', 'useRef', 'forwardRef', 'Slot', 'cva', 'cn', 'displayName', 'createElement', 'createRef'];
     builtins.forEach(b => {
       safe = safe.replace(new RegExp('\\b(' + b + ')\\b', 'g'), '<span class="tok-fn">$1</span>');
     });
 
-    // Tags JSX (ex: <Button>, <Dialog>, <Input>, <div/>)
     safe = safe.replace(/(&lt;\/?)([A-Z][a-zA-Z0-9\.]*)/g, '$1<span class="tok-tag">$2</span>');
 
-    // Props comuns
     const props = ['className', 'variant', 'size', 'children', 'disabled', 'asChild', 'isLoading', 'fullWidth', 'placeholder', 'onClick', 'onChange', 'value'];
     props.forEach(p => {
       safe = safe.replace(new RegExp('\\b(' + p + ')=', 'g'), '<span class="tok-attr">$1</span>=');
@@ -5306,7 +5261,6 @@ function showToast(msg) {
   }, 2400);
 }
 
-// ==================== COMMAND PALETTE / BUSCA GLOBAL ====================
 let searchResultsData = [];
 let selectedSearchIndex = 0;
 
@@ -5427,7 +5381,6 @@ function selectSearchResult(index) {
   }
 }
 
-// Event Listeners da Busca
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('searchInputModal');
   if (searchInput) {
@@ -5459,7 +5412,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ==================== EXPORTAÇÃO GLOBAL DE MÉTODOS ====================
 if (typeof window !== 'undefined') {
   const _fnMap = {
     openComponentDocs, toggleComponentMenu, showHomePage, showInstallationDocs, showTailwindDocs, showStorybookDocs,
@@ -5490,7 +5442,6 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Inicialização segura após declaração de todas as variáveis e mapas
 if (typeof document !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootstrapApp);
