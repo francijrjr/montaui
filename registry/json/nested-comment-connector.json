@@ -1,0 +1,15 @@
+{
+  "name": "nested-comment-connector",
+  "type": "registry:ui",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/nested-comment-connector.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface NestedCommentConnectorProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function NestedCommentConnector({\n  children,\n  last = true,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: NestedCommentConnectorProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n        }}\n      />\n\n      {children}\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/monta-ui/nested-comment-connector.tsx"
+    }
+  ]
+}

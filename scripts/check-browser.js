@@ -31,6 +31,22 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
         await page.emulateMedia({ reducedMotion: 'no-preference' });
       }
     }
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const name of ['reply-thread-line', 'comment-connector-line', 'thread-connector', 'nested-comment-connector']) {
+        await page.goto(`${base}/#/componente/${name}`, { waitUntil: 'domcontentloaded' });
+        const conversation = page.getByRole('region', { name: 'Exemplo de conversa' });
+        await conversation.waitFor();
+        assert.ok(await conversation.locator('[aria-hidden="true"]').count() > 0);
+        assert.ok((await conversation.innerText()).includes('Ana'));
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        if (name === 'nested-comment-connector') {
+          assert.ok((await conversation.innerText()).includes('Clara'));
+        }
+      }
+    }
+    await page.goto(`${base}/#/componente/text-reveal`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.motion-controls').waitFor();
     await page.setViewportSize({ width: 390, height: 844 });
     await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.__testClipboard = text; } } }));
     await page.getByRole('button', { name: 'Copiar para IA', exact: true }).click();
@@ -66,7 +82,7 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
       define: { 'process.env.NODE_ENV': '"development"' },
     });
     await page.goto('about:blank');
-    await page.setContent('<div id="fixture"></div>');
+    await page.setContent('<style>label[aria-hidden="true"] { display: inline-block; width: 16px; height: 16px; }</style><div id="fixture"></div>');
     await page.addScriptTag({ content: fixture.outputFiles[0].text });
     await page.locator('label[aria-hidden="true"]').click();
     assert.equal(await page.getByRole('checkbox').isChecked(), true);

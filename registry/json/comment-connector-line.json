@@ -1,0 +1,15 @@
+{
+  "name": "comment-connector-line",
+  "type": "registry:ui",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/comment-connector-line.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface CommentConnectorLineProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function CommentConnectorLine({\n  children,\n  last = false,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: CommentConnectorLineProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n        }}\n      />\n\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          insetInlineStart: 8,\n          top: 0,\n          height: 26,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n          pointerEvents: \"none\",\n        }}\n      />\n      {children}\n    </div>\n  );\n}\n",
+      "type": "registry:ui",
+      "target": "components/monta-ui/comment-connector-line.tsx"
+    }
+  ]
+}

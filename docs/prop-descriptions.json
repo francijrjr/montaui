@@ -265,5 +265,33 @@
     "text": "Texto ou rótulo contextual exibido ao lado ou abaixo.",
     "fullscreen": "Ativa camada modal fixa em tela cheia com backdrop blur.",
     "className": "Classes CSS customizadas adicionais."
+  },
+  "reply-thread-line": {
+    "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
+    "last": "Encerra a linha neste item quando verdadeiro.",
+    "lineColor": "Cor CSS da linha de conexão.",
+    "className": "Classes CSS adicionais.",
+    "style": "Estilos do contêiner."
+  },
+  "comment-connector-line": {
+    "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
+    "last": "Encerra a linha neste item quando verdadeiro.",
+    "lineColor": "Cor CSS da linha de conexão.",
+    "className": "Classes CSS adicionais.",
+    "style": "Estilos do contêiner."
+  },
+  "thread-connector": {
+    "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
+    "last": "Encerra a linha neste item quando verdadeiro.",
+    "lineColor": "Cor CSS da linha de conexão.",
+    "className": "Classes CSS adicionais.",
+    "style": "Estilos do contêiner."
+  },
+  "nested-comment-connector": {
+    "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
+    "last": "Encerra a linha neste item quando verdadeiro.",
+    "lineColor": "Cor CSS da linha de conexão.",
+    "className": "Classes CSS adicionais.",
+    "style": "Estilos do contêiner."
   }
 }

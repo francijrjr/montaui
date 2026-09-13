@@ -3862,7 +3862,7 @@ export function Loading({
 ];
 
 // Novos componentes têm arquivos TSX legíveis como fonte única.
-for (const name of ['animated-gradient', 'gradient-text', 'shimmer-text', 'text-reveal']) {
+for (const name of ['animated-gradient', 'gradient-text', 'shimmer-text', 'text-reveal', 'reply-thread-line', 'comment-connector-line', 'thread-connector', 'nested-comment-connector']) {
   components.push({ name, dependencies: [], content: fs.readFileSync(path.join(__dirname, 'components', `${name}.tsx`), 'utf8') });
 }
 

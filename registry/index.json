@@ -545,6 +545,38 @@
       "files": [
         "ui/text-reveal.tsx"
       ]
+    },
+    {
+      "name": "reply-thread-line",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/reply-thread-line.tsx"
+      ]
+    },
+    {
+      "name": "comment-connector-line",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/comment-connector-line.tsx"
+      ]
+    },
+    {
+      "name": "thread-connector",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/thread-connector.tsx"
+      ]
+    },
+    {
+      "name": "nested-comment-connector",
+      "type": "registry:ui",
+      "dependencies": [],
+      "files": [
+        "ui/nested-comment-connector.tsx"
+      ]
     }
   ]
 }
