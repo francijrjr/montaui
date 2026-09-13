@@ -2846,9 +2846,49 @@
           "required": false,
           "default": "\"#a1a1aa\"",
           "description": "Cor CSS da linha de conexão."
+        },
+        {
+          "component": "ReplyThreadLine",
+          "prop": "collapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Controla se os comentários estão ocultos. Use com onCollapsedChange."
+        },
+        {
+          "component": "ReplyThreadLine",
+          "prop": "defaultCollapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Inicia com os comentários ocultos quando verdadeiro."
+        },
+        {
+          "component": "ReplyThreadLine",
+          "prop": "onCollapsedChange",
+          "type": "((collapsed: boolean) => void) | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar."
+        },
+        {
+          "component": "ReplyThreadLine",
+          "prop": "collapseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Ocultar comentários\"",
+          "description": "Texto do botão para ocultar os comentários."
+        },
+        {
+          "component": "ReplyThreadLine",
+          "prop": "expandLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Mostrar comentários\"",
+          "description": "Texto do botão para mostrar os comentários."
         }
       ],
-      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ReplyThreadLineProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function ReplyThreadLine({\n  children,\n  last = true,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: ReplyThreadLineProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n        }}\n      />\n\n      {children}\n    </div>\n  );\n}\n",
+      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ReplyThreadLineProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n  collapsed?: boolean;\n  defaultCollapsed?: boolean;\n  onCollapsedChange?: (collapsed: boolean) => void;\n  collapseLabel?: string;\n  expandLabel?: string;\n}\n\nexport function ReplyThreadLine({\n  children,\n  last = true,\n  lineColor = \"#a1a1aa\",\n  collapsed,\n  defaultCollapsed = false,\n  onCollapsedChange,\n  collapseLabel = \"Ocultar comentários\",\n  expandLabel = \"Mostrar comentários\",\n  className,\n  style,\n  ...props\n}: ReplyThreadLineProps) {\n  const [internalCollapsed, setInternalCollapsed] =\n    React.useState(defaultCollapsed);\n  const isCollapsed = collapsed ?? internalCollapsed;\n  const contentId = React.useId();\n\n  function toggleComments() {\n    const nextCollapsed = !isCollapsed;\n    if (collapsed === undefined) setInternalCollapsed(nextCollapsed);\n    onCollapsedChange?.(nextCollapsed);\n  }\n\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n        }}\n      />\n\n      <button\n        type=\"button\"\n        aria-expanded={!isCollapsed}\n        aria-controls={contentId}\n        onClick={toggleComments}\n        className=\"rounded-md text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current\"\n        style={{\n          display: \"inline-flex\",\n          alignItems: \"center\",\n          gap: 6,\n          minHeight: 32,\n          padding: \"4px 6px\",\n          marginBottom: isCollapsed ? 0 : 6,\n          fontSize: 12,\n          fontWeight: 600,\n          cursor: \"pointer\",\n          background: \"transparent\",\n          border: 0,\n          fontFamily: \"inherit\",\n        }}\n      >\n        <span aria-hidden=\"true\" style={{ width: 14, textAlign: \"center\" }}>\n          {isCollapsed ? \"+\" : \"−\"}\n        </span>\n        {isCollapsed ? expandLabel : collapseLabel}\n      </button>\n      <div id={contentId} hidden={isCollapsed}>\n        {children}\n      </div>\n    </div>\n  );\n}\n",
       "example": "import * as React from \"react\";\nimport { ReplyThreadLine } from \"@/components/monta-ui/reply-thread-line\";\n\nexport default function Example() {\n  return (\n    <section\n      aria-label=\"Exemplo de conversa\"\n      style={{ width: \"100%\", maxWidth: 480, fontSize: 14, lineHeight: 1.6 }}\n    >\n      <p style={{ marginBottom: 20 }}>Liga uma mensagem à sua resposta.</p>\n      <article>\n        <strong>Ana - conversa inicial</strong>\n        <p>Como está a nova interface?</p>\n      </article>\n      <ReplyThreadLine>\n        <strong>Bruno - resposta a Ana</strong>\n        <p>Sim, o layout está pronto para revisão.</p>\n      </ReplyThreadLine>\n    </section>\n  );\n}\n"
     },
     "comment-connector-line": {
@@ -2886,9 +2926,49 @@
           "required": false,
           "default": "\"#a1a1aa\"",
           "description": "Cor CSS da linha de conexão."
+        },
+        {
+          "component": "CommentConnectorLine",
+          "prop": "collapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Controla se os comentários estão ocultos. Use com onCollapsedChange."
+        },
+        {
+          "component": "CommentConnectorLine",
+          "prop": "defaultCollapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Inicia com os comentários ocultos quando verdadeiro."
+        },
+        {
+          "component": "CommentConnectorLine",
+          "prop": "onCollapsedChange",
+          "type": "((collapsed: boolean) => void) | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar."
+        },
+        {
+          "component": "CommentConnectorLine",
+          "prop": "collapseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Ocultar comentários\"",
+          "description": "Texto do botão para ocultar os comentários."
+        },
+        {
+          "component": "CommentConnectorLine",
+          "prop": "expandLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Mostrar comentários\"",
+          "description": "Texto do botão para mostrar os comentários."
         }
       ],
-      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface CommentConnectorLineProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function CommentConnectorLine({\n  children,\n  last = false,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: CommentConnectorLineProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n        }}\n      />\n\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          insetInlineStart: 8,\n          top: 0,\n          height: 26,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n          pointerEvents: \"none\",\n        }}\n      />\n      {children}\n    </div>\n  );\n}\n",
+      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface CommentConnectorLineProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n  collapsed?: boolean;\n  defaultCollapsed?: boolean;\n  onCollapsedChange?: (collapsed: boolean) => void;\n  collapseLabel?: string;\n  expandLabel?: string;\n}\n\nexport function CommentConnectorLine({\n  children,\n  last = false,\n  lineColor = \"#a1a1aa\",\n  collapsed,\n  defaultCollapsed = false,\n  onCollapsedChange,\n  collapseLabel = \"Ocultar comentários\",\n  expandLabel = \"Mostrar comentários\",\n  className,\n  style,\n  ...props\n}: CommentConnectorLineProps) {\n  const [internalCollapsed, setInternalCollapsed] =\n    React.useState(defaultCollapsed);\n  const isCollapsed = collapsed ?? internalCollapsed;\n  const contentId = React.useId();\n\n  function toggleComments() {\n    const nextCollapsed = !isCollapsed;\n    if (collapsed === undefined) setInternalCollapsed(nextCollapsed);\n    onCollapsedChange?.(nextCollapsed);\n  }\n\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n        }}\n      />\n\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          insetInlineStart: 8,\n          top: 0,\n          height: 26,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n          pointerEvents: \"none\",\n        }}\n      />\n      <button\n        type=\"button\"\n        aria-expanded={!isCollapsed}\n        aria-controls={contentId}\n        onClick={toggleComments}\n        className=\"rounded-md text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current\"\n        style={{\n          display: \"inline-flex\",\n          alignItems: \"center\",\n          gap: 6,\n          minHeight: 32,\n          padding: \"4px 6px\",\n          marginBottom: isCollapsed ? 0 : 6,\n          fontSize: 12,\n          fontWeight: 600,\n          cursor: \"pointer\",\n          background: \"transparent\",\n          border: 0,\n          fontFamily: \"inherit\",\n        }}\n      >\n        <span aria-hidden=\"true\" style={{ width: 14, textAlign: \"center\" }}>\n          {isCollapsed ? \"+\" : \"−\"}\n        </span>\n        {isCollapsed ? expandLabel : collapseLabel}\n      </button>\n      <div id={contentId} hidden={isCollapsed}>\n        {children}\n      </div>\n    </div>\n  );\n}\n",
       "example": "import * as React from \"react\";\nimport { CommentConnectorLine } from \"@/components/monta-ui/comment-connector-line\";\n\nexport default function Example() {\n  return (\n    <section\n      aria-label=\"Exemplo de conversa\"\n      style={{ width: \"100%\", maxWidth: 480, fontSize: 14, lineHeight: 1.6 }}\n    >\n      <p style={{ marginBottom: 20 }}>\n        Liga comentários do mesmo nível, encerrando a linha no último.\n      </p>\n      <article>\n        <strong>Ana - conversa inicial</strong>\n        <p>Como está a nova interface?</p>\n      </article>\n      <CommentConnectorLine>\n        <strong>Ana</strong>\n        <p>Vamos revisar o layout?</p>\n      </CommentConnectorLine>\n      <CommentConnectorLine last>\n        <strong>Bruno</strong>\n        <p>Revisado. Podemos seguir.</p>\n      </CommentConnectorLine>\n    </section>\n  );\n}\n"
     },
     "thread-connector": {
@@ -2926,9 +3006,49 @@
           "required": false,
           "default": "\"#a1a1aa\"",
           "description": "Cor CSS da linha de conexão."
+        },
+        {
+          "component": "ThreadConnector",
+          "prop": "collapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Controla se os comentários estão ocultos. Use com onCollapsedChange."
+        },
+        {
+          "component": "ThreadConnector",
+          "prop": "defaultCollapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Inicia com os comentários ocultos quando verdadeiro."
+        },
+        {
+          "component": "ThreadConnector",
+          "prop": "onCollapsedChange",
+          "type": "((collapsed: boolean) => void) | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar."
+        },
+        {
+          "component": "ThreadConnector",
+          "prop": "collapseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Ocultar comentários\"",
+          "description": "Texto do botão para ocultar os comentários."
+        },
+        {
+          "component": "ThreadConnector",
+          "prop": "expandLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Mostrar comentários\"",
+          "description": "Texto do botão para mostrar os comentários."
         }
       ],
-      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ThreadConnectorProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function ThreadConnector({\n  children,\n  last = false,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: ThreadConnectorProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n        }}\n      />\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          insetInlineStart: 4,\n          top: 20,\n          width: 10,\n          height: 10,\n          borderRadius: \"50%\",\n          background: lineColor,\n        }}\n      />\n      {children}\n    </div>\n  );\n}\n",
+      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ThreadConnectorProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n  collapsed?: boolean;\n  defaultCollapsed?: boolean;\n  onCollapsedChange?: (collapsed: boolean) => void;\n  collapseLabel?: string;\n  expandLabel?: string;\n}\n\nexport function ThreadConnector({\n  children,\n  last = false,\n  lineColor = \"#a1a1aa\",\n  collapsed,\n  defaultCollapsed = false,\n  onCollapsedChange,\n  collapseLabel = \"Ocultar comentários\",\n  expandLabel = \"Mostrar comentários\",\n  className,\n  style,\n  ...props\n}: ThreadConnectorProps) {\n  const [internalCollapsed, setInternalCollapsed] =\n    React.useState(defaultCollapsed);\n  const isCollapsed = collapsed ?? internalCollapsed;\n  const contentId = React.useId();\n\n  function toggleComments() {\n    const nextCollapsed = !isCollapsed;\n    if (collapsed === undefined) setInternalCollapsed(nextCollapsed);\n    onCollapsedChange?.(nextCollapsed);\n  }\n\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n        }}\n      />\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          insetInlineStart: 4,\n          top: 20,\n          width: 10,\n          height: 10,\n          borderRadius: \"50%\",\n          background: lineColor,\n        }}\n      />\n      <button\n        type=\"button\"\n        aria-expanded={!isCollapsed}\n        aria-controls={contentId}\n        onClick={toggleComments}\n        className=\"rounded-md text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current\"\n        style={{\n          display: \"inline-flex\",\n          alignItems: \"center\",\n          gap: 6,\n          minHeight: 32,\n          padding: \"4px 6px\",\n          marginBottom: isCollapsed ? 0 : 6,\n          fontSize: 12,\n          fontWeight: 600,\n          cursor: \"pointer\",\n          background: \"transparent\",\n          border: 0,\n          fontFamily: \"inherit\",\n        }}\n      >\n        <span aria-hidden=\"true\" style={{ width: 14, textAlign: \"center\" }}>\n          {isCollapsed ? \"+\" : \"−\"}\n        </span>\n        {isCollapsed ? expandLabel : collapseLabel}\n      </button>\n      <div id={contentId} hidden={isCollapsed}>\n        {children}\n      </div>\n    </div>\n  );\n}\n",
       "example": "import * as React from \"react\";\nimport { ThreadConnector } from \"@/components/monta-ui/thread-connector\";\n\nexport default function Example() {\n  return (\n    <section\n      aria-label=\"Exemplo de conversa\"\n      style={{ width: \"100%\", maxWidth: 480, fontSize: 14, lineHeight: 1.6 }}\n    >\n      <p style={{ marginBottom: 20 }}>\n        Conecta etapas de uma conversa em uma linha vertical.\n      </p>\n      <article>\n        <strong>Ana - conversa inicial</strong>\n        <p>Como está a nova interface?</p>\n      </article>\n      <ThreadConnector>\n        <strong>Ana</strong>\n        <p>Vamos revisar o layout?</p>\n      </ThreadConnector>\n      <ThreadConnector last>\n        <strong>Bruno</strong>\n        <p>Revisado. Podemos seguir.</p>\n      </ThreadConnector>\n    </section>\n  );\n}\n"
     },
     "nested-comment-connector": {
@@ -2966,9 +3086,49 @@
           "required": false,
           "default": "\"#a1a1aa\"",
           "description": "Cor CSS da linha de conexão."
+        },
+        {
+          "component": "NestedCommentConnector",
+          "prop": "collapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Controla se os comentários estão ocultos. Use com onCollapsedChange."
+        },
+        {
+          "component": "NestedCommentConnector",
+          "prop": "defaultCollapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Inicia com os comentários ocultos quando verdadeiro."
+        },
+        {
+          "component": "NestedCommentConnector",
+          "prop": "onCollapsedChange",
+          "type": "((collapsed: boolean) => void) | undefined",
+          "required": false,
+          "default": "—",
+          "description": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar."
+        },
+        {
+          "component": "NestedCommentConnector",
+          "prop": "collapseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Ocultar comentários\"",
+          "description": "Texto do botão para ocultar os comentários."
+        },
+        {
+          "component": "NestedCommentConnector",
+          "prop": "expandLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Mostrar comentários\"",
+          "description": "Texto do botão para mostrar os comentários."
         }
       ],
-      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface NestedCommentConnectorProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n}\n\nexport function NestedCommentConnector({\n  children,\n  last = true,\n  lineColor = \"#a1a1aa\",\n  className,\n  style,\n  ...props\n}: NestedCommentConnectorProps) {\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n        }}\n      />\n\n      {children}\n    </div>\n  );\n}\n",
+      "source": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface NestedCommentConnectorProps extends React.HTMLAttributes<HTMLDivElement> {\n  children: React.ReactNode;\n  last?: boolean;\n  lineColor?: string;\n  collapsed?: boolean;\n  defaultCollapsed?: boolean;\n  onCollapsedChange?: (collapsed: boolean) => void;\n  collapseLabel?: string;\n  expandLabel?: string;\n}\n\nexport function NestedCommentConnector({\n  children,\n  last = true,\n  lineColor = \"#a1a1aa\",\n  collapsed,\n  defaultCollapsed = false,\n  onCollapsedChange,\n  collapseLabel = \"Ocultar comentários\",\n  expandLabel = \"Mostrar comentários\",\n  className,\n  style,\n  ...props\n}: NestedCommentConnectorProps) {\n  const [internalCollapsed, setInternalCollapsed] =\n    React.useState(defaultCollapsed);\n  const isCollapsed = collapsed ?? internalCollapsed;\n  const contentId = React.useId();\n\n  function toggleComments() {\n    const nextCollapsed = !isCollapsed;\n    if (collapsed === undefined) setInternalCollapsed(nextCollapsed);\n    onCollapsedChange?.(nextCollapsed);\n  }\n\n  return (\n    <div\n      {...props}\n      className={className}\n      style={{\n        position: \"relative\",\n        paddingInlineStart: 28,\n        paddingBlock: 10,\n        minWidth: 0,\n        overflowWrap: \"anywhere\",\n        ...style,\n      }}\n    >\n      <span\n        aria-hidden=\"true\"\n        style={{\n          position: \"absolute\",\n          pointerEvents: \"none\",\n          insetInlineStart: 8,\n          top: 0,\n          bottom: last ? \"auto\" : 0,\n          height: last ? 26 : undefined,\n          width: 16,\n          borderInlineStart: `2px solid ${lineColor}`,\n          borderBottom: `2px solid ${lineColor}`,\n          borderEndStartRadius: 12,\n        }}\n      />\n\n      <button\n        type=\"button\"\n        aria-expanded={!isCollapsed}\n        aria-controls={contentId}\n        onClick={toggleComments}\n        className=\"rounded-md text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current\"\n        style={{\n          display: \"inline-flex\",\n          alignItems: \"center\",\n          gap: 6,\n          minHeight: 32,\n          padding: \"4px 6px\",\n          marginBottom: isCollapsed ? 0 : 6,\n          fontSize: 12,\n          fontWeight: 600,\n          cursor: \"pointer\",\n          background: \"transparent\",\n          border: 0,\n          fontFamily: \"inherit\",\n        }}\n      >\n        <span aria-hidden=\"true\" style={{ width: 14, textAlign: \"center\" }}>\n          {isCollapsed ? \"+\" : \"−\"}\n        </span>\n        {isCollapsed ? expandLabel : collapseLabel}\n      </button>\n      <div id={contentId} hidden={isCollapsed}>\n        {children}\n      </div>\n    </div>\n  );\n}\n",
       "example": "import * as React from \"react\";\nimport { NestedCommentConnector } from \"@/components/monta-ui/nested-comment-connector\";\n\nexport default function Example() {\n  return (\n    <section\n      aria-label=\"Exemplo de conversa\"\n      style={{ width: \"100%\", maxWidth: 480, fontSize: 14, lineHeight: 1.6 }}\n    >\n      <p style={{ marginBottom: 20 }}>\n        Agrupa respostas dentro de respostas, mantendo a hierarquia.\n      </p>\n      <article>\n        <strong>Ana - conversa inicial</strong>\n        <p>Como está a nova interface?</p>\n      </article>\n      <NestedCommentConnector>\n        <strong>Bruno - resposta a Ana</strong>\n        <p>Revisei a versão mobile.</p>\n        <NestedCommentConnector>\n          <strong>Clara - resposta a Bruno</strong>\n          <p>Ótimo! Ajustei o espaçamento.</p>\n        </NestedCommentConnector>\n      </NestedCommentConnector>\n    </section>\n  );\n}\n"
     }
   }

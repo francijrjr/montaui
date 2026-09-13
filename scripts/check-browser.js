@@ -40,8 +40,28 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
         assert.ok(await conversation.locator('[aria-hidden="true"]').count() > 0);
         assert.ok((await conversation.innerText()).includes('Ana'));
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        const contentId = await conversation.getByRole('button', { name: 'Ocultar comentários', exact: true }).first().getAttribute('aria-controls');
+        const toggle = conversation.locator(`button[aria-controls="${contentId}"]`);
+        const content = page.locator(`[id="${contentId}"]`);
+        await toggle.click();
+        assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
+        assert.equal(await content.isVisible(), false);
+        assert.ok((await toggle.innerText()).endsWith('Mostrar comentários'));
+        await toggle.press('Enter');
+        assert.equal(await toggle.getAttribute('aria-expanded'), 'true');
+        assert.equal(await content.isVisible(), true);
+        await toggle.press('Space');
+        assert.equal(await content.isVisible(), false);
+        await toggle.click();
         if (name === 'nested-comment-connector') {
           assert.ok((await conversation.innerText()).includes('Clara'));
+          const nestedContentId = await conversation.getByRole('button', { name: 'Ocultar comentários', exact: true }).nth(1).getAttribute('aria-controls');
+          const nestedToggle = conversation.locator(`button[aria-controls="${nestedContentId}"]`);
+          await nestedToggle.click();
+          await toggle.click();
+          await toggle.click();
+          assert.equal(await nestedToggle.getAttribute('aria-expanded'), 'false');
+          await nestedToggle.click();
         }
       }
     }
@@ -65,6 +85,19 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
         import { Checkbox } from './registry/ui/checkbox';
         import { Switch } from './registry/ui/switch';
         import { Textarea } from './registry/ui/textarea';
+        import { ReplyThreadLine } from './registry/ui/reply-thread-line';
+        import { CommentConnectorLine } from './registry/ui/comment-connector-line';
+        import { ThreadConnector } from './registry/ui/thread-connector';
+        import { NestedCommentConnector } from './registry/ui/nested-comment-connector';
+        function ControlledThread({ Component }) {
+          const [collapsed, setCollapsed] = React.useState(true);
+          return <section data-testid="controlled-thread">
+            <Component collapsed={collapsed} onCollapsedChange={setCollapsed} expandLabel="Abrir respostas" collapseLabel="Fechar respostas">
+              <input aria-label="Rascunho" defaultValue="Texto preservado" />
+            </Component>
+            <button onClick={() => setCollapsed(false)}>Abrir externamente</button>
+          </section>;
+        }
         function Fixture() {
           const [checked, setChecked] = React.useState(false);
           const [value, setValue] = React.useState('Inicial');
@@ -73,7 +106,14 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
             <Switch aria-label="Notificações" onClick={() => setClicks(n => n + 1)} />
             <output data-testid="clicks">{clicks}</output>
             <Textarea aria-label="Descrição" showCount maxLength={20} value={value} onChange={e => setValue(e.target.value)} />
-            <button onClick={() => setValue('Novo')}>Atualizar</button></>;
+            <button onClick={() => setValue('Novo')}>Atualizar</button>
+            {[ReplyThreadLine, CommentConnectorLine, ThreadConnector, NestedCommentConnector].map((Component, index) =>
+              <React.Fragment key={index}>
+                <ControlledThread Component={Component} />
+                <Component defaultCollapsed data-testid="initially-collapsed">Resposta oculta</Component>
+              </React.Fragment>
+            )}
+          </>;
         }
         createRoot(document.getElementById('fixture')).render(<Fixture />);
       `, resolveDir: path.join(__dirname, '..'), loader: 'tsx' },
@@ -93,6 +133,23 @@ const base = process.env.MONTA_TEST_URL || 'http://localhost:4173';
     assert.equal(await page.getByTestId('clicks').innerText(), '1');
     await page.getByRole('button', { name: 'Atualizar' }).click();
     assert.ok((await page.locator('body').innerText()).includes('4/20'));
+    for (const thread of await page.getByTestId('controlled-thread').all()) {
+      const draft = thread.getByRole('textbox', { name: 'Rascunho', includeHidden: true });
+      assert.equal(await draft.isVisible(), false);
+      await thread.getByRole('button', { name: 'Abrir respostas', exact: true }).click();
+      await draft.fill('Meu rascunho');
+      await thread.getByRole('button', { name: 'Fechar respostas', exact: true }).click();
+      assert.equal(await draft.isVisible(), false);
+      await thread.getByRole('button', { name: 'Abrir externamente' }).click();
+      assert.equal(await draft.inputValue(), 'Meu rascunho');
+      assert.equal(await draft.isVisible(), true);
+    }
+    for (const thread of await page.getByTestId('initially-collapsed').all()) {
+      const button = thread.getByRole('button');
+      assert.equal(await button.getAttribute('aria-expanded'), 'false');
+      await button.click();
+      assert.equal(await button.getAttribute('aria-expanded'), 'true');
+    }
     assert.deepEqual(errors, []);
     console.log('Browser: motion, reduced motion, mobile navigation and controlled React inputs passed.');
   } finally { await browser.close(); }

@@ -15,3 +15,18 @@ Os exemplos completos estão em `examples/` e no catálogo, na categoria **Threa
 a linha. `className` e `style` permitem adaptar o contêiner.
 As linhas são decorativas e ficam ocultas dos leitores de tela. Identifique
 o autor e a mensagem respondida no conteúdo, como nos exemplos.
+
+Todos os conectores têm um botão **Ocultar comentários / Mostrar comentários**.
+O botão funciona com clique, Enter e Espaço. Cada nível controla seus próprios
+comentários; ocultar um nível também oculta suas respostas internas. O conteúdo
+permanece montado, preservando textos digitados e o estado dos níveis internos.
+
+Use `defaultCollapsed` para começar fechado ou `collapsed` com
+`onCollapsedChange` para controlar o estado pela aplicação. Personalize os textos
+com `collapseLabel` e `expandLabel`.
+
+```tsx
+<ReplyThreadLine defaultCollapsed>
+  <p>Bruno: revisei a interface.</p>
+</ReplyThreadLine>
+```
