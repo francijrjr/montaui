@@ -1487,68 +1487,67 @@ function renderComponentComposition(name) {
   if (!container) return;
 
   const contract = window.MONTA_REGISTRY?.[name];
-  const data = {
-    anatomy: contract?.example || '',
-    parts: (contract?.exports || []).map(exportName => ({
-      name: exportName,
-      type: 'React.Component',
-      role: `Export nomeado de ${contract.importPath}`,
-      props: contract.props.filter(p => p.component === exportName).map(p => p.prop).join(', ') || 'Atributos nativos; consulte o TypeScript.'
-    }))
+  const threadNames = ['reply-thread-line', 'comment-connector-line', 'thread-connector', 'nested-comment-connector'];
+  const isThread = threadNames.includes(name);
+  const roles = {
+    Trigger: 'Elemento que abre ou fecha o conte\u00fado associado.',
+    Content: '\u00c1rea que apresenta o conte\u00fado do componente.',
+    Header: 'Agrupa as informa\u00e7\u00f5es de abertura, como t\u00edtulo e descri\u00e7\u00e3o.',
+    Footer: 'Agrupa as informa\u00e7\u00f5es ou a\u00e7\u00f5es de encerramento.',
+    Title: 'Identifica o conte\u00fado com um t\u00edtulo.',
+    Description: 'Acrescenta contexto ao t\u00edtulo ou ao conte\u00fado.',
+    Separator: 'Separa visualmente grupos de elementos.',
+    Shortcut: 'Exibe a indica\u00e7\u00e3o de um atalho de teclado.',
+    Item: 'Representa um item dentro do conjunto.',
+    Label: 'Exibe o r\u00f3tulo de um campo ou grupo.',
+    Group: 'Re\u00fane elementos relacionados.',
+    List: 'Organiza os itens de uma lista.',
+    Row: 'Organiza as c\u00e9lulas de uma linha.',
+    Cell: 'Apresenta o conte\u00fado de uma c\u00e9lula.',
+    Head: 'Identifica uma coluna da tabela.',
+    Body: 'Agrupa o conte\u00fado principal.',
+    Caption: 'Apresenta a legenda da tabela.',
+    Image: 'Exibe a imagem do componente.',
+    Fallback: 'Exibe o conte\u00fado alternativo quando a imagem n\u00e3o est\u00e1 dispon\u00edvel.',
   };
+  const parts = isThread ? [
+    { name: contract?.exports?.[0] || 'Cont\u00eainer', kind: 'Cont\u00eainer', role: 'Organiza a conversa e controla o estado aberto ou fechado deste n\u00edvel.' },
+    { name: 'Linha conectora', kind: 'Elemento visual', role: name === 'thread-connector' ? 'Liga as etapas com uma linha vertical e um ponto. \u00c9 decorativa e n\u00e3o recebe foco.' : 'A curva mostra a liga\u00e7\u00e3o com a resposta. \u00c9 decorativa e n\u00e3o recebe foco.' },
+    { name: 'Ocultar / Mostrar coment\u00e1rios', kind: 'Bot\u00e3o', role: 'Alterna a visibilidade por clique, Enter ou Espa\u00e7o. Comunica o estado com aria-expanded e identifica a \u00e1rea com aria-controls.' },
+    { name: '\u00c1rea de coment\u00e1rios', kind: 'Conte\u00fado', role: 'Recebe children e fica oculta ao recolher. Permanece montada para preservar rascunhos e o estado das respostas internas.' },
+  ] : (contract?.exports || []).map(exportName => {
+    const suffix = Object.keys(roles).find(key => exportName.endsWith(key));
+    return {
+      name: exportName,
+      kind: 'Componente exportado',
+      role: suffix ? roles[suffix] : (descriptions[name] || 'Parte p\u00fablica do componente, dispon\u00edvel para compor a interface.'),
+    };
+  });
 
-  if (countBadge) {
-    countBadge.textContent = `${data.parts.length} ${data.parts.length === 1 ? 'parte' : 'partes exportadas'}`;
-  }
+  if (countBadge) countBadge.textContent = `${parts.length} ${parts.length === 1 ? 'parte' : 'partes'}`;
+  const explanation = isThread
+    ? 'O cont\u00eainer re\u00fane a linha, o bot\u00e3o e a \u00e1rea de coment\u00e1rios. O bot\u00e3o controla apenas a \u00e1rea do seu n\u00edvel; outros conectores podem ser colocados dentro dela.'
+    : parts.length > 1
+      ? 'Estas s\u00e3o as partes exportadas e o papel de cada uma. Combine as partes necess\u00e1rias para a interface; a lista n\u00e3o indica uma ordem obrigat\u00f3ria de aninhamento.'
+      : 'Este componente tem uma \u00fanica parte exportada. O conte\u00fado e a apar\u00eancia s\u00e3o definidos pelas propriedades dispon\u00edveis na Refer\u00eancia da API.';
 
   container.innerHTML = `
-
-    <div class="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden">
-      <div class="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 font-mono">
-        <span class="flex items-center gap-1.5"><i data-lucide="code-2" class="h-3.5 w-3.5 text-brand"></i> Estrutura JSX / Hierarquia</span>
-        <span class="text-[10px] text-zinc-400">Anatomia do Módulo</span>
-      </div>
-      <pre class="overflow-x-auto p-4 font-mono text-xs leading-relaxed max-h-[260px] text-[#a5d6ff]"><code>${escapeHTML(data.anatomy)}</code></pre>
-    </div>
-
-
-    <p class="mb-3 text-xs text-muted-foreground">Props próprias extraídas do TypeScript. * indica obrigatória. Atributos HTML herdados, className, style e ref seguem o tipo do elemento no código. — indica que não há padrão explícito no contrato.</p>
-    <div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="bg-muted/50 border-b border-border text-muted-foreground font-semibold">
-            <tr>
-              <th class="p-3 w-44">Subcomponente</th>
-              <th class="p-3 w-40">Tipo / Base</th>
-              <th class="p-3">Papel & Responsabilidade</th>
-              <th class="p-3 w-48 font-mono">Props Chave</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-border/60">
-            ${data.parts.map(p => `
-              <tr class="hover:bg-muted/40 transition-colors">
-                <td class="p-3 font-mono font-bold text-brand flex items-center gap-1.5">
-                  <span class="h-1.5 w-1.5 rounded-full bg-brand"></span>
-                  &lt;${escapeHTML(p.name)}&gt;
-                </td>
-                <td class="p-3 font-mono text-[11px] text-muted-foreground">
-                  ${escapeHTML(p.type)}
-                </td>
-                <td class="p-3 text-foreground leading-relaxed">
-                  ${escapeHTML(p.role)}
-                </td>
-                <td class="p-3 font-mono text-[11px] text-muted-foreground">
-                  ${escapeHTML(p.props)}
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <p class="text-sm leading-relaxed text-muted-foreground">${escapeHTML(explanation)}</p>
+    <ol class="grid gap-3 sm:grid-cols-2" aria-label="Partes do componente">
+      ${parts.map((part, index) => `
+        <li class="min-w-0 rounded-xl border border-border bg-card p-4">
+          <div class="mb-3 flex items-start gap-3">
+            <span aria-hidden="true" class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-xs font-bold text-brand">${index + 1}</span>
+            <div class="min-w-0">
+              <p class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">${escapeHTML(part.kind)}</p>
+              <h4 class="break-words text-sm font-semibold text-foreground">${escapeHTML(part.name)}</h4>
+            </div>
+          </div>
+          <p class="text-xs leading-relaxed text-muted-foreground">${escapeHTML(part.role)}</p>
+        </li>
+      `).join('')}
+    </ol>
   `;
-
-  if (window.lucide) window.lucide.createIcons();
 }
 
 function renderComponentApiReference(name) {
