@@ -271,27 +271,47 @@
     "last": "Encerra a linha neste item quando verdadeiro.",
     "lineColor": "Cor CSS da linha de conexão.",
     "className": "Classes CSS adicionais.",
-    "style": "Estilos do contêiner."
+    "style": "Estilos do contêiner.",
+    "collapsed": "Controla se os comentários estão ocultos. Use com onCollapsedChange.",
+    "defaultCollapsed": "Inicia com os comentários ocultos quando verdadeiro.",
+    "onCollapsedChange": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar.",
+    "collapseLabel": "Texto do botão para ocultar os comentários.",
+    "expandLabel": "Texto do botão para mostrar os comentários."
   },
   "comment-connector-line": {
     "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
     "last": "Encerra a linha neste item quando verdadeiro.",
     "lineColor": "Cor CSS da linha de conexão.",
     "className": "Classes CSS adicionais.",
-    "style": "Estilos do contêiner."
+    "style": "Estilos do contêiner.",
+    "collapsed": "Controla se os comentários estão ocultos. Use com onCollapsedChange.",
+    "defaultCollapsed": "Inicia com os comentários ocultos quando verdadeiro.",
+    "onCollapsedChange": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar.",
+    "collapseLabel": "Texto do botão para ocultar os comentários.",
+    "expandLabel": "Texto do botão para mostrar os comentários."
   },
   "thread-connector": {
     "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
     "last": "Encerra a linha neste item quando verdadeiro.",
     "lineColor": "Cor CSS da linha de conexão.",
     "className": "Classes CSS adicionais.",
-    "style": "Estilos do contêiner."
+    "style": "Estilos do contêiner.",
+    "collapsed": "Controla se os comentários estão ocultos. Use com onCollapsedChange.",
+    "defaultCollapsed": "Inicia com os comentários ocultos quando verdadeiro.",
+    "onCollapsedChange": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar.",
+    "collapseLabel": "Texto do botão para ocultar os comentários.",
+    "expandLabel": "Texto do botão para mostrar os comentários."
   },
   "nested-comment-connector": {
     "children": "Conteúdo da resposta. Use outro conector dentro dele para criar um nível adicional.",
     "last": "Encerra a linha neste item quando verdadeiro.",
     "lineColor": "Cor CSS da linha de conexão.",
     "className": "Classes CSS adicionais.",
-    "style": "Estilos do contêiner."
+    "style": "Estilos do contêiner.",
+    "collapsed": "Controla se os comentários estão ocultos. Use com onCollapsedChange.",
+    "defaultCollapsed": "Inicia com os comentários ocultos quando verdadeiro.",
+    "onCollapsedChange": "Recebe o novo estado ao clicar no controle de mostrar ou ocultar.",
+    "collapseLabel": "Texto do botão para ocultar os comentários.",
+    "expandLabel": "Texto do botão para mostrar os comentários."
   }
 }
