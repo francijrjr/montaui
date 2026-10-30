@@ -227,6 +227,21 @@
           </div>
         </div>
 
+        <section id="montaPlayground" class="monta-playground-section scroll-mt-24" aria-labelledby="montaPlaygroundTitle">
+          <div class="monta-playground-heading">
+            <div><span class="motion-eyebrow">MONTA UI / PLAYGROUND</span><h2 id="montaPlaygroundTitle">Componentes em ação.</h2><p>Explore estados reais, veja a implementação ganhar vida e experimente cada detalhe.</p></div>
+            <span class="monta-playground-live"><span></span> DEMOS INTERATIVAS</span>
+          </div>
+          <div class="monta-playground-shell">
+            <div class="monta-playground-topbar"><div class="monta-window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span class="monta-window-title">montaui / playground</span><button id="playgroundReplay" class="monta-replay" type="button" aria-label="Reiniciar demonstração"><i data-lucide="rotate-ccw"></i><span>Reiniciar</span></button></div>
+            <div class="monta-playground-tabs" role="tablist" aria-label="Demonstrações de componentes"></div>
+            <div class="monta-playground-grid">
+              <section class="monta-runner" aria-label="Execução da demonstração"><div class="monta-panel-heading"><div><span class="monta-panel-kicker">TERMINAL</span><h3>Preparando componente</h3></div><span class="monta-run-state"><i></i> <span>executando</span></span></div><div class="monta-runner-body"><div class="monta-file-tree" aria-label="Arquivos do componente"></div><div class="monta-run-log" role="log" aria-live="polite" aria-relevant="additions text"></div></div><div class="monta-runner-footer"><span><i data-lucide="check-circle-2"></i> Sem dependências externas</span><span>LOCAL · DETERMINÍSTICO</span></div></section>
+              <section id="playground-preview" class="monta-preview-panel" role="tabpanel" aria-labelledby="playground-tab-button" tabindex="0" aria-label="Prévia interativa"><div class="monta-preview-head"><div><span class="monta-panel-kicker">LIVE PREVIEW</span><h3>Prévia do componente</h3></div><span class="monta-preview-badge"><i data-lucide="sparkles"></i> Interativo</span></div><div class="monta-preview-canvas"><div class="monta-preview-content"></div></div><div class="monta-preview-caption"><span class="monta-preview-file"></span><span>Use mouse ou teclado para experimentar</span></div></section>
+            </div>
+          </div>
+        </section>
+
         <section class="motion-section" aria-labelledby="motionHeading">
           <div class="motion-section-heading"><div><span class="motion-eyebrow">NOVO / MOTION COLLECTION</span><h2 id="motionHeading">Um pouco de movimento.<br>Muitas possibilidades.</h2></div><p>Gradientes e textos animados.<br>Explore, ajuste e leve para o seu projeto.</p></div>
           <div id="motionGallery"></div>
@@ -1031,5 +1046,6 @@ export const WithIcon: Story = {
   <script src="registry/catalog.js"></script>
   <script src="motion-preview.js"></script>
   <script src="app.min.js"></script>
+  <script src="playground.js"></script>
 </body>
 </html>

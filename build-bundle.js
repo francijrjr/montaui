@@ -11,6 +11,7 @@ esbuild.buildSync({
   minify: true,
   platform: 'browser',
   target: ['es2020'],
+  alias: { '@/lib/utils': path.join(__dirname, 'registry/utils.ts') },
   define: { 'process.env.NODE_ENV': '"production"' },
   legalComments: 'linked',
 });

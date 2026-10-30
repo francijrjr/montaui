@@ -927,11 +927,33 @@ export function DialogTrigger({ children, className, ...props }: React.ButtonHTM
 
 export function DialogContent({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const context = React.useContext(DialogContext)
+  const contentRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    if (!context?.open || !contentRef.current) return
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const content = contentRef.current
+    const focusable = () => Array.from(content.querySelectorAll<HTMLElement>('button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'))
+    focusable()[0]?.focus()
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); context.setOpen(false); return }
+      if (event.key !== "Tab") return
+      const items = focusable()
+      if (!items.length) { event.preventDefault(); content.focus(); return }
+      if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); items[items.length - 1].focus() }
+      else if (!event.shiftKey && document.activeElement === items[items.length - 1]) { event.preventDefault(); items[0].focus() }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => { document.removeEventListener("keydown", onKeyDown); previous?.focus() }
+  }, [context?.open, context?.setOpen])
   if (!context?.open) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200 p-4">
       <div
+        ref={contentRef}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
         className={cn(
           "relative w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200",
           className

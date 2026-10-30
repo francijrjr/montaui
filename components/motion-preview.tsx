@@ -8,6 +8,7 @@ import { AnimatedGradient } from "./animated-gradient";
 import { GradientText } from "./gradient-text";
 import { ShimmerText } from "./shimmer-text";
 import { TextReveal } from "./text-reveal";
+import { PlaygroundPreview } from "./playground-preview";
 
 const threadExamples: Record<string, React.ComponentType> = {
   "reply-thread-line": ReplyThreadLineExample,
@@ -207,6 +208,12 @@ const api = {
     const root = createRoot(element);
     roots.set(element, root);
     root.render(<Gallery />);
+  },
+  mountShowcase(element: HTMLElement, name: string) {
+    api.unmount(element);
+    const root = createRoot(element);
+    roots.set(element, root);
+    root.render(<PlaygroundPreview name={name} />);
   },
 };
 Object.assign(window, { MontaMotion: api });
